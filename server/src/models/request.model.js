@@ -1,41 +1,37 @@
 import { DataTypes } from "sequelize";
 import db from "../lib/db.js";
 
-const User = db.define(
-  "User",
+const Request = db.define(
+  "Request",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    endUser: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
+    category: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    dept: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM("Admin", "IT_Head", "Stock_Manager", "User"),
-    },
-    registeredOn: {
+    raisedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
     approvedOn: {
-      type: DataTypes.DATE,
+      ype: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
@@ -48,11 +44,22 @@ const User = db.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("Active", "Inactive"),
-      defaultValue: "Active",
+      type: DataTypes.ENUM(
+        "Pending",
+        "Cancelled",
+        "Rejected",
+        "Issued",
+        "Returned"
+      ),
+      defaultValue: "Pending",
+    },
+    purpose: {
+      type: DataTypes.STRING,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default User;
+export default Request;
+
+// TODO: Set user's name as default for endUser in controllers (if empty)

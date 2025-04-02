@@ -1,45 +1,34 @@
 import { DataTypes } from "sequelize";
 import db from "../lib/db.js";
 
-const User = db.define(
-  "User",
+const Issue = db.define(
+  "Issue",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    request: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Requests",
+        key: "id",
+      },
+    },
+    asset: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Asset",
+        key: "id",
+      },
+      allowNull: false,
+    },
+    equipNo: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    dept: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM("Admin", "IT_Head", "Stock_Manager", "User"),
-    },
-    registeredOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    approvedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    approvedBy: {
+    issuedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "User",
@@ -47,12 +36,37 @@ const User = db.define(
       },
       allowNull: false,
     },
-    status: {
-      type: DataTypes.ENUM("Active", "Inactive"),
-      defaultValue: "Active",
+    issuedOn: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    issuedTo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    endUser: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    returnedOn: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    returnedTo: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "User",
+        key: "id",
+      },
+      allowNull: false,
+    },
+    addInfo: {
+      type: DataTypes.STRING,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default User;
+export default Issue;
