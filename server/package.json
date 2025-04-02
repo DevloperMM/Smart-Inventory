@@ -1,0 +1,23 @@
+{
+  "name": "ims-apis",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "node -r dotenv/config src/index.js"
+  },
+  "keywords": [],
+  "author": "Mangal Murti Varshney",
+  "license": "ISC",
+  "description": "This project focuses on managing IT store during the internship at JSL",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mssql": "^11.0.1",
+    "sequelize": "^6.37.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
