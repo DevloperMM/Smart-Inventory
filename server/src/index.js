@@ -9,7 +9,7 @@ db.sync()
     console.log("SQL Server established successfully");
 
     app.on("error", (err) => {
-      console.log("Error while listening to port- ");
+      console.log("Error while listening to port");
       throw err;
     });
 
