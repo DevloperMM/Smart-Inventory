@@ -17,7 +17,7 @@ const PeriodicCheck = db.define(
     checkedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,
@@ -25,7 +25,7 @@ const PeriodicCheck = db.define(
     stock: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Stock",
+        model: "Stocks",
         key: "id",
       },
     },

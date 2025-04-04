@@ -21,9 +21,9 @@ const Asset = db.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    purchaseDate: {
+    purchasedOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      allowNull: false,
     },
     mfgBy: {
       type: DataTypes.STRING,
@@ -31,7 +31,6 @@ const Asset = db.define(
     },
     mfgOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
     modelNo: {
       type: DataTypes.STRING,
@@ -55,7 +54,7 @@ const Asset = db.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    receiveDate: {
+    stockedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
@@ -65,17 +64,17 @@ const Asset = db.define(
       allowNull: false,
       defaultValue: true,
     },
-    expiryDate: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
     amcVendor: {
       type: DataTypes.STRING,
+    },
+    expiryOn: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     enteredBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,

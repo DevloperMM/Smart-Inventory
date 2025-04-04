@@ -19,7 +19,7 @@ const Issue = db.define(
     asset: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Asset",
+        model: "Assets",
         key: "id",
       },
       allowNull: false,
@@ -31,7 +31,7 @@ const Issue = db.define(
     issuedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,
@@ -52,12 +52,11 @@ const Issue = db.define(
     returnedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
-      allowNull: false,
     },
     returnedTo: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,

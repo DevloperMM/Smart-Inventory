@@ -19,7 +19,7 @@ const Discrepency = db.define(
     reportedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,
@@ -27,14 +27,14 @@ const Discrepency = db.define(
     asset: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Asset",
+        model: "Assets",
         key: "id",
       },
     },
     consumable: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Consumable",
+        model: "Consumables",
         key: "id",
       },
     },

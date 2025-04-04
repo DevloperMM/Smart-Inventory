@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "../lib/db.js";
 
 // TODO: Throw error in case of getting asset and consumable both null
+// TODO: Create auto approved dispose request if create by IT head
 
 const Disposal = db.define(
   "Disposal",
@@ -14,14 +15,14 @@ const Disposal = db.define(
     asset: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Asset",
+        model: "Assets",
         key: "id",
       },
     },
     consumable: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Consumable",
+        model: "Consumables",
         key: "id",
       },
     },
@@ -74,5 +75,3 @@ const Disposal = db.define(
 );
 
 export default Disposal;
-
-// TODO: Create auto approved dispose request if create by IT head

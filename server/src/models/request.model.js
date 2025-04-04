@@ -1,6 +1,8 @@
 import { DataTypes } from "sequelize";
 import db from "../lib/db.js";
 
+// TODO: Filter user assets and consumables issued
+
 const Request = db.define(
   "Request",
   {
@@ -31,14 +33,14 @@ const Request = db.define(
       allowNull: false,
     },
     approvedOn: {
-      ype: DataTypes.DATE,
+      type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
     approvedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,

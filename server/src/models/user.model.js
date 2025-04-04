@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import db from "../lib/db.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const User = db.define(
   "User",
@@ -21,38 +23,30 @@ const User = db.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      min: 6,
     },
-    dept: {
+    department: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     role: {
       type: DataTypes.ENUM("Admin", "IT_Head", "Stock_Manager", "User"),
+      defaultValue: "User",
+      allowNull: false,
     },
     registeredOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-    approvedOn: {
+    roleModifiedOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    approvedBy: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "User",
-        key: "id",
-      },
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM("Active", "Inactive"),
-      defaultValue: "Active",
     },
   },
   { timestamps: true, paranoid: true }
 );
 
 export default User;
+
+// FIXME: approvedBy may or may not have users inside user model
+// FIXME: handle registration and approval for user role

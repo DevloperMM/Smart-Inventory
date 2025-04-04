@@ -15,7 +15,11 @@ const Stock = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    stockQty: {
+    model: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    qty: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

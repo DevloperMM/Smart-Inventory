@@ -27,14 +27,13 @@ const Consumable = db.define(
     },
     purchaseDate: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
     mfgBy: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     mfgOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
     uniqueNo: {
       type: DataTypes.STRING,
@@ -49,12 +48,12 @@ const Consumable = db.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    receiveDate: {
+    stockedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-    expiryDate: {
+    expiryOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
@@ -66,7 +65,7 @@ const Consumable = db.define(
     issuedToAsset: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Asset",
+        model: "Assets",
         key: "id",
       },
     },

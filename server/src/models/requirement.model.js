@@ -15,7 +15,6 @@ const Requirement = db.define(
     },
     pr: {
       type: DataTypes.FLOAT,
-      allowNull: false,
     },
     requestedQty: {
       type: DataTypes.INTEGER,
@@ -33,7 +32,7 @@ const Requirement = db.define(
     raisedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,
@@ -46,7 +45,7 @@ const Requirement = db.define(
     approvedBy: {
       type: DataTypes.INTEGER,
       references: {
-        model: "User",
+        model: "Users",
         key: "id",
       },
       allowNull: false,
