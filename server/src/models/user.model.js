@@ -34,11 +34,6 @@ const User = db.define(
       defaultValue: "User",
       allowNull: false,
     },
-    registeredOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     roleModifiedOn: {
       type: DataTypes.DATE,
     },
@@ -46,7 +41,28 @@ const User = db.define(
   { timestamps: true, paranoid: true }
 );
 
-export default User;
+User.beforeCreate(async (user) => {
+  if (user.password) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+  }
+});
 
-// FIXME: approvedBy may or may not have users inside user model
-// FIXME: handle registration and approval for user role
+User.beforeUpdate(async (user) => {
+  if (user.changed("password")) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+  }
+});
+
+User.prototype.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+User.prototype.generateToken = function () {
+  return jwt.sign({ id: this.id }, process.env.TOKEN_SECRET, {
+    expiresIn: process.env.TOKEN_EXPIRY,
+  });
+};
+
+export default User;

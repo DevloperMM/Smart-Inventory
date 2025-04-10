@@ -19,6 +19,6 @@ db.sync()
     });
   })
   .catch((err) => {
-    console.error("Unable to connect to the DB:", err);
+    console.error("DB Connection error:", err);
     process.exit(1);
   });
