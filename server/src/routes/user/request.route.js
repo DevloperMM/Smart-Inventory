@@ -5,10 +5,18 @@ import {
   getRequests,
 } from "../../controllers/user/request.controller.js";
 import { verifyAuth } from "../../middlewares/auth.middleware.js";
+import authorisedRoles from "../../middlewares/role.middleware.js";
+import asyncHandler from "../../utils/asyncHandler.js";
 
 const router = Router();
 
-router.route("/").get(verifyAuth, getRequests).post(verifyAuth, createRequest);
-router.route("/:id").post(verifyAuth, cancelRequest);
+router
+  .route("/")
+  .get(verifyAuth, asyncHandler(authorisedRoles("User")), getRequests)
+  .post(verifyAuth, asyncHandler(authorisedRoles("User")), createRequest);
+
+router
+  .route("/:id")
+  .post(verifyAuth, asyncHandler(authorisedRoles("User")), cancelRequest);
 
 export default router;
