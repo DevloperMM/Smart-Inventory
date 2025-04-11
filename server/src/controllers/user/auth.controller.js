@@ -6,8 +6,8 @@ import ApiResponse from "../../utils/ApiResponse.js";
 const options = {
   httpOnly: true,
   cookies: true,
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV !== "development" ? "none" : "strict",
+  secure: process.env.NODE_ENV !== "development",
 };
 
 export const registerUser = asyncHandler(async (req, res) => {

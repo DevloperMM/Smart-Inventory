@@ -34,8 +34,6 @@ const Request = db.define(
     },
     approvedOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
     },
     approvedBy: {
       type: DataTypes.INTEGER,
@@ -43,7 +41,6 @@ const Request = db.define(
         model: "Users",
         key: "id",
       },
-      allowNull: false,
     },
     status: {
       type: DataTypes.ENUM(
@@ -57,11 +54,10 @@ const Request = db.define(
     },
     purpose: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
 export default Request;
-
-// TODO: Set user's name as default for endUser in controllers (if empty)
