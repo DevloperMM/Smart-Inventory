@@ -13,16 +13,12 @@ const options = {
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, department } = req.body;
 
-  if (
-    [name, email, password, department].some((field) => field?.trim() === "")
-  ) {
+  if ([name, email, password, department].some((field) => field?.trim() === ""))
     throw new ApiError(400, "Fill the mentioned details");
-  }
 
   const mailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  if (!mailRegex.test(email)) {
+  if (!mailRegex.test(email))
     throw new ApiError(400, "Enter valid email address");
-  }
 
   const isUserExist = await User.findOne({ where: { email } });
   if (isUserExist) throw new ApiError(409, "This email is already registered");
@@ -45,7 +41,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie("token", token, options)
-    .json(new ApiResponse(200, user, "Registration Successfull!"));
+    .json(new ApiResponse(200, user, "User Registered !!"));
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -64,12 +60,28 @@ export const loginUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie("token", token, options)
-    .json(new ApiResponse(200, user, "Login successful"));
+    .json(new ApiResponse(200, user, "User authenticated !!"));
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .clearCookie("token", options)
-    .json(new ApiResponse(200, {}, "Logout successful!"));
+    .json(new ApiResponse(200, {}, "User logged out !!"));
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!(oldPassword && newPassword))
+    throw new ApiError(400, "Fill the required fields");
+
+  const user = await User.findByPk(req.user.id);
+  const isPassValid = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPassValid) throw new ApiError(400, "Enter valid current password");
+
+  user.password = newPassword;
+  await user.save({ validate: true });
+
+  return res.status(200).json(new ApiResponse(200, {}, "Password updated !!"));
 });

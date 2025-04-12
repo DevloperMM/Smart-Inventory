@@ -1,7 +1,7 @@
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-const authorisedRoles = (...allowedRoles) => {
+const isAuthorised = (allowedRoles) => {
   return (req, _res, next) => {
     if (!allowedRoles.includes(req.user.role)) {
       if (req.user.role === "User")
@@ -11,6 +11,10 @@ const authorisedRoles = (...allowedRoles) => {
 
     next();
   };
+};
+
+const authorisedRoles = (...allowedRoles) => {
+  return asyncHandler(isAuthorised(allowedRoles));
 };
 
 export default authorisedRoles;

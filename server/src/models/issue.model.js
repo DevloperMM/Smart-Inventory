@@ -64,6 +64,16 @@ const Issue = db.define(
     addInfo: {
       type: DataTypes.STRING,
     },
+    status: {
+      type: DataTypes.ENUM(
+        "Pending",
+        "Cancelled",
+        "Approved",
+        "Issued",
+        "Rejected"
+      ),
+      defaultValue: "Pending",
+    },
   },
   { timestamps: true, paranoid: true }
 );

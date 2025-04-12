@@ -30,12 +30,20 @@ const User = db.define(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM("Admin", "IT_Head", "Stock_Manager", "User"),
-      defaultValue: "User",
+      type: DataTypes.ENUM("ADMIN", "IT-HEAD", "STORE-MANAGER", "USER"),
+      defaultValue: "USER",
       allowNull: false,
     },
-    roleModifiedOn: {
+    profileUpdatedOn: {
       type: DataTypes.DATE,
+    },
+    profileUpdatedBy: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
     },
   },
   { timestamps: true, paranoid: true }

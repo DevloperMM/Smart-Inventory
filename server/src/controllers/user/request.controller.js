@@ -12,9 +12,9 @@ export const getRequests = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, requests, "Requests fetched successfully"));
+      .json(new ApiResponse(200, requests, "Requests fetched !!"));
   } catch (err) {
-    throw new ApiError(err.statusCode, err?.message);
+    throw new ApiError(err.statusCode || 500, err?.message);
   }
 });
 
@@ -40,9 +40,9 @@ export const createRequest = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, request, "Item applied successfully"));
+      .json(new ApiResponse(200, request, "IT Equipment requested"));
   } catch (err) {
-    throw new ApiError(err.statusCode, err?.message);
+    throw new ApiError(err.statusCode || 500, err?.message);
   }
 });
 
@@ -69,6 +69,6 @@ export const cancelRequest = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, {}, "Request Cancelled"));
   } catch (err) {
-    throw new ApiError(err.statusCode, err?.message);
+    throw new ApiError(err.statusCode || 500, err?.message);
   }
 });

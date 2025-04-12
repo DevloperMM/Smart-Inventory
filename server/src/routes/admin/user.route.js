@@ -3,12 +3,21 @@ import {
   createUser,
   deleteUser,
   getUsers,
-  updateUserRole,
+  updateUser,
 } from "../../controllers/admin/user.controller.js";
+import { verifyAuth } from "../../middlewares/auth.middleware.js";
+import authorisedRoles from "../../middlewares/role.middleware.js";
 
 const router = Router();
 
-router.route("/").get(getUsers).post(createUser);
-router.route("/:id").patch(updateUserRole).delete(deleteUser);
+router
+  .route("/")
+  .get(verifyAuth, authorisedRoles("ADMIN"), getUsers)
+  .post(verifyAuth, authorisedRoles("ADMIN"), createUser);
+
+router
+  .route("/:id")
+  .patch(verifyAuth, authorisedRoles("ADMIN"), updateUser)
+  .delete(verifyAuth, authorisedRoles("ADMIN"), deleteUser);
 
 export default router;
