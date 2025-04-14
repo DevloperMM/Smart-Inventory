@@ -5,7 +5,7 @@ import {
   getUsers,
   updateUser,
 } from "../../controllers/admin/user.controller.js";
-import { verifyAuth } from "../../middlewares/auth.middleware.js";
+import verifyAuth from "../../middlewares/auth.middleware.js";
 import authorisedRoles from "../../middlewares/role.middleware.js";
 
 const router = Router();

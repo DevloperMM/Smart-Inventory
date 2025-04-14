@@ -2,9 +2,9 @@ import { Router } from "express";
 import {
   cancelRequest,
   createRequest,
-  getRequests,
+  getAllRequests,
 } from "../../controllers/user/request.controller.js";
-import { verifyAuth } from "../../middlewares/auth.middleware.js";
+import verifyAuth from "../../middlewares/auth.middleware.js";
 import authorisedRoles from "../../middlewares/role.middleware.js";
 
 const router = Router();
@@ -14,7 +14,7 @@ router
   .get(
     verifyAuth,
     authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER", "USER"),
-    getRequests
+    getAllRequests
   )
   .post(
     verifyAuth,

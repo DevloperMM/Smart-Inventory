@@ -18,10 +18,10 @@ export const getUsers = asyncHandler(async (req, res) => {
 });
 
 export const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password, department, role } = req.body;
+  const { name, email, password, department, role, empCode } = req.body;
 
   if (
-    [name, email, password, department, role].some(
+    [name, email, password, department, role, empCode].some(
       (field) => field?.trim() === ""
     )
   )
@@ -32,9 +32,13 @@ export const createUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Enter valid email address");
 
   try {
-    const isUserExist = await User.findOne({ where: { email } });
-    if (isUserExist)
+    const isEmailExist = await User.findOne({ where: { email } });
+    if (isEmailExist)
       throw new ApiError(409, "This email is already registered");
+
+    const isEmpCodeExist = await User.findOne({ where: { empCode } });
+    if (isEmpCodeExist)
+      throw new ApiError(409, "This employee code is already registered");
 
     const user = await User.create({
       name,
@@ -42,6 +46,7 @@ export const createUser = asyncHandler(async (req, res) => {
       password,
       department: department.toUpperCase(),
       role: role.toUpperCase(),
+      empCode,
     });
 
     if (!user)

@@ -73,7 +73,7 @@ const Consumable = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      type: DataTypes.ENUM("Available", "Issued", "Disposed"),
+      type: DataTypes.ENUM("Available", "Issued", "Disposed", "Vendor"),
       defaultValue: "Available",
     },
   },

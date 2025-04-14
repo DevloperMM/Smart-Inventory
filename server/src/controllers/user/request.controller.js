@@ -4,7 +4,7 @@ import User from "../../models/user.model.js";
 import Request from "../../models/request.model.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 
-export const getRequests = asyncHandler(async (req, res) => {
+export const getAllRequests = asyncHandler(async (req, res) => {
   try {
     const requests = await Request.findAll({ where: { user: req.user.id } });
     if (requests.length === 0)

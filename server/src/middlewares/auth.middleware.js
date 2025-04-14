@@ -3,7 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 
-export const verifyAuth = asyncHandler(async (req, _res, next) => {
+const verifyAuth = asyncHandler(async (req, _res, next) => {
   try {
     const token =
       req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
@@ -20,3 +20,5 @@ export const verifyAuth = asyncHandler(async (req, _res, next) => {
     throw new ApiError(401, err?.message || "Unauthorized! Token forged");
   }
 });
+
+export default verifyAuth;
