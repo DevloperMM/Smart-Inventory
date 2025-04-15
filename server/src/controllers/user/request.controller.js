@@ -7,8 +7,7 @@ import ApiResponse from "../../utils/ApiResponse.js";
 export const getAllRequests = asyncHandler(async (req, res) => {
   try {
     const requests = await Request.findAll({ where: { user: req.user.id } });
-    if (requests.length === 0)
-      return res.status(200).json(new ApiResponse(200, {}, "No records found"));
+    if (requests.length === 0) throw new ApiError(404, "No records found");
 
     return res
       .status(200)

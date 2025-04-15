@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+
 import User from "../../models/user.model.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
@@ -5,7 +7,9 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getUsers = asyncHandler(async (req, res) => {
   try {
-    const records = await User.findAll();
+    const records = await User.findAll({
+      where: { id: { [Op.ne]: req.user.id } },
+    });
 
     if (records.length <= 0) throw new ApiError(404, "No users found");
 

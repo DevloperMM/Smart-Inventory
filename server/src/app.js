@@ -24,13 +24,13 @@ import userRequestRouter from "./routes/user/request.route.js";
 // handling the routers
 app.use("/api/v1/admin/user", manageUsersRouter);
 
-app.use("/api/v1/admin/approval", approvalsRouter);
+app.use("/api/v1/admin/approve", approvalsRouter);
 
 app.use("/api/v1/admin/stock", stockRouter);
 app.use("/api/v1/admin/user-request", requestsRouter);
-app.use("/api/v1/admin/issuance", issuanceRouter);
+app.use("/api/v1/admin/issue", issuanceRouter);
 app.use("/api/v1/admin/periodic-check", periodicCheckRouter);
-app.use("/api/v1/admin/disposal", disposalRouter);
+app.use("/api/v1/admin/dispose", disposalRouter);
 
 app.use("/api/v1/user/auth", userAuthRouter);
 app.use("/api/v1/user/request", userRequestRouter);
