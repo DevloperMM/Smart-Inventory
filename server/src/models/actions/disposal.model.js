@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
 
 // TODO: Throw error in case of getting asset and consumable both null
-// TODO: Create auto approved dispose request if create by IT head
+// TODO: If get asset to dispose, make sure to dispose all consumables against it
 
 const Disposal = db.define(
   "Disposal",
@@ -12,14 +12,19 @@ const Disposal = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    asset: {
+    itemType: {
+      type: DataTypes.ENUM("Asset", "Consumable"),
+      allowNull: false,
+      defaultValue: "Asset",
+    },
+    assetId: {
       type: DataTypes.INTEGER,
       references: {
         model: "Assets",
         key: "id",
       },
     },
-    consumable: {
+    consumableId: {
       type: DataTypes.INTEGER,
       references: {
         model: "Consumables",
@@ -27,47 +32,38 @@ const Disposal = db.define(
       },
     },
     condition: {
-      type: DataTypes.ENUM("Obsolete", "Retired", "Damaged"),
+      type: DataTypes.ENUM("Obsolete", "Damaged"),
       allowNull: false,
-      defaultValue: "Retired",
     },
     description: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
-    disposeRaisedOn: {
+    raisedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-    disposeRaisedBy: {
+    raisedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    approvedOn: {
+      type: DataTypes.DATE,
+    },
+    approvedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
-      allowNull: false,
-    },
-    disposeApprovedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    disposeApprovedBy: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-      allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM(
-        "Pending",
-        "Cancelled",
-        "Approved",
-        "Disposed",
-        "Rejected"
-      ),
+      type: DataTypes.ENUM("Pending", "Cancelled", "Approved", "Rejected"),
       defaultValue: "Pending",
     },
   },

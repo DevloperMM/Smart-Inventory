@@ -1,48 +1,61 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
 
-const Asset = db.define(
-  "Asset",
+const Consumable = db.define(
+  "Consumable",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    pr: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
     category: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    po: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    purchasedOn: {
-      type: DataTypes.DATE,
+    specs: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     mfgBy: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    mfgOn: {
-      type: DataTypes.DATE,
-    },
-    modelNo: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    serialNo: {
+    identifyNo: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
     },
+    pr: {
+      type: DataTypes.FLOAT,
+    },
+    po: {
+      type: DataTypes.FLOAT,
+    },
     grn: {
       type: DataTypes.FLOAT,
+    },
+    srr: {
+      type: DataTypes.FLOAT,
+    },
+    stockedOn: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    stockedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    expiryOn: {
+      type: DataTypes.DATE,
+    },
+    amcVendor: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     location: {
@@ -50,44 +63,22 @@ const Asset = db.define(
       allowNull: false,
       defaultValue: "HRD",
     },
-    srr: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    stockedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    inWarranty: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    },
-    amcVendor: {
-      type: DataTypes.STRING,
-    },
-    expiryOn: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    enteredBy: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-      allowNull: false,
-    },
     addInfo: {
       type: DataTypes.STRING,
     },
     status: {
-      type: DataTypes.ENUM("Available", "Issued", "Disposed", "Vendor"),
+      type: DataTypes.ENUM(
+        "Available",
+        "Issued",
+        "Vendored",
+        "Disposed",
+        "Sold"
+      ),
+      allowNull: false,
       defaultValue: "Available",
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default Asset;
+export default Consumable;

@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
-
-// TODO: Controllers add to show different categories
+import db from "../../lib/db.js";
 
 const Stock = db.define(
   "Stock",
@@ -21,6 +19,11 @@ const Stock = db.define(
     },
     alertQty: {
       type: DataTypes.INTEGER,
+    },
+    isDisposable: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     status: {
       type: DataTypes.ENUM("In stock", "Low stock", "Out of stock"),

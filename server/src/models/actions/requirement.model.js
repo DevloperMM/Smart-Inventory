@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
 
 const Requirement = db.define(
   "Requirement",
@@ -13,20 +13,8 @@ const Requirement = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    pr: {
-      type: DataTypes.FLOAT,
-    },
     requestedQty: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    approvedQty: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    isUrgent: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
       allowNull: false,
     },
     raisedBy: {
@@ -42,6 +30,19 @@ const Requirement = db.define(
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
+    isUrgent: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    reason: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    approvedQty: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     approvedBy: {
       type: DataTypes.INTEGER,
       references: {
@@ -55,12 +56,12 @@ const Requirement = db.define(
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-    isTransit: {
+    inTransit: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
     status: {
-      type: DataTypes.ENUM("Pending", "Cancelled", "Rejected", "Approved"),
+      type: DataTypes.ENUM("Pending", "Resolved"),
       allowNull: false,
       defaultValue: "Pending",
     },

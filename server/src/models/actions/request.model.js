@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
-
-// TODO: Filter user assets and consumables issued
+import db from "../../lib/db.js";
 
 const Request = db.define(
   "Request",
@@ -11,7 +9,7 @@ const Request = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    user: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -24,6 +22,10 @@ const Request = db.define(
       allowNull: false,
     },
     category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    info: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -42,19 +44,12 @@ const Request = db.define(
         key: "id",
       },
     },
-    status: {
-      type: DataTypes.ENUM(
-        "Pending",
-        "Cancelled",
-        "Rejected",
-        "Issued",
-        "Returned"
-      ),
-      defaultValue: "Pending",
-    },
-    purpose: {
+    approvalComments: {
       type: DataTypes.STRING,
-      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("Pending", "Cancelled", "Rejected", "Approved"),
+      defaultValue: "Pending",
     },
   },
   { timestamps: true, paranoid: true }

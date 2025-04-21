@@ -1,40 +1,45 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
 
-const Issue = db.define(
-  "Issue",
+const ConsumableIssuance = db.define(
+  "ConsumableIssuance",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    request: {
+    requestId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Requests",
         key: "id",
       },
     },
-    asset: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Assets",
-        key: "id",
-      },
+    category: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    equipNo: {
+    consumableId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Consumables",
+        key: "id",
+      },
+    },
+    toEquipNo: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     issuedBy: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Users",
         key: "id",
       },
-      allowNull: false,
     },
     issuedOn: {
       type: DataTypes.DATE,
@@ -42,16 +47,15 @@ const Issue = db.define(
       allowNull: false,
     },
     issuedTo: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    endUser: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
     },
     returnedOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
     returnedTo: {
       type: DataTypes.INTEGER,
@@ -59,23 +63,17 @@ const Issue = db.define(
         model: "Users",
         key: "id",
       },
+    },
+    status: {
+      type: DataTypes.ENUM("Issued", "Raised-Return", "Returned", "Exempted"),
       allowNull: false,
+      defaultValue: "Issued",
     },
     addInfo: {
       type: DataTypes.STRING,
-    },
-    status: {
-      type: DataTypes.ENUM(
-        "Pending",
-        "Cancelled",
-        "Approved",
-        "Issued",
-        "Rejected"
-      ),
-      defaultValue: "Pending",
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default Issue;
+export default ConsumableIssuance;

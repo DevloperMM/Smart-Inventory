@@ -1,13 +1,20 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
 
-const PeriodicCheck = db.define(
-  "PeriodicCheck",
+const Tally = db.define(
+  "Tally",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+    discrepencyId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Discrepencies",
+        key: "id",
+      },
     },
     checkedOn: {
       type: DataTypes.DATE,
@@ -22,19 +29,11 @@ const PeriodicCheck = db.define(
       },
       allowNull: false,
     },
-    stock: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Stocks",
-        key: "id",
-      },
-    },
-    isDisposable: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    addInfo: {
+      type: DataTypes.STRING,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default PeriodicCheck;
+export default Tally;

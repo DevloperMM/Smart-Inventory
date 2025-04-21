@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
-import db from "../lib/db.js";
+import db from "../../lib/db.js";
+import ApiError from "../../utils/ApiError.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -17,8 +18,8 @@ const User = db.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
+      allowNull: false,
     },
     empCode: {
       type: DataTypes.INTEGER,
@@ -28,7 +29,6 @@ const User = db.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      min: 6,
     },
     department: {
       type: DataTypes.STRING,
@@ -38,6 +38,20 @@ const User = db.define(
       type: DataTypes.ENUM("ADMIN", "IT-HEAD", "STORE-MANAGER", "USER"),
       defaultValue: "USER",
       allowNull: false,
+    },
+    profileCreatedOn: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    profileCreatedBy: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      allowNull: false,
+      onUpdate: "CASCADE",
     },
     profileUpdatedOn: {
       type: DataTypes.DATE,
@@ -55,16 +69,20 @@ const User = db.define(
 );
 
 User.beforeCreate(async (user) => {
-  if (user.password) {
+  if (user.password && user.password.length > 5) {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
+  } else {
+    throw new ApiError(402, "Password should have atleast 6 characters");
   }
 });
 
 User.beforeUpdate(async (user) => {
-  if (user.changed("password")) {
+  if (user.changed("password") && user.password.length > 5) {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
+  } else {
+    throw new ApiError(402, "Password should have atleast 6 characters");
   }
 });
 
