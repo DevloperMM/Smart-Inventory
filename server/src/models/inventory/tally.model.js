@@ -9,13 +9,6 @@ const Tally = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    discrepencyId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Discrepencies",
-        key: "id",
-      },
-    },
     checkedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

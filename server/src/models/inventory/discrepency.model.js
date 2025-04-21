@@ -9,6 +9,14 @@ const Discrepency = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    tallyId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Discrepencies",
+        key: "id",
+      },
+    },
     itemType: {
       type: DataTypes.ENUM("Asset", "Consumable"),
       allowNull: false,
