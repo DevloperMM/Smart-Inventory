@@ -1,11 +1,8 @@
-import asyncHandler from "../../utils/asyncHandler.js";
-import ApiError from "../../utils/ApiError.js";
-import ApiResponse from "../../utils/ApiResponse.js";
-import Request from "../../models/request.model.js";
-import Asset from "../../models/asset.model.js";
-import Issue from "../../models/issue.model.js";
+import { Asset, Request } from "../../models";
+import ApiError from "../../utils/ApiError";
+import ApiResponse from "../../utils/ApiResponse";
+import asyncHandler from "../../utils/asyncHandler";
 
-// Assets
 export const issueAssetForRequest = asyncHandler(async (req, res) => {
   const { requestId } = req.params;
   const { assetSerialNo, equipNo, addInfo } = req.body;
@@ -52,24 +49,6 @@ export const issueAssetForRequest = asyncHandler(async (req, res) => {
   }
 });
 
-export const getUserAssetRequests = asyncHandler(async (req, res) => {
-  try {
-    const requests = await Request.findAll();
-    if (requests.length === 0) throw new ApiError(404, "No records found");
+export const receiveReturnForAsset = asyncHandler(async (req, res) => {});
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, requests, "Requests fetched !!"));
-  } catch (err) {
-    throw new ApiError(err.statusCode || 500, err?.message);
-  }
-});
-
-export const getAllAssetIssuances = asyncHandler(async (req, res) => {});
-
-// Consumables
-export const issueConsumableForRequest = asyncHandler(async (req, res) => {});
-
-export const getUserConsumableRequests = asyncHandler(async (req, res) => {});
-
-export const getAllConsumableIssuances = asyncHandler(async (req, res) => {});
+export const createDisposeForAsset = asyncHandler(async (req, res) => {});

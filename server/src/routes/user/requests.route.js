@@ -3,7 +3,7 @@ import {
   cancelRequest,
   createRequest,
   getAllRequests,
-} from "../../controllers/user/request.controller.js";
+} from "../../controllers/user/requests.controller.js";
 import verifyAuth from "../../middlewares/auth.middleware.js";
 import authorisedRoles from "../../middlewares/role.middleware.js";
 
@@ -23,7 +23,7 @@ router
   );
 
 router
-  .route("/:id")
+  .route("/:requestId")
   .post(
     verifyAuth,
     authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER", "USER"),

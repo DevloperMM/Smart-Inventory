@@ -1,4 +1,4 @@
-import User from "../../models/user.model.js";
+import { User } from "../../models";
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
@@ -49,14 +49,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User Registered !!"));
 });
 
-// We can give either mail or empCode option to login user
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  if (!(email && password))
+  const { empCode, password } = req.body;
+  if (!(empCode && password))
     throw new ApiError(400, "Fill the mentioned details");
 
-  const user = await User.findOne({ where: { email } });
-  if (!user) throw new ApiError(409, "No such email/user exist");
+  const user = await User.findOne({ where: { empCode } });
+  if (!user) throw new ApiError(409, "No such user exist");
 
   const isPassValid = await user.isPasswordCorrect(password);
   if (!isPassValid) throw new ApiError(404, "Invalid credentials");
@@ -84,7 +83,7 @@ export const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.id);
   const isPassValid = await user.isPasswordCorrect(oldPassword);
 
-  if (!isPassValid) throw new ApiError(400, "Enter valid current password");
+  if (!isPassValid) throw new ApiError(400, "Invalid current password");
 
   user.password = newPassword;
   await user.save({ validate: true });

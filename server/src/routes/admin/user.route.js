@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createUser,
   deleteUser,
+  getUserById,
   getUsers,
   updateUser,
 } from "../../controllers/admin/user.controller.js";
@@ -16,7 +17,8 @@ router
   .post(verifyAuth, authorisedRoles("ADMIN"), createUser);
 
 router
-  .route("/:id")
+  .route("/:userId")
+  .get(verifyAuth, authorisedRoles("ADMIN"), getUserById)
   .patch(verifyAuth, authorisedRoles("ADMIN"), updateUser)
   .delete(verifyAuth, authorisedRoles("ADMIN"), deleteUser);
 

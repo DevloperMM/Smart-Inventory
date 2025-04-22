@@ -1,111 +1,34 @@
 import { Router } from "express";
 import verifyAuth from "../../middlewares/auth.middleware.js";
 import authorisedRoles from "../../middlewares/role.middleware.js";
-import {
-  deleteAssetIssuancePreview,
-  deleteConsumableIssuancePreview,
-  editAssetIssuancePreview,
-  editConsumableIssuancePreview,
-  getApprovedAssetIssuances,
-  getApprovedConsumableIssuances,
-  getPendingAssetIssuances,
-  getPendingConsumableIssuances,
-  getRejectedAssetIssuances,
-  getRejectedConsumableIssuances,
-  issueAsset,
-  issueConsumable,
-} from "../../controllers/store_manager/issue.controller.js";
+import {} from "../../controllers/store_manager/issue.controller.js";
 
 const router = Router();
 
+// Assets
 router
   .route("/asset")
-  .post(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    issueAsset
-  );
+  .get(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
 router
-  .route("/asset/pending")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getPendingAssetIssuances
-  );
+  .route("/asset/requests")
+  .get(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
 router
-  .route("/asset/approved")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getApprovedAssetIssuances
-  );
+  .route("/asset/request/:requestId")
+  .post(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
-router
-  .route("/asset/rejected")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getRejectedAssetIssuances
-  );
-
-router
-  .route("/asset/:id")
-  .patch(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    editAssetIssuancePreview
-  )
-  .delete(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    deleteAssetIssuancePreview
-  );
-
+// Consumables
 router
   .route("/consumable")
-  .post(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    issueConsumable
-  );
+  .get(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
 router
-  .route("/consumable/pending")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getPendingConsumableIssuances
-  );
+  .route("/consumable/requests")
+  .get(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
 router
-  .route("/consumable/approved")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getApprovedConsumableIssuances
-  );
-
-router
-  .route("/consumable/rejected")
-  .get(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    getRejectedConsumableIssuances
-  );
-
-router
-  .route("/consumable/:id")
-  .patch(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    editConsumableIssuancePreview
-  )
-  .delete(
-    verifyAuth,
-    authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"),
-    deleteConsumableIssuancePreview
-  );
+  .route("/consumable/request/:requestId")
+  .post(verifyAuth, authorisedRoles("ADMIN", "IT-HEAD", "STORE-MANAGER"));
 
 export default router;

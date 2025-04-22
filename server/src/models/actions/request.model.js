@@ -25,7 +25,7 @@ const Request = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    info: {
+    purpose: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -48,8 +48,8 @@ const Request = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      type: DataTypes.ENUM("Pending", "Cancelled", "Rejected", "Approved"),
-      defaultValue: "Pending",
+      type: DataTypes.ENUM("pending", "cancelled", "rejected", "approved"),
+      defaultValue: "pending",
     },
   },
   { timestamps: true, paranoid: true }

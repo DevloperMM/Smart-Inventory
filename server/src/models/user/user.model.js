@@ -55,6 +55,7 @@ const User = db.define(
     },
     profileUpdatedOn: {
       type: DataTypes.DATE,
+      allowNull: false,
     },
     profileUpdatedBy: {
       type: DataTypes.INTEGER,
@@ -63,6 +64,7 @@ const User = db.define(
         key: "id",
       },
       onUpdate: "CASCADE",
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }

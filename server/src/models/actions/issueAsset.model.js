@@ -75,7 +75,6 @@ const AssetIssuance = db.define(
     },
     returnReason: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }

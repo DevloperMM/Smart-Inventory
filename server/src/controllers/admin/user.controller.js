@@ -1,21 +1,44 @@
 import { Op } from "sequelize";
 
-import User from "../../models/user.model.js";
+import { User } from "../../models";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getUsers = asyncHandler(async (req, res) => {
   try {
-    const records = await User.findAll({
+    const users = await User.findAll({
       where: { id: { [Op.ne]: req.user.id } },
+      include: [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "name", "email", "department", "role"],
+        },
+        {
+          model: User,
+          as: "updater",
+          attributes: ["id", "name", "email", "department", "role"],
+        },
+      ],
     });
 
-    if (records.length <= 0) throw new ApiError(404, "No users found");
+    if (users.length <= 0) throw new ApiError(404, "No users found");
 
     return res
       .status(200)
-      .json(new ApiResponse(200, records, "Users fetched !!"));
+      .json(new ApiResponse(200, users, "Users fetched !!"));
+  } catch (err) {
+    throw new ApiError(err?.statusCode || 500, err?.message);
+  }
+});
+
+export const getUserById = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) throw new ApiError(404, "No such user found");
+    return res.status(200).json(new ApiResponse(200, user, "User fetched !!"));
   } catch (err) {
     throw new ApiError(err?.statusCode || 500, err?.message);
   }
@@ -51,6 +74,9 @@ export const createUser = asyncHandler(async (req, res) => {
       department: department.toUpperCase(),
       role: role.toUpperCase(),
       empCode,
+      profileCreatedBy: req.user.id,
+      profileUpdatedBy: req.user.id,
+      profileUpdatedOn: new Date(),
     });
 
     if (!user)
@@ -68,14 +94,14 @@ export const createUser = asyncHandler(async (req, res) => {
 });
 
 export const updateUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { userId } = req.params;
   const { role, department, password } = req.body;
 
   if ([role, password, department].some((field) => field?.trim() === ""))
     throw new ApiError(400, "Fill the mentioned details");
 
   try {
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(userId);
 
     if (role) user.role = role.toUpperCase();
     if (department) user.department = department.toUpperCase();

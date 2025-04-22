@@ -19,7 +19,6 @@ const Consumable = db.define(
     },
     mfgBy: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     identifyNo: {
       type: DataTypes.STRING,
