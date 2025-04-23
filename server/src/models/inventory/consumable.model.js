@@ -17,10 +17,7 @@ const Consumable = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    mfgBy: {
-      type: DataTypes.STRING,
-    },
-    identifyNo: {
+    trackingNo: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
@@ -50,9 +47,6 @@ const Consumable = db.define(
         key: "id",
       },
     },
-    expiryOn: {
-      type: DataTypes.DATE,
-    },
     amcVendor: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -61,9 +55,6 @@ const Consumable = db.define(
       type: DataTypes.ENUM("HRD", "CRD"),
       allowNull: false,
       defaultValue: "HRD",
-    },
-    addInfo: {
-      type: DataTypes.STRING,
     },
     status: {
       type: DataTypes.ENUM(
@@ -75,6 +66,9 @@ const Consumable = db.define(
       ),
       allowNull: false,
       defaultValue: "Available",
+    },
+    addInfo: {
+      type: DataTypes.STRING,
     },
   },
   { timestamps: true, paranoid: true }

@@ -3,6 +3,12 @@ import ApiError from "../../utils/ApiError";
 import ApiResponse from "../../utils/ApiResponse";
 import asyncHandler from "../../utils/asyncHandler";
 
+export const getAllAssets = asyncHandler(async (req, res) => {});
+
+export const addAssetInStore = asyncHandler(async (req, res) => {});
+
+export const getAllAssetIssuances = asyncHandler(async (req, res) => {});
+
 export const issueAssetForRequest = asyncHandler(async (req, res) => {
   const { requestId } = req.params;
   const { assetSerialNo, equipNo, addInfo } = req.body;
@@ -50,5 +56,7 @@ export const issueAssetForRequest = asyncHandler(async (req, res) => {
 });
 
 export const receiveReturnForAsset = asyncHandler(async (req, res) => {});
+
+export const getAllAssetDisposals = asyncHandler(async (req, res) => {});
 
 export const createDisposeForAsset = asyncHandler(async (req, res) => {});

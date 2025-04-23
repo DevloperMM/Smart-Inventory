@@ -60,12 +60,17 @@ const Asset = db.define(
       allowNull: false,
       defaultValue: true,
     },
+    startDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    endDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
     amcVendor: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    expiryOn: {
-      type: DataTypes.DATE,
     },
     addInfo: {
       type: DataTypes.STRING,
