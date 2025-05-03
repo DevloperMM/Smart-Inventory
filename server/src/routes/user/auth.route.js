@@ -3,7 +3,6 @@ import {
   changePassword,
   loginUser,
   logoutUser,
-  registerUser,
 } from "../../controllers/user/auth.controller.js";
 import verifyAuth from "../../middlewares/auth.middleware.js";
 

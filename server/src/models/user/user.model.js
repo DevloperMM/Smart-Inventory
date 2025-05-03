@@ -22,7 +22,7 @@ const User = db.define(
       allowNull: false,
     },
     empCode: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },

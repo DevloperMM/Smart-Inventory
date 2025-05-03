@@ -21,7 +21,7 @@ const Asset = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    specs: {
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
     },
