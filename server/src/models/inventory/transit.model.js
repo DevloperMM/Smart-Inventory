@@ -1,46 +1,44 @@
 import { DataTypes } from "sequelize";
 import db from "../../lib/db.js";
 
-const Requirement = db.define(
-  "Requirement",
+const Transit = db.define(
+  "Transit",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    // array of json objects having category and qty
+    request: {
+      type: DataTypes.TEXT,
+      get() {
+        const rawValue = this.getDataValue("request");
+        return rawValue ? JSON.parse(rawValue) : [];
+      },
+      set(value) {
+        this.setDataValue("request", JSON.stringify(value));
+      },
     },
-    requestedQty: {
+    fromStore: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    raisedBy: {
+    toStore: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    requestedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Users",
         key: "id",
       },
-      allowNull: false,
     },
-    raisedOn: {
+    requestedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    isUrgent: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-    },
-    reason: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    approvedQty: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
     approvedBy: {
@@ -49,27 +47,17 @@ const Requirement = db.define(
         model: "Users",
         key: "id",
       },
-      allowNull: false,
     },
     approvedOn: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    inTransit: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
     status: {
-      type: DataTypes.ENUM("Pending", "Resolved"),
-      allowNull: false,
-      defaultValue: "Pending",
-    },
-    addInfo: {
+      // Pending, Cancelled, Rejected, Approved
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default Requirement;
+export default Transit;

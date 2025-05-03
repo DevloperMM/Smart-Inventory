@@ -9,7 +9,7 @@ const Request = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    userId: {
+    requestedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -44,12 +44,10 @@ const Request = db.define(
         key: "id",
       },
     },
-    approvalComments: {
-      type: DataTypes.STRING,
-    },
     status: {
-      type: DataTypes.ENUM("pending", "cancelled", "rejected", "approved"),
-      defaultValue: "pending",
+      // Pending, Cancelled, Approved, Rejected
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }

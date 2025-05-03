@@ -10,6 +10,7 @@ const options = {
   secure: process.env.NODE_ENV !== "development",
 };
 
+// Don't use, signup is deprecated by user
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, department, empCode } = req.body;
 

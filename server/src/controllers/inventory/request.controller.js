@@ -1,7 +1,7 @@
-import ApiError from "../../utils/ApiError.js";
-import asyncHandler from "../../utils/asyncHandler.js";
-import ApiResponse from "../../utils/ApiResponse.js";
 import { Request } from "../../models";
+import ApiError from "../../utils/ApiError";
+import ApiResponse from "../../utils/ApiResponse";
+import asyncHandler from "../../utils/asyncHandler";
 
 export const getAllRequests = asyncHandler(async (req, res) => {
   const userId = req.user.id;

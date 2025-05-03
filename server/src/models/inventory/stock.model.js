@@ -13,20 +13,22 @@ const Stock = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    storeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     activeQty: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     alertQty: {
       type: DataTypes.INTEGER,
-    },
-    isDisposable: {
-      type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: 1,
     },
     status: {
-      type: DataTypes.ENUM("In stock", "Low stock", "Out of stock"),
+      // InStock, LowStock, OutStock
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },

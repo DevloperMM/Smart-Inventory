@@ -1,59 +1,35 @@
-import Disposal from "./actions/disposal.model.js";
-import AssetIssuance from "./actions/issueAsset.model.js";
-import ConsumableIssuance from "./actions/issueConsumable.model.js";
-import Request from "./actions/request.model.js";
-import Requirement from "./actions/requirement.model.js";
-import Asset from "./inventory/asset.model.js";
-import Consumable from "./inventory/consumable.model.js";
-import Discrepency from "./inventory/discrepency.model.js";
+import Asset from "./asset/asset.model.js";
+import AssetIssuance from "./asset/issue.model.js";
+import AssetDisposal from "./asset/dispose.model.js";
+import Consumable from "./consumable/consumable.model.js";
+import ConsumableIssuance from "./consumable/issue.model.js";
+import ConsumableDisposal from "./consumable/dispose.model.js";
+import Request from "./inventory/request.model.js";
+import Transfer from "./inventory/transfer.model.js";
+import Transit from "./inventory/transit.model.js";
 import Stock from "./inventory/stock.model.js";
-import Tally from "./inventory/tally.model.js";
 import User from "./user/user.model.js";
 
 export const setupAssociations = async () => {
-  Request.belongsTo(User, { foreignKey: "userId", as: "requester" });
-  Request.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
-  Request.hasOne(AssetIssuance, { foreignKey: "requestId", as: "issuedAsset" });
-  Request.hasOne(ConsumableIssuance, {
-    foreignKey: "requestId",
-    as: "issuedConsumable",
-  });
-
-  Requirement.belongsTo(User, { foreignKey: "raisedBy", as: "requester" });
-  Requirement.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
-
-  Asset.belongsTo(User, { foreignKey: "stockedBy", as: "stocker" });
-  Asset.hasOne(Disposal, { foreignKey: "assetId", as: "disposal" });
-  Asset.hasOne(AssetIssuance, { foreignKey: "assetId", as: "assetIssuance" });
-
-  Consumable.belongsTo(User, { foreignKey: "stockedBy", as: "stocker" });
-  Consumable.hasOne(Disposal, { foreignKey: "consumableId", as: "disposal" });
-  Consumable.hasOne(ConsumableIssuance, {
-    foreignKey: "consumableId",
-    as: "consumableIssuance",
-  });
-
-  Discrepency.belongsTo(Tally, { foreignKey: "tallyId", as: "tally" });
-
-  Tally.belongsTo(User, { foreignKey: "checkedBy", as: "checker" });
-  Tally.hasMany(Discrepency, { foreignKey: "tallyId", as: "discrepencies" });
-
-  Disposal.belongsTo(User, { foreignKey: "raisedBy", as: "requester" });
-  Disposal.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
-  Disposal.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
-  Disposal.belongsTo(Consumable, {
-    foreignKey: "consumableId",
-    as: "consumable",
-  });
+  Asset.belongsTo(User, { foreignKey: "stockedBy", as: "storeKeeper" });
+  Asset.hasMany(AssetIssuance, { foreignKey: "assetId", as: "assetIssuances" });
 
   AssetIssuance.belongsTo(Request, { foreignKey: "requestId", as: "request" });
   AssetIssuance.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
   AssetIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
-  AssetIssuance.belongsTo(User, { foreignKey: "issuedTo", as: "receiver" });
-  AssetIssuance.belongsTo(User, {
-    foreignKey: "returnedTo",
-    as: "returnReceiver",
+  AssetIssuance.belongsTo(User, { foreignKey: "issuedTo", as: "recipient" });
+  AssetIssuance.belongsTo(User, { foreignKey: "returnedTo", as: "receiver" });
+
+  AssetDisposal.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
+  AssetDisposal.belongsTo(User, { foreignKey: "raisedBy", as: "requester" });
+  AssetDisposal.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+  AssetDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
+
+  Consumable.hasMany(ConsumableIssuance, {
+    foreignKey: "consumableId",
+    as: "consumableIssuances",
   });
+  Consumable.belongsTo(User, { foreignKey: "updatedBy", as: "storeUpdater" });
 
   ConsumableIssuance.belongsTo(Request, {
     foreignKey: "requestId",
@@ -63,60 +39,59 @@ export const setupAssociations = async () => {
     foreignKey: "consumableId",
     as: "consumable",
   });
-  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
   ConsumableIssuance.belongsTo(User, {
     foreignKey: "issuedTo",
-    as: "receiver",
+    as: "recipient",
   });
   ConsumableIssuance.belongsTo(User, {
     foreignKey: "returnedTo",
-    as: "returnReceiver",
+    as: "receiver",
   });
+  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
 
-  User.belongsTo(User, { foreignKey: "profileCreatedBy", as: "creator" });
-  User.belongsTo(User, { foreignKey: "profileUpdatedBy", as: "updater" });
-  User.hasMany(Request, { foreignKey: "userId", as: "requests" });
-  User.hasMany(Request, { foreignKey: "approvedBy", as: "approvedRequests" });
-  User.hasMany(Asset, { foreignKey: "stockedBy", as: "assets" });
-  User.hasMany(Consumable, { foreignKey: "stockedBy", as: "consumables" });
-  User.hasMany(Tally, { foreignKey: "checkedBy", as: "checks" });
-  User.hasMany(Disposal, { foreignKey: "raisedBy", as: "disposeRequests" });
-  User.hasMany(Disposal, { foreignKey: "approvedBy", as: "approvedDisposals" });
-  User.hasMany(Requirement, { foreignKey: "raisedBy", as: "requirements" });
-  User.hasMany(Requirement, {
+  ConsumableDisposal.belongsTo(Consumable, {
+    foreignKey: "consumableId",
+    as: "consumable",
+  });
+  ConsumableDisposal.belongsTo(User, {
+    foreignKey: "raisedBy",
+    as: "requester",
+  });
+  ConsumableDisposal.belongsTo(User, {
     foreignKey: "approvedBy",
-    as: "approvedRequirements",
+    as: "approver",
   });
-  User.hasMany(AssetIssuance, { foreignKey: "issuedBy", as: "assetsIssued" });
+  ConsumableDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
+
+  Request.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
+  Request.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+
+  Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
+  Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });
+  Transfer.belongsTo(User, { foreignKey: "receivedBy", as: "receiver" });
+
+  Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
+  Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
+  Transit.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+
+  User.hasMany(Request, { foreignKey: "requestedBy", as: "requests" });
   User.hasMany(AssetIssuance, { foreignKey: "issuedTo", as: "assetsReceived" });
-  User.hasMany(AssetIssuance, {
-    foreignKey: "returnedTo",
-    as: "receivedAssetReturns",
-  });
-  User.hasMany(ConsumableIssuance, {
-    foreignKey: "issuedBy",
-    as: "consumablesIssued",
-  });
   User.hasMany(ConsumableIssuance, {
     foreignKey: "issuedTo",
     as: "consumablesReceived",
   });
-  User.hasMany(ConsumableIssuance, {
-    foreignKey: "returnedTo",
-    as: "receivedConsumableReturns",
-  });
 };
 
 export {
-  Discrepency,
-  Disposal,
   Asset,
+  AssetDisposal,
   AssetIssuance,
   Consumable,
+  ConsumableDisposal,
   ConsumableIssuance,
-  Request,
-  Requirement,
   Stock,
-  Tally,
+  Transfer,
+  Transit,
+  Request,
   User,
 };

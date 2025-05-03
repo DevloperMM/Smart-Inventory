@@ -8,16 +8,16 @@ const verifyAuth = asyncHandler(async (req, _res, next) => {
     const token =
       req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
 
-    if (!token) throw new ApiError(401, "Unauthorized! No token found");
+    if (!token) throw new ApiError(401, "No token found !!");
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
 
     const user = await User.findByPk(decodedToken?.id);
-    if (!user) throw new ApiError(401, "Unauthorized! Token expired");
+    if (!user) throw new ApiError(401, "Token expired !!");
 
     req.user = user;
     next();
   } catch (err) {
-    throw new ApiError(401, err?.message || "Unauthorized! Token forged");
+    throw new ApiError(401, err?.message || "Token forged !!");
   }
 });
 

@@ -17,29 +17,26 @@ const Consumable = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    trackingNo: {
-      type: DataTypes.STRING,
-      unique: true,
+    qty: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1,
+    },
+    storeId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    pr: {
-      type: DataTypes.FLOAT,
+    isUsed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
-    po: {
-      type: DataTypes.FLOAT,
-    },
-    grn: {
-      type: DataTypes.FLOAT,
-    },
-    srr: {
-      type: DataTypes.FLOAT,
-    },
-    stockedOn: {
+    updatedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-    stockedBy: {
+    updatedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -49,26 +46,11 @@ const Consumable = db.define(
     },
     amcVendor: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    location: {
-      type: DataTypes.ENUM("HRD", "CRD"),
-      allowNull: false,
-      defaultValue: "HRD",
     },
     status: {
-      type: DataTypes.ENUM(
-        "Available",
-        "Issued",
-        "Vendored",
-        "Disposed",
-        "Sold"
-      ),
-      allowNull: false,
-      defaultValue: "Available",
-    },
-    addInfo: {
+      // Store, Vendor
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }

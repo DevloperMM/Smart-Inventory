@@ -19,28 +19,35 @@ const Asset = db.define(
     },
     modelNo: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    specs: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     serialNo: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
     },
+    materialCode: {
+      type: DataTypes.STRING,
+    },
     pr: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     po: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     grn: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     srr: {
-      type: DataTypes.FLOAT,
-    },
-    location: {
-      type: DataTypes.ENUM("HRD", "CRD"),
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "HRD",
     },
     stockedOn: {
       type: DataTypes.DATE,
@@ -72,18 +79,16 @@ const Asset = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    storeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     addInfo: {
       type: DataTypes.STRING,
     },
     status: {
-      type: DataTypes.ENUM(
-        "Available",
-        "Issued",
-        "Vendored",
-        "Disposed",
-        "Sold"
-      ),
-      defaultValue: "Available",
+      // Available, InTransit, Issued, AMC, Disposed, Sold
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },

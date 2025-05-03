@@ -1,27 +1,11 @@
-import { Op } from "sequelize";
-
-import { User } from "../../models";
+import { User } from "../../models/index.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getUsers = asyncHandler(async (req, res) => {
   try {
-    const users = await User.findAll({
-      where: { id: { [Op.ne]: req.user.id } },
-      include: [
-        {
-          model: User,
-          as: "creator",
-          attributes: ["id", "name", "email", "department", "role"],
-        },
-        {
-          model: User,
-          as: "updater",
-          attributes: ["id", "name", "email", "department", "role"],
-        },
-      ],
-    });
+    const users = await User.findAll({});
 
     if (users.length <= 0) throw new ApiError(404, "No users found");
 
@@ -36,7 +20,10 @@ export const getUsers = asyncHandler(async (req, res) => {
 export const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   try {
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ["password"] },
+    });
+
     if (!user) throw new ApiError(404, "No such user found");
     return res.status(200).json(new ApiResponse(200, user, "User fetched !!"));
   } catch (err) {

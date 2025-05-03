@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import db from "../../lib/db.js";
 
-const ConsumableIssuance = db.define(
-  "ConsumableIssuance",
+const AssetIssuance = db.define(
+  "AssetIssuance",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -17,20 +17,16 @@ const ConsumableIssuance = db.define(
         key: "id",
       },
     },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    consumableId: {
+    assetId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Consumables",
+        model: "Assets",
         key: "id",
       },
     },
-    toEquipNo: {
-      type: DataTypes.STRING,
+    equipNo: {
+      type: DataTypes.STRING(10),
       allowNull: false,
     },
     issuedBy: {
@@ -65,15 +61,12 @@ const ConsumableIssuance = db.define(
       },
     },
     status: {
-      type: DataTypes.ENUM("Issued", "Raised-Return", "Returned", "Exempted"),
-      allowNull: false,
-      defaultValue: "Issued",
-    },
-    addInfo: {
+      // Issued, Returned, Exempted
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }
 );
 
-export default ConsumableIssuance;
+export default AssetIssuance;

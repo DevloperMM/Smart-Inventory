@@ -35,9 +35,13 @@ const User = db.define(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM("ADMIN", "IT-HEAD", "STORE-MANAGER", "USER"),
-      defaultValue: "USER",
+      // Admin, IT-Head, Store-Manager, User
+      type: DataTypes.STRING,
+      defaultValue: "User",
       allowNull: false,
+    },
+    storeManaging: {
+      type: DataTypes.INTEGER,
     },
     profileCreatedOn: {
       type: DataTypes.DATE,
@@ -67,7 +71,13 @@ const User = db.define(
       allowNull: false,
     },
   },
-  { timestamps: true, paranoid: true }
+  {
+    timestamps: true,
+    paranoid: true,
+    defaultScope: {
+      attributes: { exclude: ["password"] },
+    },
+  }
 );
 
 User.beforeCreate(async (user) => {
