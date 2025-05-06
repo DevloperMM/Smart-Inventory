@@ -16,6 +16,8 @@ import TransfersHistory from "./Transactions/Transfers/TransfersHistory.jsx";
 import Requests from "./Transactions/UserRequests/Requests.jsx";
 import AssetOptions from "./Transactions/UserRequests/AssetOptions.jsx";
 import ConsumableOptions from "./Transactions/UserRequests/ConsumableOptions.jsx";
+import Profile from "./User/Profile.jsx";
+import Password from "./User/Password.jsx";
 
 export {
   LoginPage,
@@ -36,4 +38,6 @@ export {
   Requests,
   AssetOptions,
   ConsumableOptions,
+  Profile,
+  Password,
 };

@@ -13,7 +13,7 @@ function Overflow() {
       >
         <thead>
           <tr>
-            {Array.from({ length: 12 }).map((_, index) => (
+            {Array.from({ length: 20 }).map((_, index) => (
               <th
                 key={index}
                 style={{
@@ -30,7 +30,7 @@ function Overflow() {
         </thead>
         <tbody>
           <tr>
-            {Array.from({ length: 12 }).map((_, index) => (
+            {Array.from({ length: 20 }).map((_, index) => (
               <td
                 key={index}
                 style={{
