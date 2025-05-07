@@ -38,7 +38,9 @@ function Requests() {
 
   return (
     <div className="p-4 h-full w-full">
-      <h1 className="text-2xl font-semibold mb-4 text-center">Request List</h1>
+      <h1 className="text-2xl font-semibold italic text-gray-800 mb-4 py-2">
+        Request List
+      </h1>
 
       {/* This wrapper forces horizontal scroll */}
       <div className="w-full overflow-x-auto">

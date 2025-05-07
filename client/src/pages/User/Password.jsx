@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { PassField } from "../../components";
 
 const Password = () => {
+  const [err, setErr] = useState();
   const [form, setForm] = useState({
     currPassword: "",
     newPassword: "",
@@ -13,14 +14,21 @@ const Password = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleClick = () => setErr("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (form.newPassword !== form.confirmPassword) {
-      toast.error("Passwords do not match");
+    setErr("");
+    if (!(form.newPassword && form.currPassword && form.confirmPassword)) {
+      setErr("All fields are required");
+      return;
+    } else if (form.newPassword !== form.confirmPassword) {
+      setErr("New Password and Confirm Password must be same");
       return;
     }
 
+    toast.success("Password changed");
     console.log(form);
   };
 
@@ -35,22 +43,27 @@ const Password = () => {
           name="currPassword"
           value={form.currPassword}
           onChange={handleChange}
-          disabled={false}
+          onClick={handleClick}
         />
         <PassField
           label="New Password"
           name="newPassword"
+          type="password"
           value={form.newPassword}
           onChange={handleChange}
-          disabled={false}
+          onClick={handleClick}
         />
         <PassField
           label="Confirm New Password"
           name="confirmPassword"
+          type="password"
           value={form.confirmPassword}
           onChange={handleChange}
-          disabled={false}
+          onClick={handleClick}
         />
+
+        {err && <p className="text-red-500 italic text-sm">{err}</p>}
+
         <button
           type="submit"
           className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"

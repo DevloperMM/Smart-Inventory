@@ -6,14 +6,14 @@ function Profile() {
     id: 1,
     name: "Alice Smith",
     email: "alice@example.com",
-    empCode: "EMP1234",
-    department: "IT",
-    role: "User",
+    empCode: "97268",
+    department: "IT & SAP",
+    role: "IT Head",
     storeManaging: 2,
     profileCreatedOn: "2025-03-01T10:30:00Z",
-    profileCreatedBy: "IT CMS Department",
+    profileCreatedBy: "Admin Helpdesk",
     profileUpdatedOn: "2025-04-10T16:45:00Z",
-    profileUpdatedBy: "IT CMS Department",
+    profileUpdatedBy: "Admin Helpdesk",
   };
 
   const formatDate = (dateString) => {
@@ -27,10 +27,10 @@ function Profile() {
       <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <ProfileField label="Name" value={user.name} />
         <ProfileField label="Email" value={user.email} />
-        <ProfileField label="Employee Code" value={user.empCode} />
+        <ProfileField label="Emp Code" value={user.empCode} />
         <ProfileField label="Department" value={user.department} />
-        <ProfileField label="Role" value={user.role} />
-        {user.role === "Store-Manager" && (
+        <ProfileField label="Designation" value={user.role.toUpperCase()} />
+        {user.role.toLowerCase() === "store manager" && (
           <ProfileField
             label="Store Managing"
             value={user.storeManaging === 1 ? "HRD" : "CRD"}

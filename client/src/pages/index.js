@@ -3,7 +3,6 @@ import Welcome from "./Welcome.jsx";
 import AssetInfo from "./Assets/AssetInfo.jsx";
 import AssetList from "./Assets/AssetList.jsx";
 import NewAsset from "./Assets/NewAsset.jsx";
-import ConsumableInfo from "./Consumables/ConsumableInfo.jsx";
 import ConsumableList from "./Consumables/ConsumableList.jsx";
 import NewConsumable from "./Consumables/NewConsumable.jsx";
 import HRD from "./Dashboard/HRD.jsx";
@@ -25,7 +24,6 @@ export {
   AssetInfo,
   AssetList,
   NewAsset,
-  ConsumableInfo,
   ConsumableList,
   NewConsumable,
   CRD,
