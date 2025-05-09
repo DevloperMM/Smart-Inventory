@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { PassField } from "../../components";
+import { Input } from "../../components";
 
 const Password = () => {
   const [err, setErr] = useState();
@@ -33,43 +33,50 @@ const Password = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-center">
+    <div className="p-6 w-[40%] mx-auto space-y-6">
+      <h1 className="text-2xl font-semibold italic text-gray-800">
         Change Password
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <PassField
-          label="Current Password"
-          name="currPassword"
-          value={form.currPassword}
-          onChange={handleChange}
-          onClick={handleClick}
-        />
-        <PassField
-          label="New Password"
-          name="newPassword"
-          type="password"
-          value={form.newPassword}
-          onChange={handleChange}
-          onClick={handleClick}
-        />
-        <PassField
-          label="Confirm New Password"
-          name="confirmPassword"
-          type="password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          onClick={handleClick}
-        />
+      </h1>
 
-        {err && <p className="text-red-500 italic text-sm">{err}</p>}
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
-        >
-          Update password
-        </button>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-xl shadow-md"
+      >
+        <div className="flex flex-col gap-6">
+          <Input
+            label="Current Password"
+            name="currPassword"
+            value={form.currPassword}
+            onChange={handleChange}
+            onClick={handleClick}
+            required
+          />
+          <Input
+            label="New Password"
+            name="newPassword"
+            type="password"
+            value={form.newPassword}
+            onChange={handleChange}
+            onClick={handleClick}
+            required
+          />
+          <Input
+            label="Confirm New Password"
+            name="confirmPassword"
+            type="password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            onClick={handleClick}
+            required
+          />
+          {err && <p className="text-red-500 italic text-sm">{err}</p>}
+          <button
+            type="submit"
+            className="w-[40%] block mx-auto mt-4 bg-emerald-500 text-white py-2 rounded-lg cursor-pointer hover:bg-green-500 transition"
+          >
+            Update password
+          </button>
+        </div>
       </form>
     </div>
   );

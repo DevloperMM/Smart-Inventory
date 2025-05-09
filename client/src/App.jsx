@@ -6,12 +6,13 @@ import {
   AssetInfo,
   AssetList,
   ConsumableList,
-  CRD,
+  Dashbaord,
   DisposalHistory,
-  HRD,
   IssueHistory,
   LoginPage,
   NewAsset,
+  NewConsumable,
+  NewRequest,
   Password,
   Profile,
   Requests,
@@ -43,8 +44,7 @@ function App() {
                     <main className="flex-1 p-4 overflow-x-auto bg-gray-100">
                       <Routes>
                         <Route path="/" element={<Welcome />} />
-                        <Route path="/dashboard/hrd" element={<HRD />} />
-                        <Route path="/dashboard/crd" element={<CRD />} />
+                        <Route path="/dashboard" element={<Dashbaord />} />
                         <Route path="/assets" element={<AssetList />} />
                         <Route path="/assets/new" element={<NewAsset />} />
                         <Route path="/assets/:id" element={<AssetInfo />} />
@@ -53,21 +53,20 @@ function App() {
                           element={<ConsumableList />}
                         />
                         <Route
-                          path="/transaction/disposals"
+                          path="/consumables/new"
+                          element={<NewConsumable />}
+                        />
+                        <Route
+                          path="/disposals"
                           element={<DisposalHistory />}
                         />
+                        <Route path="/issuances" element={<IssueHistory />} />
                         <Route
-                          path="/transaction/issuances"
-                          element={<IssueHistory />}
-                        />
-                        <Route
-                          path="/transaction/transfers"
+                          path="/transfers"
                           element={<TransfersHistory />}
                         />
-                        <Route
-                          path="/transaction/requests"
-                          element={<Requests />}
-                        />
+                        <Route path="/requests" element={<Requests />} />
+                        <Route path="/requests/new" element={<NewRequest />} />
                         <Route path="/user/profile" element={<Profile />} />
                         <Route path="/user/password" element={<Password />} />
                         <Route path="*" element={<PageNotFound />} />

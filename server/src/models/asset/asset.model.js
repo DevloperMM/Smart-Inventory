@@ -35,19 +35,15 @@ const Asset = db.define(
     },
     pr: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     po: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     grn: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     srr: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     stockedOn: {
       type: DataTypes.DATE,
@@ -77,7 +73,6 @@ const Asset = db.define(
     },
     amcVendor: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     storeId: {
       type: DataTypes.INTEGER,
@@ -87,7 +82,6 @@ const Asset = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      // Available, InTransit, Issued, AMC, Disposed, Sold
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -97,9 +97,10 @@ function NewAsset() {
             required
           />
           <Input
-            label="AMC Vendor"
-            name="amcVendor"
-            value={formData.amcVendor}
+            label="Warranty End Date"
+            name="endDate"
+            type="date"
+            value={formData.endDate}
             onChange={handleChange}
             required
           />
@@ -112,7 +113,6 @@ function NewAsset() {
             name="pr"
             value={formData.pr}
             onChange={handleChange}
-            required
           />
           <Input
             label="PO Number"
@@ -126,14 +126,12 @@ function NewAsset() {
             name="grn"
             value={formData.grn}
             onChange={handleChange}
-            required
           />
           <Input
             label="SRR Number"
             name="srr"
             value={formData.srr}
             onChange={handleChange}
-            required
           />
           <Input
             label="Material Code"
@@ -142,15 +140,13 @@ function NewAsset() {
             onChange={handleChange}
           />
           <Input
-            label="Warranty End Date"
-            name="endDate"
-            type="date"
-            value={formData.endDate}
+            label="AMC Vendor"
+            name="amcVendor"
+            value={formData.amcVendor}
             onChange={handleChange}
-            required
           />
           <Input
-            label="Additional Info"
+            label="Additional Information"
             name="addInfo"
             value={formData.addInfo}
             onChange={handleChange}

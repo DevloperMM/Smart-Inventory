@@ -5,20 +5,19 @@ import { KeyRound, LogOut, User } from "lucide-react";
 function Navbar() {
   const logout = () => {
     console.log("logout");
-    // Add logout logic here
   };
 
   return (
     <header className="bg-white shadow border-b sticky top-0 z-30">
       <div className="max-w-full px-6 h-18 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-3">
           <img
             src="/image.png"
             alt="logo"
             className="h-12 w-auto object-contain"
           />
-        </div>
+        </Link>
 
         {/* Actions */}
         <div className="flex items-center space-x-8">

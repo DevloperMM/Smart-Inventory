@@ -1,5 +1,5 @@
 import React from "react";
-import { ProfileField } from "../../components";
+import { Input } from "../../components";
 
 function Profile() {
   const user = {
@@ -8,7 +8,7 @@ function Profile() {
     email: "alice@example.com",
     empCode: "97268",
     department: "IT & SAP",
-    role: "IT Head",
+    role: "store manager",
     storeManaging: 2,
     profileCreatedOn: "2025-03-01T10:30:00Z",
     profileCreatedBy: "Admin Helpdesk",
@@ -22,36 +22,49 @@ function Profile() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">User Profile</h2>
-      <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ProfileField label="Name" value={user.name} />
-        <ProfileField label="Email" value={user.email} />
-        <ProfileField label="Emp Code" value={user.empCode} />
-        <ProfileField label="Department" value={user.department} />
-        <ProfileField label="Designation" value={user.role.toUpperCase()} />
-        {user.role.toLowerCase() === "store manager" && (
-          <ProfileField
-            label="Store Managing"
-            value={user.storeManaging === 1 ? "HRD" : "CRD"}
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <h2 className="text-2xl font-semibold italic text-gray-800">
+        My Profile
+      </h2>
+
+      <form className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-xl shadow-md">
+        <div className="flex flex-col gap-4">
+          <Input label="Name" value={user.name} disabled />
+          <Input label="Email" value={user.email} disabled />
+          <Input label="Emp Code" value={user.empCode} disabled />
+          <Input label="Department" value={user.department} disabled />
+          <Input label="Designation" value={user.role.toUpperCase()} disabled />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {user.role.toLowerCase() === "store manager" && (
+            <Input
+              label="Store Managing"
+              value={user.storeManaging === 1 ? "HRD" : "CRD"}
+              disabled
+            />
+          )}
+          <Input
+            label="Profile Created On"
+            value={formatDate(user.profileCreatedOn)}
+            disabled
           />
-        )}
-        <ProfileField
-          label="Profile Created On"
-          value={formatDate(user.profileCreatedOn)}
-        />
-        <ProfileField
-          label="Profile Created By"
-          value={user.profileCreatedBy}
-        />
-        <ProfileField
-          label="Profile Updated On"
-          value={formatDate(user.profileUpdatedOn)}
-        />
-        <ProfileField
-          label="Profile Updated By"
-          value={user.profileUpdatedBy}
-        />
+          <Input
+            label="Profile Created By"
+            value={user.profileCreatedBy}
+            disabled
+          />
+          <Input
+            label="Profile Updated On"
+            value={formatDate(user.profileUpdatedOn)}
+            disabled
+          />
+          <Input
+            label="Profile Updated By"
+            value={user.profileUpdatedBy}
+            disabled
+          />
+        </div>
       </form>
     </div>
   );

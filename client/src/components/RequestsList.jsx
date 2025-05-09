@@ -1,37 +1,34 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Eye, Pencil, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const statusColors = {
-  Available: "text-green-600 bg-green-100",
-  Issued: "text-blue-600 bg-blue-100",
-  AMC: "text-yellow-600 bg-yellow-100",
-  Disposed: "text-gray-600 bg-gray-100",
-  Sold: "text-red-600 bg-red-100",
+  Approved: "text-green-600 bg-green-100",
+  Rejected: "text-red-600 bg-red-100",
+  Cancelled: "text-gray-600 text-gray-100",
+  Pending: "text-yellow-600 bg-yellow-100",
 };
 
-const AssetList = () => {
+const RequestsList = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
-  const assets = [
+  const requests = [
     {
       id: 1,
-      code: "ASSET-001",
-      name: "Dell Laptop",
-      category: "Laptop",
-      purchaseDate: "2023-08-10",
-      status: "Available",
-      location: "HRD",
+      code: "REQ-48736",
+      category: "Mouse",
+      requestedBy: "Suraj Kumar",
+      requestedOn: "2025-05-01",
+      status: "Pending",
     },
     {
       id: 2,
-      code: "ASSET-002",
-      name: "HP Monitor",
-      category: "Monitor",
-      purchaseDate: "2023-05-14",
-      status: "Issued",
-      location: "CRD",
+      code: "REQ-25478",
+      category: "Keyboard",
+      requestedBy: "Rachin Ravindra",
+      requestedOn: "2023-05-14",
+      status: "Approved",
     },
   ];
 
@@ -39,27 +36,27 @@ const AssetList = () => {
     <div className="p-6 bg-white text-gray-800">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold italic">Assets List</h2>
+        <h2 className="text-2xl font-semibold italic">IT Requests List</h2>
         <button
-          onClick={() => navigate("/assets/new")}
+          onClick={() => navigate("/requests/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
-          <Plus className="inline-block size-5 mb-1 mr-1" /> Add Asset
+          <Plus className="inline-block size-5 mb-1 mr-1" />
+          Create Request
         </button>
       </div>
 
-      {/* Assets Table */}
+      {/* Requests Table */}
       <div className="overflow-auto">
         <table className="w-full text-sm border-collapse">
           <thead className="bg-gray-100">
             <tr>
               <th className="border px-3 py-2 text-left">#</th>
-              <th className="border px-3 py-2 text-left">Asset Code</th>
-              <th className="border px-3 py-2 text-left">Description</th>
+              <th className="border px-3 py-2 text-left">Request Code</th>
               <th className="border px-3 py-2 text-left">Category</th>
-              <th className="border px-3 py-2 text-left">Purchase Date</th>
+              <th className="border px-3 py-2 text-left">Requested By</th>
+              <th className="border px-3 py-2 text-left">Requested On</th>
               <th className="border px-3 py-2 text-left">Status</th>
-              <th className="border px-3 py-2 text-left">Location</th>
               <th className="border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white text-xs">
@@ -88,40 +85,36 @@ const AssetList = () => {
               <td className="border p-2" />
               <td className="border p-2" />
               <td className="border p-2" />
-              <td className="border p-2" />
             </tr>
           </thead>
           <tbody>
-            {assets.map((asset, index) => (
+            {requests.map((request, index) => (
               <tr
-                key={asset.id}
+                key={request.id}
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
               >
-                <td className="border px-3 py-2">{asset.id}</td>
-                <td className="border px-3 py-2">{asset.code}</td>
-                <td className="border px-3 py-2">{asset.name}</td>
-                <td className="border px-3 py-2">{asset.category}</td>
-                <td className="border px-3 py-2">{asset.purchaseDate}</td>
+                <td className="border px-3 py-2">{request.id}</td>
+                <td className="border px-3 py-2">{request.code}</td>
+                <td className="border px-3 py-2">{request.category}</td>
+                <td className="border px-3 py-2">{request.requestedBy}</td>
+                <td className="border px-3 py-2">{request.requestedOn}</td>
                 <td className="border px-3 py-2">
                   <span
-                    className={`px-2 py-1 rounded ${
-                      statusColors[asset.status]
+                    className={`px-2 py-1 rounded text-sm font-medium ${
+                      statusColors[request.status]
                     }`}
                   >
-                    {asset.status}
+                    {request.status}
                   </span>
                 </td>
-                <td className="border px-3 py-2">{asset.location}</td>
                 <td className="border px-3 py-2 text-center">
                   <div className="flex justify-center space-x-3">
                     <button
-                      onClick={() => navigate(`/assets/${asset.id}`)}
-                      className="text-gray-600 hover:text-black"
+                      disabled={request.status !== "Approved"}
+                      onClick={() => navigate(`/requests/${request.id}`)}
+                      className="bg-blue-500 py-2 px-4 rounded-xl text-white cursor-pointer hover:bg-blue-700 disabled:bg-gray-400"
                     >
-                      <Eye size={20} />
-                    </button>
-                    <button className="text-gray-600 hover:text-black">
-                      <Pencil size={18} />
+                      Issue
                     </button>
                   </div>
                 </td>
@@ -153,4 +146,4 @@ const AssetList = () => {
   );
 };
 
-export default AssetList;
+export default RequestsList;
