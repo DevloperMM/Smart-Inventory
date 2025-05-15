@@ -64,6 +64,10 @@ const ConsumableIssuance = db.define(
         key: "id",
       },
     },
+    returnInfo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     status: {
       // Consumed, Integrated, Returned, Exempted
       type: DataTypes.STRING,

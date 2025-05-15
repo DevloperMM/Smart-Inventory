@@ -21,6 +21,10 @@ const AssetDisposal = db.define(
       type: DataTypes.ENUM("Retired", "Obsolete"),
       allowNull: false,
     },
+    reason: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
     raisedOn: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

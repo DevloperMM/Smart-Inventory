@@ -5,8 +5,8 @@ function IssueHistory() {
   const [isAssetTab, setIsAssetTab] = useState(true);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6 italic">All Issuances</h1>
+    <div className="p-6 bg-white text-gray-800">
+      <h1 className="text-2xl font-semibold mb-6 italic">Issuances List</h1>
 
       {/* Tab Switcher */}
       <div className="flex gap-4 mb-6">
@@ -16,7 +16,7 @@ function IssueHistory() {
           }`}
           onClick={() => setIsAssetTab(true)}
         >
-          Asset
+          Assets
         </button>
         <button
           className={`px-4 py-2 rounded-lg text-sm font-medium ${
@@ -24,7 +24,7 @@ function IssueHistory() {
           }`}
           onClick={() => setIsAssetTab(false)}
         >
-          Consumable
+          Consumables
         </button>
       </div>
 

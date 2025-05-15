@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const statusColors = {
-  InStore: "text-green-600 bg-green-100",
-  AMC: "text-yellow-600 bg-yellow-100",
-};
+import { statusColors } from "../../lib/constants.js";
 
 const ConsumableList = () => {
   const navigate = useNavigate();
@@ -18,7 +14,7 @@ const ConsumableList = () => {
       name: "HP Wireless Mouse",
       category: "Mouse",
       purchaseDate: "2023-08-10",
-      status: "InStore",
+      status: "Store",
       location: "HRD",
     },
     {
@@ -81,8 +77,23 @@ const ConsumableList = () => {
                   className="w-full border px-1 py-1 rounded"
                 />
               </td>
-              <td className="border p-2" />
-              <td className="border p-2" />
+              <td className="border p-2">
+                <input
+                  type="date"
+                  placeholder="Filter..."
+                  className="w-full border px-1 py-1 text-xs rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <div className="relative inline-block w-full">
+                  <select className="appearance-none w-full border px-1 py-1 text-xs rounded">
+                    <option value="">Select Status</option>
+                    <option value="InStock">Store</option>
+                    <option value="LowStock">AMC</option>
+                  </select>
+                  <ChevronDown className="absolute right-2.5 top-4/9 -translate-y-1/2 pointer-events-none text-black size-4" />
+                </div>
+              </td>
               <td className="border p-2" />
             </tr>
           </thead>

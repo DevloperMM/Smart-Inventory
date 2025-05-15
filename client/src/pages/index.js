@@ -15,6 +15,8 @@ import NewRequest from "./Transactions/UserRequests/NewRequest.jsx";
 import Profile from "./User/Profile.jsx";
 import Password from "./User/Password.jsx";
 import Dashbaord from "./Dashboard/Dashboard.jsx";
+import TransitRequests from "./Transactions/Transits/TransitRequests.jsx";
+import NewTransit from "./Transactions/Transits/NewTransit.jsx";
 
 export {
   LoginPage,
@@ -34,4 +36,6 @@ export {
   Profile,
   Password,
   Dashbaord,
+  TransitRequests,
+  NewTransit,
 };

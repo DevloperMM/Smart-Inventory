@@ -60,6 +60,19 @@ const AssetIssuance = db.define(
         key: "id",
       },
     },
+    exemptedBy: {
+      type: DataTypes.DATE,
+    },
+    exemptedOn: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    info: {
+      type: DataTypes.STRING,
+    },
     status: {
       // Issued, Returned, Exempted
       type: DataTypes.STRING,

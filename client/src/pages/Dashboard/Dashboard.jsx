@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ArrowUpDown,
   Search,
@@ -8,101 +8,248 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { statusColors } from "../../lib/constants.js";
 
-const sampleStocks = [
+const storeData = [
   {
     id: 1,
+    type: "Asset",
     category: "Laptop",
-    storeId: 101,
+    storeId: "HRD",
     activeQty: 12,
     alertQty: 2,
     status: "InStock",
   },
   {
     id: 2,
-    category: "Monitor",
-    storeId: 102,
-    activeQty: 4,
+    type: "Asset",
+    category: "Laptop",
+    storeId: "CRD",
+    activeQty: 1,
     alertQty: 2,
     status: "LowStock",
   },
   {
     id: 3,
-    category: "Keyboard & Mouse Combo",
-    storeId: 103,
+    type: "Asset",
+    category: "Monitor",
+    storeId: "HRD",
     activeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
   {
     id: 4,
-    category: "External Hard Drives",
-    storeId: 101,
+    type: "Asset",
+    category: "Monitor",
+    storeId: "HRD",
     activeQty: 8,
-    alertQty: 3,
+    alertQty: 2,
     status: "InStock",
   },
   {
     id: 5,
-    category: "Ethernet Cables 5m Length",
-    storeId: 104,
+    type: "Consumable",
+    category: "Ethernet Cable",
+    storeId: "CRD",
+    activeQty: 5,
+    alertQty: 2,
+    status: "InStock",
+  },
+  {
+    id: 6,
+    type: "Consumable",
+    category: "Ethernet Cable",
+    storeId: "HRD",
+    activeQty: 1,
+    alertQty: 2,
+    status: "LowStock",
+  },
+  {
+    id: 7,
+    type: "Consumable",
+    category: "HDMI Cable",
+    storeId: "HRD",
+    activeQty: 0,
+    alertQty: 1,
+    status: "OutStock",
+  },
+  {
+    id: 8,
+    type: "Consumable",
+    category: "HDMI Cable",
+    storeId: "HRD",
+    activeQty: 3,
+    alertQty: 2,
+    status: "InStock",
+  },
+  {
+    id: 9,
+    type: "Consumable",
+    category: "Mouse",
+    storeId: "HRD",
+    activeQty: 0,
+    alertQty: 1,
+    status: "OutStock",
+  },
+  {
+    id: 10,
+    type: "Consumable",
+    category: "Mouse",
+    storeId: "CRD",
+    activeQty: 6,
+    alertQty: 2,
+    status: "InStock",
+  },
+  {
+    id: 11,
+    type: "Consumable",
+    category: "Keyboard",
+    storeId: "HRD",
+    activeQty: 3,
+    alertQty: 3,
+    status: "LowStock",
+  },
+  {
+    id: 12,
+    type: "Consumable",
+    category: "Keyboard",
+    storeId: "CRD",
+    activeQty: 7,
+    alertQty: 2,
+    status: "InStock",
+  },
+  {
+    id: 13,
+    type: "Asset",
+    category: "Docking Station",
+    storeId: "HRD",
     activeQty: 2,
     alertQty: 2,
     status: "LowStock",
   },
   {
-    id: 6,
-    category: "HDMI to VGA Converters with Long Descriptions",
-    storeId: 102,
+    id: 14,
+    type: "Asset",
+    category: "Docking Station",
+    storeId: "CRD",
+    activeQty: 5,
+    alertQty: 1,
+    status: "InStock",
+  },
+  {
+    id: 15,
+    type: "Asset",
+    category: "Tablet",
+    storeId: "CRD",
+    activeQty: 0,
+    alertQty: 1,
+    status: "OutStock",
+  },
+  {
+    id: 16,
+    type: "Asset",
+    category: "Tablet",
+    storeId: "HRD",
+    activeQty: 10,
+    alertQty: 3,
+    status: "InStock",
+  },
+  {
+    id: 17,
+    type: "Consumable",
+    category: "Power Adapter",
+    storeId: "CRD",
+    activeQty: 0,
+    alertQty: 2,
+    status: "OutStock",
+  },
+  {
+    id: 18,
+    type: "Consumable",
+    category: "Power Adapter",
+    storeId: "CRD",
+    activeQty: 3,
+    alertQty: 2,
+    status: "LowStock",
+  },
+  {
+    id: 19,
+    type: "Consumable",
+    category: "SSD",
+    storeId: "HRD",
+    activeQty: 4,
+    alertQty: 2,
+    status: "InStock",
+  },
+  {
+    id: 20,
+    type: "Consumable",
+    category: "SSD",
+    storeId: "HRD",
     activeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
 ];
 
-const statusColors = {
-  InStock: "text-green-600 bg-green-100",
-  LowStock: "text-yellow-600 bg-yellow-100",
-  OutStock: "text-red-600 bg-red-100",
-};
-
 export default function Dashbaord() {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [sortAsc, setSortAsc] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 4;
+  const [status, setStatus] = useState("");
+  const [sortCriteria, setSortCriteria] = useState([]);
+  const [page, setPage] = useState(1);
+  const [msg, setMsg] = useState("");
+  const [rows, setRows] = useState(5);
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, status]);
+
   const filteredData = useMemo(() => {
-    let data = sampleStocks.filter(
+    setMsg("");
+
+    let data = storeData.filter(
       (item) =>
         item.category.toLowerCase().includes(search.toLowerCase()) &&
-        (statusFilter ? item.status === statusFilter : true)
+        (status ? item.status === status : true)
     );
 
     data.sort((a, b) => {
-      const valA = a["storeId"];
-      const valB = b["storeId"];
-      if (typeof valA === "string") {
-        return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      }
+      for (const { field, asc } of sortCriteria) {
+        const valA = a[field];
+        const valB = b[field];
 
-      return sortAsc ? valA - valB : valB - valA;
+        let result = 0;
+        if (typeof valA === "string" && typeof valB === "string") {
+          result = valA.localeCompare(valB);
+        } else {
+          result = valA - valB;
+        }
+
+        if (result !== 0) return asc ? result : -result;
+      }
+      return 0;
     });
 
+    if (data.length === 0) setMsg("No such records found");
+
     return data;
-  }, [search, statusFilter, sortAsc]);
+  }, [search, status, sortCriteria]);
 
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const totalPages = Math.ceil(filteredData.length / rows);
+  const pageData = filteredData.slice((page - 1) * rows, page * rows);
 
-  const toggleSort = () => {
-    setSortAsc(!sortAsc);
+  const toggleSort = (field) => {
+    setSortCriteria((prev) => {
+      const existing = prev.find((c) => c.field === field);
+      if (existing) {
+        return prev.map((c) => (c.field === field ? { ...c, asc: !c.asc } : c));
+      } else {
+        return [...prev, { field, asc: true }];
+      }
+    });
   };
 
   return (
@@ -140,11 +287,8 @@ export default function Dashbaord() {
         <div className="relative inline-block w-36">
           <select
             className="appearance-none w-full border border-gray-300 bg-white rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(1);
-            }}
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
           >
             <option value="">Select Status</option>
             <option value="InStock">In Stock</option>
@@ -157,38 +301,49 @@ export default function Dashbaord() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border">
+      <div className="overflow-auto rounded-lg border">
         <table className="w-full table-fixed text-sm text-left">
           <thead className="bg-gray-100 text-gray-700 font-medium">
             <tr>
-              <th className="w-[5%] px-4 py-3 border-r text-center">#</th>
-              <th className="w-[25%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[4%] px-4 py-3 border-r text-center">#</th>
+              <th
+                className="w-[20%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                onClick={() => toggleSort("type")}
+              >
+                <span className="flex items-center gap-1 capitalize">
+                  Item type <ArrowUpDown className="w-4 h-4" />
+                </span>
+              </th>
+              <th className="w-[20%] px-4 py-3 border-r break-words whitespace-normal">
                 Category
               </th>
               <th
-                className="w-[15%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
-                onClick={() => toggleSort()}
+                className="w-[16%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                onClick={() => toggleSort("storeId")}
               >
                 <span className="flex items-center gap-1 capitalize">
                   Store <ArrowUpDown className="w-4 h-4" />
                 </span>
               </th>
-              <th className="w-[15%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[12%] px-4 py-3 border-r break-words whitespace-normal">
                 Store Qty
               </th>
-              <th className="w-[15%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[12%] px-4 py-3 border-r break-words whitespace-normal">
                 Alert Qty
               </th>
-              <th className="w-[20%] px-4 py-3 break-words whitespace-normal">
+              <th className="w-[16%] px-4 py-3 break-words whitespace-normal">
                 Status
               </th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((item, i) => (
+            {pageData.map((item, i) => (
               <tr key={i} className="border-t hover:bg-gray-50">
                 <td className="px-4 py-3 border-r text-center">
-                  {(currentPage - 1) * rowsPerPage + i + 1}
+                  {(page - 1) * rows + i + 1}
+                </td>
+                <td className="px-4 py-3 border-r break-words whitespace-normal">
+                  {item.type}
                 </td>
                 <td className="px-4 py-3 border-r break-words whitespace-normal">
                   {item.category}
@@ -217,24 +372,49 @@ export default function Dashbaord() {
         </table>
       </div>
 
+      {msg && <div className="text-center mt-4 text-red-500">{msg}</div>}
+
       {/* Pagination */}
-      <div className="space-x-2 mt-4 text-right">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => p - 1)}
-          className="px-2 py-1 rounded border cursor-pointer disabled:opacity-50"
-        >
-          <ChevronLeft size={14} />
-        </button>
-        <span className="mb-2">{currentPage}</span>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((p) => p + 1)}
-          className="px-2 py-1 rounded border cursor-pointer disabled:opacity-50"
-        >
-          <ChevronRight size={14} />
-        </button>
-      </div>
+      {!msg && (
+        <div className="mt-4 text-right space-x-12">
+          <div className="space-x-2 inline-block">
+            <span>Show</span>
+            <div className="relative inline-block w-14 h-fit">
+              <select
+                className="appearance-none w-full border border-gray-300 bg-white rounded-md p-1.5 text-sm shadow-sm focus:outline-none focus:ring-1"
+                value={rows}
+                onChange={(e) => setRows(e.target.value)}
+              >
+                <option value={5}>5</option>
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+              </select>
+              <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 w-4 h-4" />
+            </div>
+            <span>Records</span>
+          </div>
+
+          <div className="space-x-2 inline-block">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="p-1 rounded border disabled:opacity-30"
+            >
+              <ChevronLeft size={14} />
+            </button>
+            <span className="mb-2">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="p-1 rounded border disabled:opacity-30"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

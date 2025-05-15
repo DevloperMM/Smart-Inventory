@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { isBefore } from "date-fns";
 
 const initialState = {
   category: "",
@@ -21,28 +22,64 @@ const initialState = {
   amcVendor: "",
   storeId: "",
   addInfo: "",
-  status: "Available",
 };
 
 function NewAsset() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialState);
+  const [err, setErr] = useState("");
+  const manufacturers = ["HP", "Dell"];
+  const categories = [
+    "BARCODE PRINTER",
+    "BARCODE SCANNER",
+    "DESKTOP",
+    "LAPTOP",
+    "PRINTER",
+    "PROCESS LAPTOP",
+    "PROCESS PC",
+    "PROCESS SERVER",
+    "SCANNER",
+    "SERVER",
+  ];
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
+
+    if (name === "startDate") {
+      const isInvalid = !isBefore(new Date(value), new Date());
+      setErr(
+        isInvalid ? "Warranty start date can't be today or in future" : ""
+      );
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
+      ...(name === "endDate" && {
+        inWarranty: new Date() < new Date(value),
+      }),
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitted Asset:", formData);
+    if (err) console.error("Something went wrong !!");
+
+    setFormData({
+      ...formData,
+      description: "",
+      category: "",
+      mfgBy: "",
+      modelNo: "",
+      serialNo: "",
+      startDate: "",
+      endDate: "",
+    });
+    console.log(formData);
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 max-w-5xl mx-auto space-y-7">
       <h1 className="text-2xl font-semibold italic text-gray-800">
         Enter new Asset
       </h1>
@@ -54,23 +91,27 @@ function NewAsset() {
         {/** First Column Inputs */}
         <div className="flex flex-col gap-4">
           <Input
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <Input
             label="Category"
             name="category"
+            placeholder="Select or enter the category"
             value={formData.category}
             onChange={handleChange}
             required
+            list={categories}
           />
           <Input
             label="Manufactured By"
             name="mfgBy"
+            placeholder="Select or enter the manufacturer"
             value={formData.mfgBy}
+            onChange={handleChange}
+            required
+            list={manufacturers}
+          />
+          <Input
+            label="Description"
+            name="description"
+            value={formData.description}
             onChange={handleChange}
             required
           />
@@ -156,20 +197,22 @@ function NewAsset() {
         <div className="md:col-span-2 flex flex-row justify-between mt-2">
           <button
             type="button"
-            className="bg-gray-500 text-white px-4 py-2 rounded-xl hover:bg-gray-700 transition"
-            onClick={() => navigate("/assets")}
+            className="bg-gray-500 text-white px-4 py-2 rounded-xl hover:bg-gray-700 transition cursor-pointer"
+            onClick={() => navigate(-1)}
           >
             Back
           </button>
 
           <button
             type="submit"
-            className="bg-green-600 text-white px-3 py-2.5 rounded-xl hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-3 py-2.5 rounded-xl hover:bg-green-700 transition cursor-pointer"
           >
             Submit
           </button>
         </div>
       </form>
+
+      {err && <p className="text-red-500 italic text-sm block">{err}</p>}
     </div>
   );
 }

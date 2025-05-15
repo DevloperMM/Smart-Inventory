@@ -10,7 +10,7 @@ const Transit = db.define(
       autoIncrement: true,
     },
     // array of json objects having category and qty
-    request: {
+    items: {
       type: DataTypes.TEXT,
       get() {
         const rawValue = this.getDataValue("request");
@@ -19,6 +19,10 @@ const Transit = db.define(
       set(value) {
         this.setDataValue("request", JSON.stringify(value));
       },
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     fromStore: {
       type: DataTypes.INTEGER,

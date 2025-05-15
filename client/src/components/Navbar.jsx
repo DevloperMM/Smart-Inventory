@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { KeyRound, LogOut, User } from "lucide-react";
 
 function Navbar() {
+  const navigate = useNavigate();
   const logout = () => {
     console.log("logout");
   };
@@ -11,13 +12,12 @@ function Navbar() {
     <header className="bg-white shadow border-b sticky top-0 z-30">
       <div className="max-w-full px-6 h-18 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3">
-          <img
-            src="/image.png"
-            alt="logo"
-            className="h-12 w-auto object-contain"
-          />
-        </Link>
+        <img
+          src="/image.png"
+          alt="logo"
+          className="h-12 w-auto object-contain"
+          onClick={() => navigate("/")}
+        />
 
         {/* Actions */}
         <div className="flex items-center space-x-8">
@@ -25,8 +25,10 @@ function Navbar() {
             to="/user/password"
             className="flex items-center text-gray-700 hover:text-black transition"
           >
-            <KeyRound className="h-5 w-5 mr-2" />
-            <span className="hidden sm:inline text-sm">Change Password</span>
+            <KeyRound className="h-5 w-5 md:mr-2" />
+            <span className="hidden sm:inline-block text-sm">
+              Change Password
+            </span>
           </Link>
 
           <Link

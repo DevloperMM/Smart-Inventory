@@ -9,6 +9,10 @@ const Stock = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    type: {
+      type: DataTypes.ENUM("Asset", "Consumable"),
+      allowNull: false,
+    },
     category: {
       type: DataTypes.STRING,
       allowNull: false,

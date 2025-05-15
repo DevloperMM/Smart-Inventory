@@ -8,13 +8,13 @@ dotenv.config();
 db.sync({ force: true })
   .then(() => {
     console.log("SQL Server established successfully");
-    setupAssociations()
-      .then(() => {
-        console.log("Models associated successfully");
-      })
-      .catch((err) => {
-        console.log("Associating Models error:", err);
-      });
+    // setupAssociations()
+    //   .then(() => {
+    //     console.log("Models associated successfully");
+    //   })
+    //   .catch((err) => {
+    //     console.log("Associating Models error:", err);
+    //   });
 
     app.on("error", (err) => {
       console.log("Error while listening to port");
@@ -26,6 +26,7 @@ db.sync({ force: true })
       console.log(`Node is listening to http://localhost:${port}`);
     });
   })
+
   .catch((err) => {
     console.error("DB Connection error:", err);
     process.exit(1);

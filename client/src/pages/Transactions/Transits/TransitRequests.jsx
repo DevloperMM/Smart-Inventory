@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { statusColors } from "../lib/constants.js";
+import { statusColors } from "../../../lib/constants";
 
-const RequestsList = () => {
+const TransitRequests = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(3);
@@ -15,7 +15,7 @@ const RequestsList = () => {
   const requests = [
     {
       id: 1,
-      code: "REQ-48736",
+      code: "TST-48736",
       category: "Mouse",
       requestedBy: "Suraj Kumar",
       requestedOn: "2025-05-01",
@@ -23,23 +23,23 @@ const RequestsList = () => {
     },
     {
       id: 2,
-      code: "REQ-25478",
+      code: "TST-25478",
       category: "Keyboard",
       requestedBy: "Rachin Ravindra",
       requestedOn: "2023-05-14",
       status: "Approved",
-      decidedOn: "2025-05-09",
-      decidedBy: "Shankar Sharma",
+      resolvedOn: "2025-05-09",
+      resolvedBy: "Shankar Sharma",
     },
     {
       id: 3,
-      code: "REQ-78453",
+      code: "TST-78453",
       category: "Monitor",
       requestedBy: "Farhan Qureshi",
       requestedOn: "2023-05-14",
       status: "Rejected",
-      decidedOn: "2025-05-09",
-      decidedBy: "Raju Rastogi",
+      resolvedOn: "2025-05-09",
+      resolvedBy: "Raju Rastogi",
     },
   ];
 
@@ -47,13 +47,13 @@ const RequestsList = () => {
     <div className="p-6 bg-white text-gray-800">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold italic">Requests List</h2>
+        <h2 className="text-2xl font-semibold italic">Transits List</h2>
         <button
-          onClick={() => navigate("/requests/new")}
+          onClick={() => navigate("/transit/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
           <Plus className="inline-block size-5 mb-1 mr-1" />
-          Create Request
+          Create Transit
         </button>
       </div>
 
@@ -66,10 +66,10 @@ const RequestsList = () => {
               <th className="border px-3 py-2">Category</th>
               <th className="border px-3 py-2">Requested By</th>
               <th className="border px-3 py-2">Requested On</th>
+              <th className="border px-3 py-2">Purpose</th>
               <th className="border px-3 py-2">Status</th>
               <th className="border px-3 py-2">Decided by</th>
               <th className="border px-3 py-2">Decided On</th>
-              <th className="border px-3 py-2">Purpose</th>
               <th className="border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white text-xs">
@@ -95,6 +95,7 @@ const RequestsList = () => {
                   className="w-full border px-1 py-1 rounded"
                 />
               </td>
+              <td className="border p-2" />
               <td className="border p-2">
                 <select className="w-full border px-1 py-1 rounded">
                   <option value="">Select</option>
@@ -118,7 +119,6 @@ const RequestsList = () => {
                 />
               </td>
               <td className="border p-2" />
-              <td className="border p-2" />
             </tr>
           </thead>
           <tbody>
@@ -134,6 +134,12 @@ const RequestsList = () => {
                 <td className="border px-3 py-2">{request.requestedBy}</td>
                 <td className="border px-3 py-2">{request.requestedOn}</td>
                 <td className="border px-3 py-2">
+                  <span className="ml-1 text-blue-600 hover:underline cursor-pointer">
+                    <Eye size={16} className="inline-block pb-0.5 mr-1.5" />
+                    View
+                  </span>
+                </td>
+                <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
                       statusColors[request.status]
@@ -144,12 +150,6 @@ const RequestsList = () => {
                 </td>
                 <td className="border px-3 py-2"></td>
                 <td className="border px-3 py-2"></td>
-                <td className="border px-3 py-2">
-                  <span className="ml-1 text-blue-600 hover:underline cursor-pointer">
-                    <Eye size={16} className="inline-block pb-0.5 mr-1.5" />
-                    View
-                  </span>
-                </td>
                 <td className="border px-3 py-2 text-center">
                   {user.role.toLowerCase() === "it-head" &&
                   request.status === "Pending" ? (
@@ -211,4 +211,4 @@ const RequestsList = () => {
   );
 };
 
-export default RequestsList;
+export default TransitRequests;

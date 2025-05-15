@@ -7,6 +7,9 @@ import IssuedConsumables from "./IssuedConsumables.jsx";
 import RequestsList from "./RequestsList.jsx";
 import AssetOptions from "./AssetOptions.jsx";
 import ConsumableOptions from "./ConsumableOptions.jsx";
+import DisposedAssets from "./DisposedAssets.jsx";
+import DisposedConsumables from "./DisposedConsumables.jsx";
+import WelcomeCard from "./WelcomeCard.jsx";
 
 export {
   Sidebar,
@@ -18,4 +21,7 @@ export {
   RequestsList,
   AssetOptions,
   ConsumableOptions,
+  DisposedAssets,
+  DisposedConsumables,
+  WelcomeCard
 };

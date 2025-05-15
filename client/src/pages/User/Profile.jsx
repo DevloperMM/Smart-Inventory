@@ -8,7 +8,7 @@ function Profile() {
     email: "alice@example.com",
     empCode: "97268",
     department: "IT & SAP",
-    role: "store manager",
+    role: "it head",
     storeManaging: 2,
     profileCreatedOn: "2025-03-01T10:30:00Z",
     profileCreatedBy: "Admin Helpdesk",
@@ -22,7 +22,7 @@ function Profile() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 max-w-4xl mx-auto space-y-7">
       <h2 className="text-2xl font-semibold italic text-gray-800">
         My Profile
       </h2>

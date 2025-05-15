@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { Navbar, PageNotFound, Sidebar } from "./components";
@@ -13,10 +12,12 @@ import {
   NewAsset,
   NewConsumable,
   NewRequest,
+  NewTransit,
   Password,
   Profile,
   Requests,
   TransfersHistory,
+  TransitRequests,
   Welcome,
 } from "./pages";
 
@@ -67,6 +68,8 @@ function App() {
                         />
                         <Route path="/requests" element={<Requests />} />
                         <Route path="/requests/new" element={<NewRequest />} />
+                        <Route path="/transits" element={<TransitRequests />} />
+                        <Route path="/transits/new" element={<NewTransit />} />
                         <Route path="/user/profile" element={<Profile />} />
                         <Route path="/user/password" element={<Password />} />
                         <Route path="*" element={<PageNotFound />} />

@@ -33,7 +33,7 @@ const Password = () => {
   };
 
   return (
-    <div className="p-6 w-[40%] mx-auto space-y-6">
+    <div className="p-6 w-md mx-auto space-y-6">
       <h1 className="text-2xl font-semibold italic text-gray-800">
         Change Password
       </h1>
@@ -69,10 +69,12 @@ const Password = () => {
             onClick={handleClick}
             required
           />
+
           {err && <p className="text-red-500 italic text-sm">{err}</p>}
+
           <button
             type="submit"
-            className="w-[40%] block mx-auto mt-4 bg-emerald-500 text-white py-2 rounded-lg cursor-pointer hover:bg-green-500 transition"
+            className="w-fit block mx-auto mt-4 px-4 bg-emerald-500 text-white py-2 rounded-lg cursor-pointer hover:bg-green-500 transition"
           >
             Update password
           </button>

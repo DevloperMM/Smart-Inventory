@@ -1,11 +1,13 @@
-import React from "react";
-import { Eye } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
+import { statusColors } from "../lib/constants.js";
 
 const assets = [
   {
     id: 1,
     requestId: "REQ-47896",
-    equipNo: "EQ-001",
+    category: "Laptop",
+    serialNo: "UEN72N82",
+    equipNo: "9080003641",
     issuedTo: "John Doe",
     issuedBy: "Admin A",
     issuedOn: "2024-12-01",
@@ -15,7 +17,9 @@ const assets = [
   {
     id: 2,
     requestId: "REQ-78123",
-    equipNo: "EQ-002",
+    category: "Printer",
+    serialNo: "B23JS73H",
+    equipNo: "9080007428",
     issuedTo: "Jane Smith",
     issuedBy: "Admin B",
     issuedOn: "2025-03-20",
@@ -29,12 +33,13 @@ function IssuedAssets() {
       <thead className="bg-gray-100 text-left">
         <tr>
           <th className="p-3">#</th>
-          <th className="p-3">Request ID</th>
+          <th className="p-3">Issuance ID</th>
+          <th className="p-3">Category</th>
+          <th className="p-3">Serial No</th>
           <th className="p-3">Equipment No</th>
           <th className="p-3">Issued To</th>
           <th className="p-3">Issued By</th>
           <th className="p-3">Issued On</th>
-          <th className="p-3">Returned On</th>
           <th className="p-3">Status</th>
           <th className="p-3">Action</th>
         </tr>
@@ -44,17 +49,31 @@ function IssuedAssets() {
           <tr key={item.id} className="border-t hover:bg-gray-50">
             <td className="p-3">{index + 1}</td>
             <td className="p-3">{item.requestId}</td>
+            <td className="p-3">{item.category}</td>
+            <td className="p-3">{item.serialNo}</td>
             <td className="p-3">{item.equipNo}</td>
             <td className="p-3">{item.issuedTo}</td>
             <td className="p-3">{item.issuedBy}</td>
             <td className="p-3">{item.issuedOn}</td>
-            <td className="p-3">{item.returnedOn || "-"}</td>
-            <td className="p-3">{item.status}</td>
             <td className="p-3">
-              <button className="text-blue-600 hover:underline flex items-center gap-1">
-                <Eye size={16} />
-                View
-              </button>
+              <span
+                className={`px-2 py-1 rounded-lg ${statusColors[item.status]}`}
+              >
+                {item.status}
+              </span>
+            </td>
+            <td className="px-3 py-2 text-center">
+              <div className="space-x-3">
+                <button
+                  onClick={() => navigate(`/assets/${item.id}`)}
+                  className="text-gray-600 hover:text-black"
+                >
+                  <Eye size={20} />
+                </button>
+                <button className="text-gray-600 hover:text-black">
+                  <Pencil size={18} />
+                </button>
+              </div>
             </td>
           </tr>
         ))}
