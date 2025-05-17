@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { statusColors } from "../../../lib/constants";
 import { ChevronLeft, ChevronRight, Eye, Pencil, Plus } from "lucide-react";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const assets = [
   {
@@ -29,17 +31,17 @@ const assets = [
 ];
 
 function TransfersHistory() {
-  const [isAssetTab, setIsAssetTab] = useState(true);
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [rows, setRows] = useState(2);
+  const [rows, setRows] = useState(10);
 
   return (
-    <div className="p-6 bg-white text-gray-800">
+    <div className="p-6 bg-white text-gray-800 space-y-5">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold italic">Transfers List</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Transfers List</h2>
         <button
-          onClick={() => navigate("/requests/new")}
+          onClick={() => navigate("/transactions/transfers/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
           <Plus className="inline-block size-5 mb-1 mr-1" />
@@ -49,8 +51,8 @@ function TransfersHistory() {
 
       {/* Transfers Table */}
       <div className="overflow-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100">
+        <table className="w-full border border-gray-300 rounded-lg text-sm">
+          <thead className="bg-gray-100 text-left">
             <tr>
               <th className="p-3">#</th>
               <th className="p-3">Transfer ID</th>
@@ -74,7 +76,7 @@ function TransfersHistory() {
                 <td className="p-3">{item.equipNo}</td>
                 <td className="p-3">{item.issuedTo}</td>
                 <td className="p-3">{item.issuedBy}</td>
-                <td className="p-3">{item.issuedOn}</td>
+                <td className="p-3">{format(item.issuedOn, "dd/MM/yyyy")}</td>
                 <td className="p-3">
                   <span
                     className={`px-2 py-1 rounded-lg ${
@@ -84,7 +86,7 @@ function TransfersHistory() {
                     {item.status}
                   </span>
                 </td>
-                <td className="px-3 py-2 text-center">
+                <td className="px-3 py-2">
                   <div className="space-x-3">
                     <button
                       onClick={() => navigate(`/assets/${item.id}`)}
@@ -104,7 +106,7 @@ function TransfersHistory() {
       </div>
 
       {/* Pagination */}
-      <div className="text-right mt-4 text-sm text-gray-700 space-x-3">
+      <div className="text-right text-sm text-gray-700 space-x-3">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           className="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer"

@@ -19,4 +19,11 @@ export const statusColors = {
 
   Returned: "text-red-600 bg-red-100",
   Exempted: "text-yellow-600 bg-yellow-100",
+
+  Consumed: "text-pink-600 bg-pink-100",
+  Integrated: "text-indigo-600 bg-indigo-100",
+
+  Unused: "text-green-600 bg-green-100",
+  Vendor: "text-yellow-600 bg-yellow-100",
+  Used: "text-indigo-600 bg-indigo-100",
 };

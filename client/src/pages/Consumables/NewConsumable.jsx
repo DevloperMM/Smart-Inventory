@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "../../components";
 import { useNavigate } from "react-router-dom";
 
@@ -32,9 +32,9 @@ function NewConsumable() {
 
   return (
     <div className="p-6 max-w-xl mx-auto space-y-7">
-      <h1 className="text-2xl font-semibold italic text-gray-800">
-        Enter new Consumables
-      </h1>
+      <h2 className="text-2xl text-gray-800 font-bold">
+        Enter consumable details
+      </h2>
 
       <form
         onSubmit={handleSubmit}
@@ -87,6 +87,7 @@ function NewConsumable() {
                   value="true"
                   checked={formData.isUsed === "true"}
                   onChange={handleChange}
+                  required
                 />
                 <span className="text-sm">Yes</span>
               </label>
@@ -97,6 +98,7 @@ function NewConsumable() {
                   value="false"
                   checked={formData.isUsed === "false"}
                   onChange={handleChange}
+                  required
                 />
                 <span className="text-sm">No</span>
               </label>

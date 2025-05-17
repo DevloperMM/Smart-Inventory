@@ -22,7 +22,7 @@ const AssetDisposal = db.define(
       allowNull: false,
     },
     reason: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(),
       allowNull: false,
     },
     raisedOn: {
@@ -57,6 +57,9 @@ const AssetDisposal = db.define(
         model: "Users",
         key: "id",
       },
+    },
+    approveInfo: {
+      type: DataTypes.STRING,
     },
     status: {
       // Pending, Cancelled, Rejected, Disposed, Sold

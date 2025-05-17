@@ -1,5 +1,6 @@
 import { Eye, Pencil } from "lucide-react";
 import { statusColors } from "../lib/constants.js";
+import { format } from "date-fns";
 
 const assets = [
   {
@@ -54,7 +55,7 @@ function IssuedAssets() {
             <td className="p-3">{item.equipNo}</td>
             <td className="p-3">{item.issuedTo}</td>
             <td className="p-3">{item.issuedBy}</td>
-            <td className="p-3">{item.issuedOn}</td>
+            <td className="p-3">{format(item.issuedOn, "dd/MM/yyyy")}</td>
             <td className="p-3">
               <span
                 className={`px-2 py-1 rounded-lg ${statusColors[item.status]}`}

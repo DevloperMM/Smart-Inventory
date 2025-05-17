@@ -7,10 +7,12 @@ import {
   ConsumableList,
   Dashbaord,
   DisposalHistory,
+  EditAsset,
   IssueHistory,
   LoginPage,
   NewAsset,
   NewConsumable,
+  NewDisposal,
   NewRequest,
   NewTransit,
   Password,
@@ -34,7 +36,7 @@ function App() {
             <Route
               path="*"
               element={
-                <div className="flex h-screen font-[Verdana]">
+                <div className="flex h-screen font-[Inter]">
                   <div className="fixed inset-y-0 left-0 w-56 z-20">
                     <Sidebar />
                   </div>
@@ -46,9 +48,17 @@ function App() {
                       <Routes>
                         <Route path="/" element={<Welcome />} />
                         <Route path="/dashboard" element={<Dashbaord />} />
+
+                        {/* Assets */}
                         <Route path="/assets" element={<AssetList />} />
                         <Route path="/assets/new" element={<NewAsset />} />
+                        <Route
+                          path="/assets/edit/:id"
+                          element={<EditAsset />}
+                        />
                         <Route path="/assets/:id" element={<AssetInfo />} />
+
+                        {/* Consumables */}
                         <Route
                           path="/consumables"
                           element={<ConsumableList />}
@@ -57,21 +67,45 @@ function App() {
                           path="/consumables/new"
                           element={<NewConsumable />}
                         />
+
+                        {/* Transactions */}
                         <Route
-                          path="/disposals"
+                          path="/transactions/disposals"
                           element={<DisposalHistory />}
                         />
-                        <Route path="/issuances" element={<IssueHistory />} />
                         <Route
-                          path="/transfers"
+                          path="/transactions/disposals/new"
+                          element={<NewDisposal />}
+                        />
+                        <Route
+                          path="/transactions/issuances"
+                          element={<IssueHistory />}
+                        />
+                        <Route
+                          path="/transactions/transfers"
                           element={<TransfersHistory />}
                         />
-                        <Route path="/requests" element={<Requests />} />
-                        <Route path="/requests/new" element={<NewRequest />} />
-                        <Route path="/transits" element={<TransitRequests />} />
-                        <Route path="/transits/new" element={<NewTransit />} />
+                        <Route
+                          path="/transactions/requests"
+                          element={<Requests />}
+                        />
+                        <Route
+                          path="/transactions/requests/new"
+                          element={<NewRequest />}
+                        />
+                        <Route
+                          path="/transactions/transits"
+                          element={<TransitRequests />}
+                        />
+                        <Route
+                          path="/transactions/transits/new"
+                          element={<NewTransit />}
+                        />
+
+                        {/* User */}
                         <Route path="/user/profile" element={<Profile />} />
                         <Route path="/user/password" element={<Password />} />
+
                         <Route path="*" element={<PageNotFound />} />
                       </Routes>
                     </main>

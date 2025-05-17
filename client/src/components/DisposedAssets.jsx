@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { statusColors } from "../lib/constants";
-import { Eye, Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Plus } from "lucide-react";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const disposedAssets = [
   {
@@ -9,13 +11,11 @@ const disposedAssets = [
     equipNo: "DL123456",
     raisedBy: "John Doe",
     raisedOn: "2025-04-10",
-    // approvedBy: "Bob Smith",
-    // approvedOn: "2025-04-29",
     status: "Pending",
     reason: "The asset has completed its life as per the company's norms",
   },
   {
-    id: 1,
+    id: 2,
     category: "Monitor",
     equipNo: "MN454R23",
     raisedBy: "Kesh Pandey",
@@ -28,56 +28,107 @@ const disposedAssets = [
 ];
 
 function DisposedAssets() {
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [rows, setRows] = useState(10);
+
   return (
-    <table className="w-full table-auto border border-gray-300 rounded-lg overflow-hidden text-sm">
-      <thead className="bg-gray-100 text-left">
-        <tr>
-          <th className="border p-3">#</th>
-          <th className="p-3">Category</th>
-          <th className="p-3">Equipment No</th>
-          <th className="p-3">Raised By</th>
-          <th className="p-3">Raised On</th>
-          <th className="p-3">Approved By</th>
-          <th className="p-3">Approved On</th>
-          <th className="p-3 text-center">View</th>
-          <th className="p-3">Status</th>
-          <th className="p-3">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {disposedAssets.map((item, index) => (
-          <tr key={item.id} className="border-t hover:bg-gray-50">
-            <td className="p-3">{index + 1}</td>
-            <td className="p-3">{item.category}</td>
-            <td className="p-3">{item.equipNo}</td>
-            <td className="p-3">{item.raisedBy}</td>
-            <td className="p-3">{item.raisedOn}</td>
-            <td className="p-3">{item.approvedBy || "-"}</td>
-            <td className="p-3">{item.approvedOn || "-"}</td>
-            <td className="p-3">
-              <button
-                onClick={() => navigate(`/assets/${item.id}`)}
-                className="text-gray-600 hover:text-black text-center"
-              >
-                <Eye size={20} />
-              </button>
-            </td>
-            <td className="p-3">
-              <span
-                className={`px-2 py-1 rounded-lg ${statusColors[item.status]}`}
-              >
-                {item.status}
-              </span>
-            </td>
-            <td className="p-3">
-              <button className="text-gray-600 hover:text-black">
-                Sell Out
-              </button>
-            </td>
+    <div className="overflow-auto space-y-5">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Disposals List</h2>
+        <button
+          onClick={() => navigate("/transactions/disposals/new")}
+          className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
+        >
+          <Plus className="inline-block size-5 mb-1 mr-1" />
+          Create Dispose
+        </button>
+      </div>
+
+      {/* Asset Details */}
+      <table className="w-full border border-gray-300 rounded-lg text-sm">
+        <thead className="bg-gray-100 text-left">
+          <tr>
+            <th className="border-r border-gray-300 p-3">#</th>
+            <th className="border-r border-gray-300 p-3">Category</th>
+            <th className="border-r border-gray-300 p-3">Serial No</th>
+            <th className="border-r border-gray-300 p-3">Condition</th>
+            <th className="border-r border-gray-300 p-3">Raised By</th>
+            <th className="border-r border-gray-300 p-3">Raised On</th>
+            <th className="border-r border-gray-300 p-3">Status</th>
+            <th className="border-r border-gray-300 p-3">Approved By</th>
+            <th className="border-r border-gray-300 p-3">Approved On</th>
+            <th className="border-r border-gray-300 p-3">View</th>
+            <th className="border-r border-gray-300 p-3">Action</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {disposedAssets.map((item, index) => (
+            <tr key={item.id} className="border-t hover:bg-gray-50">
+              <td className="border-r border-gray-300 p-3">{index + 1}</td>
+              <td className="border-r border-gray-300 p-3">{item.category}</td>
+              <td className="border-r border-gray-300 p-3">{item.equipNo}</td>
+              <td className="border-r border-gray-300 p-3">{item.raisedBy}</td>
+              <td className="border-r border-gray-300 p-3">
+                {format(item.raisedOn, "dd/MM/yyyy")}
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                {item.approvedBy || "-"}
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                {item.approvedOn ? format(item.approvedOn, "dd/MM/yyyy") : "-"}
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                <button
+                  onClick={() => navigate(`/assets/${item.id}`)}
+                  className="text-gray-600 hover:text-black text-center"
+                >
+                  <Eye size={20} />
+                </button>
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                <span
+                  className={`px-2 py-1 rounded-lg ${
+                    statusColors[item.status]
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                <button className="w-fit bg-red-400 py-1.5 px-2.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400">
+                  {item.status === "Disposed" ? (
+                    <span>Disposed</span>
+                  ) : (
+                    <span>Sell out</span>
+                  )}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      <div className="text-right text-sm text-gray-700 space-x-3">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          className="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          disabled={page === 1}
+        >
+          <ChevronLeft size={14} />
+        </button>
+        <span>{page}</span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          className="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          disabled={page === 5}
+        >
+          <ChevronRight size={14} />
+        </button>
+      </div>
+    </div>
   );
 }
 

@@ -5,11 +5,11 @@ function IssueHistory() {
   const [isAssetTab, setIsAssetTab] = useState(true);
 
   return (
-    <div className="p-6 bg-white text-gray-800">
-      <h1 className="text-2xl font-semibold mb-6 italic">Issuances List</h1>
+    <div className="p-6 bg-white text-gray-800 space-y-5">
+      <h2 className="text-2xl font-bold">Issuances List</h2>
 
       {/* Tab Switcher */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4">
         <button
           className={`px-4 py-2 rounded-lg text-sm font-medium ${
             isAssetTab ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-700"

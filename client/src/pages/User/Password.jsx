@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { Input } from "../../components";
 
 const Password = () => {
-  const [err, setErr] = useState();
+  const [err, setErr] = useState("");
   const [form, setForm] = useState({
     currPassword: "",
     newPassword: "",
@@ -34,9 +34,7 @@ const Password = () => {
 
   return (
     <div className="p-6 w-md mx-auto space-y-6">
-      <h1 className="text-2xl font-semibold italic text-gray-800">
-        Change Password
-      </h1>
+      <h2 className="text-2xl font-bold text-gray-800">Change Password</h2>
 
       <form
         onSubmit={handleSubmit}

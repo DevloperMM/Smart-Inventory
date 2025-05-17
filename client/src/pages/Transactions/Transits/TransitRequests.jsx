@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../../lib/constants";
+import { format } from "date-fns";
 
 const TransitRequests = () => {
   const navigate = useNavigate();
@@ -44,12 +45,12 @@ const TransitRequests = () => {
   ];
 
   return (
-    <div className="p-6 bg-white text-gray-800">
+    <div className="p-6 bg-white text-gray-800 space-y-5">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold italic">Transits List</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Transits List</h2>
         <button
-          onClick={() => navigate("/transit/new")}
+          onClick={() => navigate("/transactions/transits/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
           <Plus className="inline-block size-5 mb-1 mr-1" />
@@ -132,9 +133,11 @@ const TransitRequests = () => {
                 </td>
                 <td className="border px-3 py-2">{request.category}</td>
                 <td className="border px-3 py-2">{request.requestedBy}</td>
-                <td className="border px-3 py-2">{request.requestedOn}</td>
                 <td className="border px-3 py-2">
-                  <span className="ml-1 text-blue-600 hover:underline cursor-pointer">
+                  {format(request.requestedOn, "dd/MM/yyyy")}
+                </td>
+                <td className="border px-3 py-2">
+                  <span className="text-blue-600 hover:underline cursor-pointer">
                     <Eye size={16} className="inline-block pb-0.5 mr-1.5" />
                     View
                   </span>
@@ -171,7 +174,9 @@ const TransitRequests = () => {
                     <div className="flex justify-center space-x-3">
                       <button
                         disabled={request.status !== "Approved"}
-                        onClick={() => navigate(`/requests/${request.id}`)}
+                        onClick={() =>
+                          navigate(`/transactions/transits/${request.id}`)
+                        }
                         className="w-full bg-teal-500 py-1.5 px-2.5 rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                       >
                         {request.status !== "Rejected" ? (
@@ -190,7 +195,7 @@ const TransitRequests = () => {
       </div>
 
       {/* Pagination */}
-      <div className="text-right mt-4 text-sm text-gray-700 space-x-3">
+      <div className="text-right text-sm text-gray-700 space-x-3">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           className="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer"

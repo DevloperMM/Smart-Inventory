@@ -17,19 +17,18 @@ const Consumable = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    qty: {
+    prevQty: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1,
+      defaultValue: 0,
+    },
+    currQty: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     storeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    isUsed: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
     },
     updatedOn: {
       type: DataTypes.DATE,
@@ -48,7 +47,7 @@ const Consumable = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      // Store, Vendor
+      // Unused, Used, Vendor
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -1,4 +1,6 @@
 import { Eye } from "lucide-react";
+import { statusColors } from "../lib/constants";
+import { format } from "date-fns";
 
 const consumables = [
   {
@@ -38,8 +40,14 @@ function IssuedConsumables() {
             <td className="p-3">{item.consumableName}</td>
             <td className="p-3">{item.issuedTo}</td>
             <td className="p-3">{item.issuedBy}</td>
-            <td className="p-3">{item.issuedOn}</td>
-            <td className="p-3">{item.status}</td>
+            <td className="p-3">{format(item.issuedOn, "dd/MM/yyyy")}</td>
+            <td className="p-3">
+              <span
+                className={`px-2 py-1 rounded-lg ${statusColors[item.status]}`}
+              >
+                {item.status}
+              </span>
+            </td>
             <td className="p-3">
               <button className="text-blue-600 hover:underline flex items-center gap-1">
                 <Eye size={16} />

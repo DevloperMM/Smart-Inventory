@@ -1,14 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-  ArrowUpDown,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Plus,
-} from "lucide-react";
+import { ArrowUpDown, Search, ChevronDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
+import { PageFooter } from "../../components";
 
 const storeData = [
   {
@@ -197,15 +191,16 @@ export default function Dashbaord() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [sortCriteria, setSortCriteria] = useState([]);
+
   const [page, setPage] = useState(1);
   const [msg, setMsg] = useState("");
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(10);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     setPage(1);
-  }, [search, status]);
+  }, [search, status, rows]);
 
   const filteredData = useMemo(() => {
     setMsg("");
@@ -238,8 +233,8 @@ export default function Dashbaord() {
     return data;
   }, [search, status, sortCriteria]);
 
-  const totalPages = Math.ceil(filteredData.length / rows);
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
+  const totalPages = Math.ceil(filteredData.length / rows);
 
   const toggleSort = (field) => {
     setSortCriteria((prev) => {
@@ -253,9 +248,9 @@ export default function Dashbaord() {
   };
 
   return (
-    <div className="p-6 bg-white text-gray-800">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold mb-4 italic">IT Store Overview</h1>
+    <div className="p-6 bg-white text-gray-800 space-y-5">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">IT Store Overview</h2>
         <div className="space-x-4">
           <button
             onClick={() => navigate("/assets/new")}
@@ -273,7 +268,7 @@ export default function Dashbaord() {
       </div>
 
       {/* Search & Filter Controls */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex items-center gap-2 border rounded-md px-3 py-2 w-full sm:max-w-xs">
           <Search size={18} />
           <input
@@ -376,44 +371,13 @@ export default function Dashbaord() {
 
       {/* Pagination */}
       {!msg && (
-        <div className="mt-4 text-right space-x-12">
-          <div className="space-x-2 inline-block">
-            <span>Show</span>
-            <div className="relative inline-block w-14 h-fit">
-              <select
-                className="appearance-none w-full border border-gray-300 bg-white rounded-md p-1.5 text-sm shadow-sm focus:outline-none focus:ring-1"
-                value={rows}
-                onChange={(e) => setRows(e.target.value)}
-              >
-                <option value={5}>5</option>
-                <option value={15}>15</option>
-                <option value={25}>25</option>
-              </select>
-              <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 w-4 h-4" />
-            </div>
-            <span>Records</span>
-          </div>
-
-          <div className="space-x-2 inline-block">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="p-1 rounded border disabled:opacity-30"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <span className="mb-2">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="p-1 rounded border disabled:opacity-30"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
+        <PageFooter
+          rows={rows}
+          page={page}
+          setPage={setPage}
+          setRows={setRows}
+          totalPages={totalPages}
+        />
       )}
     </div>
   );

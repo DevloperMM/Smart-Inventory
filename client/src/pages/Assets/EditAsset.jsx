@@ -1,44 +1,37 @@
 import { useState } from "react";
 import { Input } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
-const initialState = {
-  category: "",
-  mfgBy: "",
-  modelNo: "",
-  description: "",
-  serialNo: "",
-  materialCode: "",
-  pr: "",
-  po: "",
-  grn: "",
-  srr: "",
-  stockedOn: "",
-  stockedBy: "",
-  inWarranty: true,
-  startDate: "",
-  endDate: "",
-  amcVendor: "",
-  storeId: "",
-  addInfo: "",
+const assetInfo = {
+  category: "Laptop",
+  mfgBy: "Dell",
+  modelNo: "Latitude 5520",
+  description: "Business laptop with Intel Core i7, 16GB RAM, 512GB SSD",
+  serialNo: "DL5520-SN00123",
+  materialCode: "MAT-9981",
+  pr: "PR-2025-0098",
+  po: "PO-2025-3345",
+  grn: "GRN-2025-1122",
+  srr: "SRR-2025-7788",
+  stockedOn: "2025-03-15T10:00:00Z",
+  stockedBy: "Aman Kukreja",
+  startDate: "2025-03-15T00:00:00Z",
+  endDate: "2028-03-15T00:00:00Z",
+  amcVendor: "TechCare Services Pvt Ltd",
+  storeId: "HRD",
+  addInfo: "Includes docking station and USB-C hub",
+  status: "Available",
 };
 
-function NewAsset() {
+function EditAsset() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(initialState);
-  const manufacturers = ["HP", "Dell"];
-  const categories = [
-    "BARCODE PRINTER",
-    "BARCODE SCANNER",
-    "DESKTOP",
-    "LAPTOP",
-    "PRINTER",
-    "PROCESS LAPTOP",
-    "PROCESS PC",
-    "PROCESS SERVER",
-    "SCANNER",
-    "SERVER",
-  ];
+
+  const [formData, setFormData] = useState({
+    ...assetInfo,
+    startDate: format(assetInfo.startDate, "yyyy-MM-dd"),
+    endDate: format(assetInfo.endDate, "yyyy-MM-dd"),
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,13 +47,12 @@ function NewAsset() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormData(initialState);
     console.log(formData);
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-7">
-      <h2 className="text-2xl font-bold text-gray-800">Enter Asset details</h2>
+      <h2 className="text-2xl font-bold text-gray-800">Edit Asset details</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -75,7 +67,7 @@ function NewAsset() {
             value={formData.category}
             onChange={handleChange}
             required
-            list={categories}
+            disabled
           />
           <Input
             label="Manufactured By"
@@ -84,7 +76,7 @@ function NewAsset() {
             value={formData.mfgBy}
             onChange={handleChange}
             required
-            list={manufacturers}
+            disabled
           />
           <Input
             label="Description"
@@ -98,6 +90,7 @@ function NewAsset() {
             name="modelNo"
             value={formData.modelNo}
             onChange={handleChange}
+            disabled
             required
           />
           <Input
@@ -105,6 +98,7 @@ function NewAsset() {
             name="serialNo"
             value={formData.serialNo}
             onChange={handleChange}
+            disabled
             required
           />
           <Input
@@ -132,12 +126,14 @@ function NewAsset() {
             name="pr"
             value={formData.pr}
             onChange={handleChange}
+            disabled
           />
           <Input
             label="PO Number"
             name="po"
             value={formData.po}
             onChange={handleChange}
+            disabled
             required
           />
           <Input
@@ -145,18 +141,21 @@ function NewAsset() {
             name="grn"
             value={formData.grn}
             onChange={handleChange}
+            disabled
           />
           <Input
             label="SRR Number"
             name="srr"
             value={formData.srr}
             onChange={handleChange}
+            disabled
           />
           <Input
             label="Material Code"
             name="materialCode"
             value={formData.materialCode}
             onChange={handleChange}
+            disabled
           />
           <Input
             label="AMC Vendor"
@@ -193,4 +192,4 @@ function NewAsset() {
   );
 }
 
-export default NewAsset;
+export default EditAsset;

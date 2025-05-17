@@ -3,6 +3,7 @@ import Welcome from "./Welcome.jsx";
 import AssetInfo from "./Assets/AssetInfo.jsx";
 import AssetList from "./Assets/AssetList.jsx";
 import NewAsset from "./Assets/NewAsset.jsx";
+import EditAsset from "./Assets/EditAsset.jsx";
 import ConsumableList from "./Consumables/ConsumableList.jsx";
 import NewConsumable from "./Consumables/NewConsumable.jsx";
 import DisposalHistory from "./Transactions/Disposals/DisposeHistory.jsx";
@@ -24,6 +25,7 @@ export {
   AssetInfo,
   AssetList,
   NewAsset,
+  EditAsset,
   ConsumableList,
   NewConsumable,
   DisposalHistory,

@@ -8,13 +8,14 @@ function Input({ label, list, rowSpan, ...props }) {
 
   return (
     <div className={`row-span-${rowSpan}`}>
-      <label className="block text-sm text-black mb-1 pb-1">
+      <label className="block text-black mb-1 pb-1">
         {label}
         {props.required && <span className="text-red-500">*</span>}
       </label>
 
       {rowSpan ? (
         <textarea
+          autoComplete="off"
           rows={rowSpan}
           {...props}
           className={`w-full text-sm rounded-lg px-3 py-2 shadow-lg focus:ring-1 ${
@@ -23,10 +24,13 @@ function Input({ label, list, rowSpan, ...props }) {
         ></textarea>
       ) : (
         <input
+          autoComplete="off"
           {...props}
           list={listId}
-          className={`w-full text-sm rounded-lg px-3 py-2 shadow-lg focus:ring-1 ${
-            props.disabled ? "bg-gray-100 text-gray-700" : "border"
+          className={`w-full rounded-lg px-3 py-2 shadow-lg focus:ring-1 ${
+            props.disabled
+              ? "bg-gray-100 text-gray-700 border border-gray-400"
+              : "border"
           } `}
         />
       )}

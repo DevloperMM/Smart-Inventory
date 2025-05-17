@@ -106,7 +106,7 @@ function AssetInfo() {
   return (
     <div className="min-h-screen p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold italic">Asset Details</h2>
+        <h2 className="text-2xl font-bold">Asset Details</h2>
         <div className="space-x-4">
           {asset.status !== "Sold" && (
             <>
