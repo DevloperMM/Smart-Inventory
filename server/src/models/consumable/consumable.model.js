@@ -52,7 +52,7 @@ const Consumable = db.define(
       allowNull: false,
     },
   },
-  { timestamps: true, paranoid: true }
+  { paranoid: true }
 );
 
 export default Consumable;

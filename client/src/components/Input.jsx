@@ -18,7 +18,7 @@ function Input({ label, list, rowSpan, ...props }) {
           autoComplete="off"
           rows={rowSpan}
           {...props}
-          className={`w-full text-sm rounded-lg px-3 py-2 shadow-lg focus:ring-1 ${
+          className={`w-full rounded-lg px-3 py-2 shadow-lg focus:ring-1 ${
             props.disabled ? "bg-gray-100 text-gray-700" : "border"
           } `}
         ></textarea>

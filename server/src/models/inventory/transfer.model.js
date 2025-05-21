@@ -26,11 +26,6 @@ const Transfer = db.define(
         key: "id",
       },
     },
-    transferredOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     // Store assetId in array
     assets: {
       type: DataTypes.TEXT,
@@ -60,11 +55,8 @@ const Transfer = db.define(
         key: "id",
       },
     },
-    receivedOn: {
-      type: DataTypes.DATE,
-    },
     status: {
-      // Transferred, Received, InTransit
+      // Moved, InTransit
       type: DataTypes.STRING,
       allowNull: false,
     },

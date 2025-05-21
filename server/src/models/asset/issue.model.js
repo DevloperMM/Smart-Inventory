@@ -26,7 +26,7 @@ const AssetIssuance = db.define(
       },
     },
     equipNo: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     issuedBy: {
@@ -37,11 +37,6 @@ const AssetIssuance = db.define(
         key: "id",
       },
     },
-    issuedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     issuedTo: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -50,26 +45,14 @@ const AssetIssuance = db.define(
         key: "id",
       },
     },
-    returnedOn: {
-      type: DataTypes.DATE,
-    },
-    returnedTo: {
+    handledBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
     },
-    exemptedBy: {
-      type: DataTypes.DATE,
-    },
-    exemptedOn: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-    },
+    // return or exempt reason
     info: {
       type: DataTypes.STRING,
     },

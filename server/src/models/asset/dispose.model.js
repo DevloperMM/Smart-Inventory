@@ -67,7 +67,7 @@ const AssetDisposal = db.define(
       allowNull: false,
     },
   },
-  { timestamps: true, paranoid: true }
+  { paranoid: true }
 );
 
 export default AssetDisposal;

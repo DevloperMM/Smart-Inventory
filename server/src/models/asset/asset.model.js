@@ -45,11 +45,6 @@ const Asset = db.define(
     srr: {
       type: DataTypes.STRING,
     },
-    stockedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     stockedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -58,10 +53,16 @@ const Asset = db.define(
         key: "id",
       },
     },
+    updatedBy: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
     inWarranty: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: true,
     },
     startDate: {
       type: DataTypes.DATE,

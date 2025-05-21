@@ -1,16 +1,15 @@
-import { Request } from "../../models";
-import ApiError from "../../utils/ApiError";
-import ApiResponse from "../../utils/ApiResponse";
-import asyncHandler from "../../utils/asyncHandler";
+import { Request } from "../../models/index.js";
+import { Op } from "sequelize";
+import ApiError from "../../utils/ApiError.js";
+import ApiResponse from "../../utils/ApiResponse.js";
+import asyncHandler from "../../utils/asyncHandler.js";
 
+// Dashboard of user requests
 export const getAllRequests = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const { status } = req.query;
   try {
-    const whereClause = { userId };
-    if (status) whereClause.status = status.toLowerCase();
-
-    const requests = await Request.findAll({ where: whereClause });
+    const requests = await Request.findAll({
+      where: { status: { [Op.ne]: "cancelled" } },
+    });
 
     if (requests.length <= 0) throw new ApiError(404, "No requests found");
 
@@ -22,17 +21,39 @@ export const getAllRequests = asyncHandler(async (req, res) => {
   }
 });
 
+// Display my requests
+export const getMyRequests = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const requests = await Request.findAll({ where: { requestedBy: userId } });
+
+    if (requests.length <= 0) throw new ApiError(404, "No requests found");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, requests, "Requests fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+// Raise new request
 export const createRequest = asyncHandler(async (req, res) => {
-  const { category, purpose, endUser } = req.body;
-  if (!(category && purpose))
-    throw new ApiError(400, "Fill the required fields");
+  const { category, purpose, endUser, storeId } = req.body;
+  const userRole = req.user.role;
+
+  if (!(category && purpose && storeId))
+    throw new ApiError(400, "Please fill the marked fields");
 
   try {
     const request = await Request.create({
-      user: req.user.id,
-      endUser: endUser || req.user.name,
-      category,
+      requestedBy: req.user.id,
+      storeId,
+      category: category.toLowerCase(),
       purpose,
+      endUser: endUser || req.user.name,
+      status: userRole === "it-head" ? "approved" : "pending",
     });
 
     if (!request)
@@ -49,30 +70,65 @@ export const createRequest = asyncHandler(async (req, res) => {
   }
 });
 
+// Cancel my raised request
 export const cancelRequest = asyncHandler(async (req, res) => {
-  try {
-    const { requestId } = req.params;
+  const { requestId } = req.params;
+  const { cancelReason } = req.body;
 
+  try {
     const request = await Request.findByPk(requestId);
     if (!request) throw new ApiError(400, "No such request found");
 
-    if (request.user !== req.user.id)
-      throw new ApiError(
-        401,
-        "Request can only be cancelled if you created it"
-      );
+    if (request.requestedBy !== req.user.id)
+      throw new ApiError(401, "You have not created this request");
 
     if (request.status !== "pending")
-      throw new ApiError(
-        400,
-        "Request can only be cancelled if it is still pending"
-      );
+      throw new ApiError(400, "Only pending requests can be cancelled");
 
-    await request.update({ status: "cancelled" });
+    request.status = "cancelled";
+    request.decidedBy = req.user.id;
+    request.decisionInfo = cancelReason;
+
+    await request.save({ validate: true });
 
     return res
       .status(200)
       .json(new ApiResponse(200, request, "Request Cancelled !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+// Approve or Reject request
+export const decideRequest = asyncHandler(async (req, res) => {
+  const { status, decisionInfo } = req.body;
+  const { requestId } = req.params;
+
+  try {
+    const request = await Request.findByPk(requestId);
+    if (!request) throw new ApiError(404, "Request not found");
+
+    if (request.status !== "pending")
+      throw new ApiError(400, "Only pending requests can be decided");
+
+    if (!["approved", "rejected"].includes(status.toLowerCase()))
+      throw new ApiError(400, "The request can only be approved or rejected");
+
+    request.decidedBy = req.user.id;
+    request.decisionInfo = decisionInfo;
+    request.status = status.toLowerCase();
+
+    await request.save({ validate: true });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { ...request.dataValues, decider: req.user },
+          "Request decided !!"
+        )
+      );
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }

@@ -40,20 +40,12 @@ const Transit = db.define(
         key: "id",
       },
     },
-    requestedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     approvedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
-    },
-    approvedOn: {
-      type: DataTypes.DATE,
     },
     status: {
       // Pending, Cancelled, Rejected, Approved

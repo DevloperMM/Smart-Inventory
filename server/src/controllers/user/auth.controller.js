@@ -1,4 +1,4 @@
-import { User } from "../../models";
+import { User } from "../../models/index.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
@@ -10,52 +10,18 @@ const options = {
   secure: process.env.NODE_ENV !== "development",
 };
 
-// Don't use, signup is deprecated by user
-export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, department, empCode } = req.body;
+// Login with user details
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-  if ([name, email, password, department].some((field) => field?.trim() === ""))
+  if (!(email && password))
     throw new ApiError(400, "Fill the mentioned details");
 
-  const mailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  if (!mailRegex.test(email))
-    throw new ApiError(400, "Enter valid email address");
-
-  const isUserExist = await User.findOne({ where: { email } });
-  if (isUserExist) throw new ApiError(409, "This email is already registered");
-
-  const isEmpCodeExist = await User.findOne({ where: { empCode } });
-  if (isEmpCodeExist)
-    throw new ApiError(409, "This employee code is already registered");
-
-  const user = await User.create({
-    name,
-    email,
-    password,
-    department: department.toUpperCase(),
-    empCode,
+  const user = await User.findOne({
+    where: { email },
+    attributes: { include: ["password"] },
   });
 
-  if (!user)
-    throw new ApiError(
-      500,
-      "Error occured while registering user! Please try again after sometime!"
-    );
-
-  const token = user.generateToken();
-
-  return res
-    .status(200)
-    .cookie("token", token, options)
-    .json(new ApiResponse(200, user, "User Registered !!"));
-});
-
-export const loginUser = asyncHandler(async (req, res) => {
-  const { empCode, password } = req.body;
-  if (!(empCode && password))
-    throw new ApiError(400, "Fill the mentioned details");
-
-  const user = await User.findOne({ where: { empCode } });
   if (!user) throw new ApiError(409, "No such user exist");
 
   const isPassValid = await user.isPasswordCorrect(password);
@@ -69,6 +35,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User authenticated !!"));
 });
 
+// Logout user profile
 export const logoutUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
@@ -76,10 +43,11 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out !!"));
 });
 
+// Change old password with new
 export const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   if (!(oldPassword && newPassword))
-    throw new ApiError(400, "Fill the required fields");
+    throw new ApiError(400, "Please fill the marked fields");
 
   const user = await User.findByPk(req.user.id);
   const isPassValid = await user.isPasswordCorrect(oldPassword);

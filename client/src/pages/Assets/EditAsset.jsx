@@ -79,13 +79,6 @@ function EditAsset() {
             disabled
           />
           <Input
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <Input
             label="Model Number"
             name="modelNo"
             value={formData.modelNo}
@@ -117,6 +110,14 @@ function EditAsset() {
             onChange={handleChange}
             required
           />
+          <Input
+            label="Description"
+            name="description"
+            rowSpan={2}
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         {/** Second Column Inputs */}
@@ -126,14 +127,12 @@ function EditAsset() {
             name="pr"
             value={formData.pr}
             onChange={handleChange}
-            disabled
           />
           <Input
             label="PO Number"
             name="po"
             value={formData.po}
             onChange={handleChange}
-            disabled
             required
           />
           <Input
@@ -141,21 +140,18 @@ function EditAsset() {
             name="grn"
             value={formData.grn}
             onChange={handleChange}
-            disabled
           />
           <Input
             label="SRR Number"
             name="srr"
             value={formData.srr}
             onChange={handleChange}
-            disabled
           />
           <Input
             label="Material Code"
             name="materialCode"
             value={formData.materialCode}
             onChange={handleChange}
-            disabled
           />
           <Input
             label="AMC Vendor"
@@ -166,6 +162,7 @@ function EditAsset() {
           <Input
             label="Additional Information"
             name="addInfo"
+            rowSpan={2}
             value={formData.addInfo}
             onChange={handleChange}
           />

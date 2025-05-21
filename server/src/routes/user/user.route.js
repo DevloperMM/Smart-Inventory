@@ -6,10 +6,20 @@ import {
   getUsers,
   updateUser,
 } from "../../controllers/user/user.controller.js";
+import verifyAuth from "../../middlewares/auth.middleware.js";
+import isPermitted from "../../middlewares/role.middleware.js";
 
 const router = Router();
 
-router.route("/").post(createUser).get(getUsers);
-router.route("/:id").get(getUserById).patch(updateUser).delete(deleteUser);
+router
+  .route("/")
+  .post(verifyAuth, isPermitted("admin", "it-head"), createUser)
+  .get(verifyAuth, isPermitted("admin", "it-head"), getUsers);
+
+router
+  .route("/:userId")
+  .get(verifyAuth, isPermitted("admin", "it-head"), getUserById)
+  .patch(verifyAuth, isPermitted("admin", "it-head"), updateUser)
+  .delete(verifyAuth, isPermitted("admin", "it-head"), deleteUser);
 
 export default router;

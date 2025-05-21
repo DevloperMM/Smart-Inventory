@@ -5,16 +5,16 @@ import { setupAssociations } from "./models/index.js";
 
 dotenv.config();
 
-db.sync({ force: true })
+db.sync()
   .then(() => {
     console.log("SQL Server established successfully");
-    // setupAssociations()
-    //   .then(() => {
-    //     console.log("Models associated successfully");
-    //   })
-    //   .catch((err) => {
-    //     console.log("Associating Models error:", err);
-    //   });
+    setupAssociations()
+      .then(() => {
+        console.log("Models associated successfully");
+      })
+      .catch((err) => {
+        console.log("Associating Models error:", err);
+      });
 
     app.on("error", (err) => {
       console.log("Error while listening to port");

@@ -41,11 +41,6 @@ const ConsumableIssuance = db.define(
         key: "id",
       },
     },
-    issuedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
     issuedTo: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -54,17 +49,14 @@ const ConsumableIssuance = db.define(
         key: "id",
       },
     },
-    returnedOn: {
-      type: DataTypes.DATE,
-    },
-    returnedTo: {
+    handledBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
     },
-    returnInfo: {
+    handleInfo: {
       type: DataTypes.STRING,
       allowNull: false,
     },

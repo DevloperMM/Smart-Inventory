@@ -42,6 +42,8 @@ const User = db.define(
     },
     storeManaging: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     profileCreatedOn: {
       type: DataTypes.DATE,
@@ -59,7 +61,6 @@ const User = db.define(
     },
     profileUpdatedOn: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     profileUpdatedBy: {
       type: DataTypes.INTEGER,
@@ -68,12 +69,11 @@ const User = db.define(
         key: "id",
       },
       onUpdate: "CASCADE",
-      allowNull: false,
     },
   },
   {
-    timestamps: true,
     paranoid: true,
+    timestamps: false,
     defaultScope: {
       attributes: { exclude: ["password"] },
     },
@@ -90,11 +90,13 @@ User.beforeCreate(async (user) => {
 });
 
 User.beforeUpdate(async (user) => {
-  if (user.changed("password") && user.password.length > 5) {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-  } else {
-    throw new ApiError(402, "Password should have atleast 6 characters");
+  if (user.changed("password")) {
+    if (user.password.length > 5) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+    } else {
+      throw new ApiError(402, "Password should have at least 6 characters");
+    }
   }
 });
 

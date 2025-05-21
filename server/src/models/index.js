@@ -18,18 +18,18 @@ export const setupAssociations = async () => {
   AssetIssuance.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
   AssetIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
   AssetIssuance.belongsTo(User, { foreignKey: "issuedTo", as: "recipient" });
-  AssetIssuance.belongsTo(User, { foreignKey: "returnedTo", as: "receiver" });
+  AssetIssuance.belongsTo(User, { foreignKey: "handledBy", as: "handler" });
 
   AssetDisposal.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
   AssetDisposal.belongsTo(User, { foreignKey: "raisedBy", as: "requester" });
   AssetDisposal.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
   AssetDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
 
+  Consumable.belongsTo(User, { foreignKey: "updatedBy", as: "storeUpdater" });
   Consumable.hasMany(ConsumableIssuance, {
     foreignKey: "consumableId",
     as: "consumableIssuances",
   });
-  Consumable.belongsTo(User, { foreignKey: "updatedBy", as: "storeUpdater" });
 
   ConsumableIssuance.belongsTo(Request, {
     foreignKey: "requestId",
@@ -39,6 +39,7 @@ export const setupAssociations = async () => {
     foreignKey: "consumableId",
     as: "consumable",
   });
+  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
   ConsumableIssuance.belongsTo(User, {
     foreignKey: "issuedTo",
     as: "recipient",
@@ -47,12 +48,12 @@ export const setupAssociations = async () => {
     foreignKey: "returnedTo",
     as: "receiver",
   });
-  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
 
   ConsumableDisposal.belongsTo(Consumable, {
     foreignKey: "consumableId",
     as: "consumable",
   });
+  ConsumableDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
   ConsumableDisposal.belongsTo(User, {
     foreignKey: "raisedBy",
     as: "requester",
@@ -61,10 +62,9 @@ export const setupAssociations = async () => {
     foreignKey: "approvedBy",
     as: "approver",
   });
-  ConsumableDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
 
   Request.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
-  Request.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+  Request.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
 
   Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
   Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });

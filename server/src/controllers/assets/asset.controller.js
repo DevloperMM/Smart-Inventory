@@ -1,62 +1,192 @@
-import { Asset, Request } from "../../models";
-import ApiError from "../../utils/ApiError";
-import ApiResponse from "../../utils/ApiResponse";
-import asyncHandler from "../../utils/asyncHandler";
+import { Asset, AssetIssuance } from "../../models/index.js";
+import ApiError from "../../utils/ApiError.js";
+import ApiResponse from "../../utils/ApiResponse.js";
+import asyncHandler from "../../utils/asyncHandler.js";
 
-export const getAllAssets = asyncHandler(async (req, res) => {});
+export const getAllAssets = asyncHandler(async (req, res) => {
+  try {
+    const assets = await Asset.findAll({});
 
-export const addAssetInStore = asyncHandler(async (req, res) => {});
+    if (assets.length <= 0) throw new ApiError(404, "No assets found");
 
-export const getAllAssetIssuances = asyncHandler(async (req, res) => {});
+    return res
+      .status(200)
+      .json(new ApiResponse(200, assets, "Assets fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
 
-export const issueAssetForRequest = asyncHandler(async (req, res) => {
-  const { requestId } = req.params;
-  const { assetSerialNo, equipNo, addInfo } = req.body;
+export const getAssetById = asyncHandler(async (req, res) => {
+  const { assetId } = req.params;
 
   try {
-    const request = await Request.findByPk(requestId);
-    if (!request) throw new ApiError(404, "No such request found");
-    else if (request.status !== "Approved")
-      throw new ApiError(400, "Asset can't be issued without approval");
+    const asset = await Asset.findByPk(assetId);
+    if (!asset) throw new ApiError(404, "No such assset found");
 
-    const asset = await Asset.findOne({ where: { serialNo: assetSerialNo } });
-    if (!asset) throw new ApiError(404, "No such asset found");
-    else if (asset?.dataValues.status !== "Available")
-      throw new ApiError(404, "This asset can't be issued");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, asset, "Assets fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
 
-    const issuance = await Issue.create({
-      request: requestId,
-      asset: asset.id,
-      equipNo,
-      issuedBy: req.user.id,
-      issuedOn: new Date(),
-      issuedTo: request.user,
-      endUser: request.endUser,
-      addInfo,
-      status: "Issued",
+export const getAssetsByFilter = asyncHandler(async (req, res) => {
+  const filters = req.body;
+
+  try {
+    const assets = await Asset.findAll({ where: filters });
+
+    if (!assets || assets.length === 0)
+      throw new ApiError(404, "No such assets found");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, assets, "Categories fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const getAssetByEquipNo = asyncHandler(async (req, res) => {
+  const { equipNo } = req.params;
+
+  try {
+    const issuance = await AssetIssuance.findOne({
+      where: { equipNo },
+      include: [{ model: Asset, as: "asset" }],
     });
 
     if (!issuance)
       throw new ApiError(
-        500,
-        "Error occured while issuing the asset! Please try again after sometime!"
+        404,
+        "This equipment number is not issued to any asset yet"
       );
-
-    asset.status = "Issued";
-    request.status = "Issued";
-
-    await Promise.all([asset.save(), request.save()]);
 
     return res
       .status(200)
-      .json(new ApiResponse(200, issuance, "Asset issuance created !!"));
+      .json(
+        new ApiResponse(
+          200,
+          issuance.asset,
+          "Asset fetched from equipment number !!"
+        )
+      );
   } catch (err) {
-    throw new ApiError(err.statusCode, err?.message);
+    throw new ApiError(err.statusCode || 500, err?.message);
   }
 });
 
-export const receiveReturnForAsset = asyncHandler(async (req, res) => {});
+export const addAssetInStore = asyncHandler(async (req, res) => {
+  // send storeId also in case of user role is IT-Head or Admin
+  const assetDetails = req.body;
 
-export const getAllAssetDisposals = asyncHandler(async (req, res) => {});
+  try {
+    const isNotValid = Object.values(assetDetails).some((field) => {
+      if (typeof field === "string") return field.trim() === "";
+      return field === null || field === undefined;
+    });
 
-export const createDisposeForAsset = asyncHandler(async (req, res) => {});
+    if (isNotValid) throw new ApiError(400, "Please fill the marked fields");
+
+    const asset = await Asset.create({
+      ...assetDetails,
+      ...(!req.storeId && { storeId: req.user.storeManaging }),
+      inWarranty: new Date(assetDetails.endDate) > new Date(),
+      stockedBy: req.user.id,
+      status: "available",
+    });
+
+    if (!asset)
+      throw new ApiError(
+        500,
+        "Error occured while creating asset! Please try again after sometime!"
+      );
+
+    return res.status(200).json(new ApiResponse(200, asset, "Asset listed !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
+  const { assetId } = req.params;
+  const { amcVendor } = req.body;
+
+  try {
+    const asset = await Asset.findByPk(assetId);
+    if (!asset) throw new ApiError(404, "No such asset found");
+
+    if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
+      throw new ApiError(400, "You do not manage this asset");
+
+    if (!(amcVendor && asset.amcVendor))
+      throw new ApiError(
+        400,
+        "Please provide the AMC Vendor to the asset before flag maintenace"
+      );
+
+    if (amcVendor) asset.amcVendor = amcVendor;
+    asset.status = "amc";
+
+    await asset.save({ validate: true });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { status: asset.status },
+          "Maintenance status toggled !!"
+        )
+      );
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const updateAssetDetails = asyncHandler(async (req, res) => {
+  const { assetId } = req.params;
+  const updateDetails = req.body;
+
+  const allowedFields = [
+    "startDate",
+    "endDate",
+    "description",
+    "po",
+    "pr",
+    "grn",
+    "srr",
+    "materialCode",
+    "amcVendor",
+    "addInfo",
+  ];
+
+  try {
+    const asset = await Asset.findByPk(assetId);
+    if (!asset) throw new ApiError(404, "No such asset found");
+
+    if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
+      throw new ApiError(400, "You do not manage this asset");
+
+    Object.keys(updateDetails).forEach((key) => {
+      if (allowedFields.includes(key)) {
+        asset[key] = updateDetails[key];
+      } else {
+        throw new ApiError(400, "Details with asset identity can't be changed");
+      }
+    });
+
+    asset.updatedBy = req.user.id;
+    asset.inWarranty = new Date(updateDetails.endDate) > new Date();
+
+    await asset.save({ validate: true });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, asset, "Asset updated !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});

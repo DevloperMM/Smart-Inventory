@@ -87,13 +87,6 @@ function NewAsset() {
             list={manufacturers}
           />
           <Input
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <Input
             label="Model Number"
             name="modelNo"
             value={formData.modelNo}
@@ -120,6 +113,14 @@ function NewAsset() {
             name="endDate"
             type="date"
             value={formData.endDate}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Description"
+            name="description"
+            rowSpan={2}
+            value={formData.description}
             onChange={handleChange}
             required
           />
@@ -167,6 +168,7 @@ function NewAsset() {
           <Input
             label="Additional Information"
             name="addInfo"
+            rowSpan={2}
             value={formData.addInfo}
             onChange={handleChange}
           />

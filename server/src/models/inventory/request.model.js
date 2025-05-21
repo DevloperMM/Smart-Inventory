@@ -25,24 +25,23 @@ const Request = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    storeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     purpose: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    raisedOn: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    approvedOn: {
-      type: DataTypes.DATE,
-    },
-    approvedBy: {
+    decidedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
+    },
+    decisionInfo: {
+      type: DataTypes.STRING,
     },
     status: {
       // Pending, Cancelled, Approved, Rejected
