@@ -106,7 +106,7 @@ export const decideRequest = asyncHandler(async (req, res) => {
 
   try {
     const request = await Request.findByPk(requestId);
-    if (!request) throw new ApiError(404, "Request not found");
+    if (!request) throw new ApiError(404, "No such request found");
 
     if (request.status !== "pending")
       throw new ApiError(400, "Only pending requests can be decided");

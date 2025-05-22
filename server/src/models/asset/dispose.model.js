@@ -21,8 +21,8 @@ const AssetDisposal = db.define(
       type: DataTypes.ENUM("Retired", "Obsolete"),
       allowNull: false,
     },
-    reason: {
-      type: DataTypes.STRING(),
+    description: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     raisedOn: {
@@ -38,15 +38,18 @@ const AssetDisposal = db.define(
         key: "id",
       },
     },
-    approvedOn: {
+    decidedOn: {
       type: DataTypes.DATE,
     },
-    approvedBy: {
+    decidedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
+    },
+    decisionInfo: {
+      type: DataTypes.STRING,
     },
     soldOn: {
       type: DataTypes.DATE,
@@ -58,16 +61,15 @@ const AssetDisposal = db.define(
         key: "id",
       },
     },
-    approveInfo: {
+    soldInfo: {
       type: DataTypes.STRING,
     },
     status: {
-      // Pending, Cancelled, Rejected, Disposed, Sold
       type: DataTypes.STRING,
       allowNull: false,
     },
   },
-  { paranoid: true }
+  { paranoid: true, timestamps: true, createdAt: false, updatedAt: false }
 );
 
 export default AssetDisposal;

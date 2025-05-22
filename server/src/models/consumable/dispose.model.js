@@ -66,7 +66,7 @@ const ConsumableDisposal = db.define(
       allowNull: false,
     },
   },
-  { paranoid: true }
+  { paranoid: true, timestamps: true, createdAt: false, updatedAt: false }
 );
 
 export default ConsumableDisposal;

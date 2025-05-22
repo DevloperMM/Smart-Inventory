@@ -5,7 +5,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getAllAssets = asyncHandler(async (req, res) => {
   try {
-    const assets = await Asset.findAll({});
+    const assets = await Asset.findAll({ order: [["createdAt", "DESC"]] });
 
     if (assets.length <= 0) throw new ApiError(404, "No assets found");
 
@@ -112,7 +112,7 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
 
 export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
   const { assetId } = req.params;
-  const { amcVendor } = req.body;
+  const amcVendor = req.body?.amcVendor || "";
 
   try {
     const asset = await Asset.findByPk(assetId);
@@ -121,10 +121,16 @@ export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
     if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
       throw new ApiError(400, "You do not manage this asset");
 
-    if (!(amcVendor && asset.amcVendor))
+    if (!amcVendor && !asset.amcVendor)
       throw new ApiError(
         400,
         "Please provide the AMC Vendor to the asset before flag maintenace"
+      );
+
+    if (asset.status !== "available")
+      throw new ApiError(
+        401,
+        "Asset can be flag for maintenance only when it is available in store"
       );
 
     if (amcVendor) asset.amcVendor = amcVendor;
@@ -134,13 +140,7 @@ export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { status: asset.status },
-          "Maintenance status toggled !!"
-        )
-      );
+      .json(new ApiResponse(200, asset, "Maintenance status toggled !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }

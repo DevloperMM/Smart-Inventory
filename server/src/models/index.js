@@ -13,6 +13,7 @@ import User from "./user/user.model.js";
 export const setupAssociations = async () => {
   Asset.belongsTo(User, { foreignKey: "stockedBy", as: "storeKeeper" });
   Asset.hasMany(AssetIssuance, { foreignKey: "assetId", as: "assetIssuances" });
+  Asset.hasMany(AssetDisposal, { foreignKey: "assetId", as: "assetDisposal" });
 
   AssetIssuance.belongsTo(Request, { foreignKey: "requestId", as: "request" });
   AssetIssuance.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
@@ -22,7 +23,7 @@ export const setupAssociations = async () => {
 
   AssetDisposal.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
   AssetDisposal.belongsTo(User, { foreignKey: "raisedBy", as: "requester" });
-  AssetDisposal.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+  AssetDisposal.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
   AssetDisposal.belongsTo(User, { foreignKey: "soldBy", as: "seller" });
 
   Consumable.belongsTo(User, { foreignKey: "updatedBy", as: "storeUpdater" });
@@ -31,6 +32,7 @@ export const setupAssociations = async () => {
     as: "consumableIssuances",
   });
 
+  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
   ConsumableIssuance.belongsTo(Request, {
     foreignKey: "requestId",
     as: "request",
@@ -39,7 +41,6 @@ export const setupAssociations = async () => {
     foreignKey: "consumableId",
     as: "consumable",
   });
-  ConsumableIssuance.belongsTo(User, { foreignKey: "issuedBy", as: "issuer" });
   ConsumableIssuance.belongsTo(User, {
     foreignKey: "issuedTo",
     as: "recipient",

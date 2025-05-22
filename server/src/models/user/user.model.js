@@ -73,7 +73,9 @@ const User = db.define(
   },
   {
     paranoid: true,
-    timestamps: false,
+    timestamps: true,
+    createdAt: false,
+    updatedAt: false,
     defaultScope: {
       attributes: { exclude: ["password"] },
     },

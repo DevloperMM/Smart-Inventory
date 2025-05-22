@@ -131,27 +131,43 @@ export const getAssetsIssuedToMe = asyncHandler(async (req, res) => {
   }
 });
 
-// export const returnIssuedAsset = asyncHandler(async (req, res) => {
-//   const { assetIssuanceId } = req.params;
+export const handleIssuedAsset = asyncHandler(async (req, res) => {
+  const { assetIssueId } = req.params;
+  const { reason, status = "returned" } = req.body;
 
-//   try {
-//     const issuance = await AssetIssuance.findByPk(assetIssuanceId);
+  try {
+    const issuance = await AssetIssuance.findByPk(assetIssueId);
+    if (!issuance) throw new ApiError(404, "No such issue found against asset");
 
-//     if (!issuance) throw new ApiError(404, "No such issued asset found");
+    const asset = await Asset.findByPk(issuance.assetId);
 
-//     if (issuance.status === "Raised-Return" || issuance.status === "Returned")
-//       throw new ApiError(
-//         400,
-//         "Return is either initiated or completed already"
-//       );
+    if (issuance.status !== "issued")
+      throw new ApiError(400, "You can handle return of issued assets only");
 
-//     issuance.status = "Raised-Return";
-//     await issuance.save();
+    if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
+      throw new ApiError(400, "You do not manage this asset");
 
-//     return res
-//       .status(200)
-//       .json(new ApiResponse(200, issuance, "Return request raised !!"));
-//   } catch (err) {
-//     throw new ApiError(err?.statusCode || 500, err?.message);
-//   }
-// });
+    if (req.user.storeManaging > 0 && status.toLowerCase() !== "returned")
+      throw new ApiError(401, "You can not exempt the asset return");
+
+    issuance.handledBy = req.user.id;
+    issuance.info = reason;
+    issuance.status = status.toLowerCase();
+
+    asset.status = status === "returned" ? "available" : "lost";
+
+    await Promise.all[(asset.save(), issuance.save())];
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { ...issuance.toJSON(), asset },
+          "Return request raised !!"
+        )
+      );
+  } catch (err) {
+    throw new ApiError(err?.statusCode || 500, err?.message);
+  }
+});
