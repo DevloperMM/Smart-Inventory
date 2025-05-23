@@ -4,6 +4,7 @@ import isPermitted from "../../middlewares/role.middleware.js";
 import {
   addConsumableInStore,
   getAllConsumables,
+  markToVendor,
 } from "../../controllers/consumables/consumable.controller.js";
 
 const router = Router();
@@ -19,6 +20,14 @@ router
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),
     addConsumableInStore
+  );
+
+router
+  .route("/:consumableId")
+  .post(
+    verifyAuth,
+    isPermitted("admin", "it-head", "store-manager"),
+    markToVendor
   );
 
 export default router;

@@ -87,9 +87,16 @@ export const getUserById = asyncHandler(async (req, res) => {
 
 // Update user details
 export const updateUser = asyncHandler(async (req, res) => {
-  // name, email, empCode, role, department, password, storeManaging
   const { userId } = req.params;
   const details = req.body;
+
+  const allowedFields = [
+    "name",
+    "role",
+    "department",
+    "password",
+    "storeManaging",
+  ];
 
   if (
     Object.values(details).some(
@@ -104,17 +111,21 @@ export const updateUser = asyncHandler(async (req, res) => {
 
     let changesMade = false;
 
-    for (const [key, value] of Object.entries(details)) {
-      if (user[key] !== value) {
-        if (key === "role") {
-          const roleValue = value.toLowerCase();
-          user[key] = roleValue;
-          if (roleValue !== "store-manager") user.storeManaging = 0;
-        } else if (key === "department") user[key] = value.toUpperCase();
-        else user[key] = value;
-        changesMade = true;
+    Object.keys(details).forEach((key) => {
+      if (allowedFields.includes(key)) {
+        if (user[key] !== value) {
+          changesMade = true;
+          if (key === "role") {
+            const roleValue = value.toLowerCase();
+            user[key] = roleValue;
+            if (roleValue !== "store-manager") user.storeManaging = 0;
+          } else if (key === "department") user[key] = value.toUpperCase();
+          else user[key] = value;
+        }
+      } else {
+        throw new ApiError(400, "Details with user identity can't be changed");
       }
-    }
+    });
 
     if (!changesMade) throw new ApiError(400, "No update has been made");
 

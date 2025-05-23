@@ -1,4 +1,5 @@
 import { Asset, AssetDisposal, User } from "../../models/index.js";
+import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
@@ -22,19 +23,23 @@ export const createAssetDispose = asyncHandler(async (req, res) => {
     if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
       throw new ApiError(400, "You do not manage this asset");
 
+    if (asset.status !== "available")
+      throw new ApiError(400, "This asset is not available in store");
+
     const disposal = await AssetDisposal.findOne({
-      where: { assetId },
-      order: [["raisedOn", "DESC"]],
+      where: {
+        assetId,
+        status: {
+          [Op.in]: ["pending", "disposed"],
+        },
+      },
     });
 
-    if (disposal?.status === "pending")
+    if (disposal)
       throw new ApiError(
         400,
-        "No dispose can be generated against asset if it is already pending"
+        "No dispose can be generated against asset whose request is either pending or already disposed"
       );
-
-    if (asset.status !== "available")
-      throw new ApiError(400, "This asset is not available in store currently");
 
     const assetDisposal = await AssetDisposal.create({
       assetId,
@@ -56,7 +61,10 @@ export const createAssetDispose = asyncHandler(async (req, res) => {
         "Error occured while creating dispose! Please try again after sometime!"
       );
 
-    if (assetDisposal.status === "disposed") asset.status = "disposed";
+    if (assetDisposal.status === "disposed") {
+      asset.status = "disposed";
+      await asset.save();
+    }
 
     return res
       .status(200)
@@ -67,38 +75,42 @@ export const createAssetDispose = asyncHandler(async (req, res) => {
 });
 
 export const decideDisposeRequest = asyncHandler(async (req, res) => {
-  const { status, decisionInfo } = req.body || "";
+  let { status, decisionInfo } = req.body || "";
   const { assetDisposeId } = req.params;
 
-  if (!status || !decisionInfo)
+  if (!status)
+    throw new ApiError(400, "You must give your consent or reject the dispose");
+
+  if (!decisionInfo)
     throw new ApiError(
       400,
       "You must add approval comments for your future reference"
     );
 
+  status = status.toLowerCase();
+
   try {
     const assetDisposal = await AssetDisposal.findByPk(assetDisposeId);
+
     if (!assetDisposal)
       throw new ApiError(404, "No such dispose found against any asset");
-
-    const asset = await Asset.findByPk(assetDisposal.assetId);
 
     if (assetDisposal.status !== "pending")
       throw new ApiError(400, "Only pending requests can be decided");
 
-    if (!["disposed", "rejected"].includes(status.toLowerCase()))
+    if (!["disposed", "rejected"].includes(status))
       throw new ApiError(400, "The request can only be approved or rejected");
 
     assetDisposal.decidedBy = req.user.id;
     assetDisposal.decidedOn = new Date();
     assetDisposal.decisionInfo = decisionInfo;
-    assetDisposal.status = status.toLowerCase();
+    assetDisposal.status = status;
 
-    asset.status = "disposed";
+    await assetDisposal.save();
+    if (status === "disposed")
+      await Asset.update({ status }, { where: { id: assetDisposal.assetId } });
 
-    await Promise.all[(assetDisposal.save(), asset.save())];
-
-    const updatedRecord = await AssetDisposal.findByPk(assetDisposeId, {
+    const updatedDisposal = await AssetDisposal.findByPk(assetDisposeId, {
       include: [
         { model: Asset, as: "asset" },
         { model: User, as: "requester" },
@@ -108,7 +120,7 @@ export const decideDisposeRequest = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, updatedRecord, "Asset dispose decided !!"));
+      .json(new ApiResponse(200, updatedDisposal, "Asset dispose decided !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
@@ -121,15 +133,13 @@ export const sellDisposedAsset = asyncHandler(async (req, res) => {
   if (!soldInfo)
     throw new ApiError(
       400,
-      "You must add sold comments for your future reference"
+      "You must add sell comments for your future reference"
     );
 
   try {
     const assetDisposal = await AssetDisposal.findByPk(assetDisposeId);
     if (!assetDisposal)
       throw new ApiError(404, "No such dispose found against any asset");
-
-    const asset = await Asset.findByPk(assetDisposal.assetId);
 
     if (assetDisposal.status !== "disposed")
       throw new ApiError(400, "Only disposed assets can be sold out");
@@ -139,21 +149,26 @@ export const sellDisposedAsset = asyncHandler(async (req, res) => {
     assetDisposal.soldInfo = soldInfo;
     assetDisposal.status = "sold";
 
-    asset.status = "sold";
+    await Promise.all[
+      (assetDisposal.save(),
+      await Asset.update(
+        { status: "sold" },
+        { where: { id: assetDisposal.assetId } }
+      ))
+    ];
 
-    await Promise.all[(assetDisposal.save(), asset.save())];
-
-    const updatedRecord = await AssetDisposal.findByPk(assetDisposeId, {
+    const updatedDisposal = await AssetDisposal.findByPk(assetDisposeId, {
       include: [
         { model: Asset, as: "asset" },
         { model: User, as: "requester" },
         { model: User, as: "decider" },
+        { model: User, as: "seller" },
       ],
     });
 
     return res
       .status(200)
-      .json(new ApiResponse(200, updatedRecord, "Asset sold !!"));
+      .json(new ApiResponse(200, updatedDisposal, "Asset sold !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }

@@ -7,8 +7,9 @@ export const statusColors = {
   Available: "text-green-600 bg-green-100",
   Issued: "text-blue-600 bg-blue-100",
   AMC: "text-yellow-600 bg-yellow-100",
-  Disposed: "text-gray-600 bg-gray-100",
-  Sold: "text-red-600 bg-red-100",
+  Disposed: "text-cyan-600 bg-cyan-100",
+  Sold: "text-gray-600 bg-gray-200",
+  Lost: "text-red-600 bg-red-100",
 
   Store: "text-green-600 bg-green-100",
   AMC: "text-yellow-600 bg-yellow-100",
@@ -17,8 +18,8 @@ export const statusColors = {
   LowStock: "text-yellow-600 bg-yellow-100",
   OutStock: "text-red-600 bg-red-100",
 
-  Returned: "text-red-600 bg-red-100",
-  Exempted: "text-yellow-600 bg-yellow-100",
+  Exempted: "text-red-600 bg-red-100",
+  Returned: "text-pink-600 bg-pink-100",
 
   Consumed: "text-pink-600 bg-pink-100",
   Integrated: "text-indigo-600 bg-indigo-100",

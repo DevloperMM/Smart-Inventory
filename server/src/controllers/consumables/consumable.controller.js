@@ -5,7 +5,9 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getAllConsumables = asyncHandler(async (req, res) => {
   try {
-    const consumables = await Consumable.findAll({});
+    const consumables = await Consumable.findAll({
+      order: [["updatedOn", "DESC"]],
+    });
 
     if (consumables.length <= 0)
       throw new ApiError(404, "No consumables found");
@@ -19,21 +21,27 @@ export const getAllConsumables = asyncHandler(async (req, res) => {
 });
 
 export const addConsumableInStore = asyncHandler(async (req, res) => {
-  const consumableDetails = req.body;
+  const { category, specs, qty, storeId, amcVendor = "" } = req.body;
+
+  const status = req.body.status.toLowerCase();
+  if (!(status && ["used", "unused", "vendor"].includes(status)))
+    throw new ApiError(400, "You must provide the relevant status");
+
+  if (!(category.trim() && specs.trim() && qty))
+    throw new ApiError(400, "Please fill the marked fields");
+
+  if (req.user.storeManaging === 0 && !storeId)
+    throw new ApiError(400, "You must provide the storeId to add");
 
   try {
-    const isNotValid = Object.values(consumableDetails).some((field) => {
-      if (typeof field === "string") return field.trim() === "";
-      return field === null || field === undefined;
-    });
-
-    if (isNotValid) throw new ApiError(400, "Please fill the marked fields");
-
     const consumable = await Consumable.create({
-      ...consumableDetails,
-      ...(!req.storeId && { storeId: req.user.storeManaging }),
+      category: category.toLowerCase(),
+      specs,
+      qty,
+      storeId: req.user.storeManaging || storeId,
       updatedBy: req.user.id,
-      status: "unused",
+      amcVendor,
+      status,
     });
 
     if (!consumable)
@@ -49,3 +57,25 @@ export const addConsumableInStore = asyncHandler(async (req, res) => {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
 });
+
+export const markToVendor = asyncHandler(async (req, res) => {
+  const { consumableId } = req.params;
+
+  const { category, specs, qty, storeId, amcVendor } = req.body;
+  if (!(category.trim() && specs.trim()))
+    throw new ApiError(400, "Please provide consumable details");
+
+  if (!qty) throw new ApiError(400, "");
+
+  const status = req.body?.status.toLowerCase() || "";
+  if (!status || !["used", "unused"].includes(status))
+    throw new ApiError(400, "You must provide valid status");
+
+  try {
+    const consumable = await Consumable.findAll({ where: { category, specs } });
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const receiveFromVendor = asyncHandler(async (req, res) => {});

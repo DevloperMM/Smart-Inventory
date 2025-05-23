@@ -141,14 +141,14 @@ export const handleIssuedAsset = asyncHandler(async (req, res) => {
 
     const asset = await Asset.findByPk(issuance.assetId);
 
-    if (issuance.status !== "issued")
-      throw new ApiError(400, "You can handle return of issued assets only");
-
     if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
       throw new ApiError(400, "You do not manage this asset");
 
     if (req.user.storeManaging > 0 && status.toLowerCase() !== "returned")
       throw new ApiError(401, "You can not exempt the asset return");
+
+    if (issuance.status !== "issued")
+      throw new ApiError(400, "You can handle return of issued assets only");
 
     issuance.handledBy = req.user.id;
     issuance.info = reason;

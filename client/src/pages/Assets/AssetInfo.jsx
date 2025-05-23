@@ -178,10 +178,10 @@ function AssetInfo() {
                       {format(issue.issuedOn, "dd-MM-yyyy")}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 ml-1">
                     Issued By: {issue.issuedBy}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 ml-1">
                     Issued To: {issue.issuedTo}
                   </p>
                 </div>
@@ -205,7 +205,7 @@ function AssetInfo() {
                         )}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 ml-1">
                       {issue.status === "Returned" ? (
                         <span>Returned To: {issue.returnedTo}</span>
                       ) : (

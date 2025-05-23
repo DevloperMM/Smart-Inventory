@@ -46,8 +46,8 @@ export const setupAssociations = async () => {
     as: "recipient",
   });
   ConsumableIssuance.belongsTo(User, {
-    foreignKey: "returnedTo",
-    as: "receiver",
+    foreignKey: "handledBy",
+    as: "handler",
   });
 
   ConsumableDisposal.belongsTo(Consumable, {
@@ -60,20 +60,20 @@ export const setupAssociations = async () => {
     as: "requester",
   });
   ConsumableDisposal.belongsTo(User, {
-    foreignKey: "approvedBy",
-    as: "approver",
+    foreignKey: "decidedBy",
+    as: "decider",
   });
 
   Request.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
   Request.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
 
-  Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
-  Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });
-  Transfer.belongsTo(User, { foreignKey: "receivedBy", as: "receiver" });
+  // Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
+  // Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });
+  // Transfer.belongsTo(User, { foreignKey: "receivedBy", as: "receiver" });
 
-  Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
-  Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
-  Transit.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+  // Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
+  // Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
+  // Transit.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
 
   User.hasMany(Request, { foreignKey: "requestedBy", as: "requests" });
   User.hasMany(AssetIssuance, { foreignKey: "issuedTo", as: "assetsReceived" });

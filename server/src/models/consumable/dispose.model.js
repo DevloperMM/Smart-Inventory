@@ -40,15 +40,21 @@ const ConsumableDisposal = db.define(
         key: "id",
       },
     },
-    approvedOn: {
+    reason: {
+      type: DataTypes.STRING,
+    },
+    decidedOn: {
       type: DataTypes.DATE,
     },
-    approvedBy: {
+    decidedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
+    },
+    decisionInfo: {
+      type: DataTypes.STRING,
     },
     soldOn: {
       type: DataTypes.DATE,
@@ -59,6 +65,9 @@ const ConsumableDisposal = db.define(
         model: "Users",
         key: "id",
       },
+    },
+    soldInfo: {
+      type: DataTypes.STRING,
     },
     status: {
       // Pending, Cancelled, Rejected, Disposed, Sold

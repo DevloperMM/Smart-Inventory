@@ -34,6 +34,8 @@ export const getAssetById = asyncHandler(async (req, res) => {
 
 export const getAssetsByFilter = asyncHandler(async (req, res) => {
   const filters = req.body;
+  if (!filters || Object.keys(filters).length === 0)
+    throw new ApiError(400, "You must provide at least one filter");
 
   try {
     const assets = await Asset.findAll({ where: filters });
@@ -79,8 +81,28 @@ export const getAssetByEquipNo = asyncHandler(async (req, res) => {
 });
 
 export const addAssetInStore = asyncHandler(async (req, res) => {
-  // send storeId also in case of user role is IT-Head or Admin
   const assetDetails = req.body;
+
+  const requiredKeys = [
+    "category",
+    "mfgBy",
+    "modelNo",
+    "description",
+    "serialNo",
+    "startDate",
+    "endDate",
+    ...(req.user.storeManaging === 0 ? ["storeId"] : []),
+  ];
+
+  for (const key of requiredKeys) {
+    if (!(key in assetDetails))
+      throw new ApiError(400, `Missing required key: ${key}`);
+  }
+
+  for (const key in assetDetails) {
+    if (assetDetails[key] == null || assetDetails[key] === "")
+      throw new ApiError(400, `Missing or invalid value: ${key}`);
+  }
 
   try {
     const isNotValid = Object.values(assetDetails).some((field) => {

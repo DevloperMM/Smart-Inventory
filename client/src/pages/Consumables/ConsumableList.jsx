@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, Plus, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
 import { PageFooter } from "../../components";
@@ -11,7 +11,7 @@ const initialState = {
   qty: "",
   updatedBy: "",
   updatedOn: "",
-  updatedQty: "",
+  amcVendor: "",
   location: "",
   status: "",
 };
@@ -27,6 +27,7 @@ const consumables = [
     updatedOn: "2025-05-10",
     location: 1,
     status: "Unused",
+    amcVendor: "TechNova",
   },
   {
     id: "C002",
@@ -38,6 +39,7 @@ const consumables = [
     updatedOn: "2025-05-11",
     location: 2,
     status: "Vendor",
+    amcVendor: "ElectroMart",
   },
   {
     id: "C003",
@@ -49,6 +51,7 @@ const consumables = [
     updatedOn: "2025-05-12",
     location: 1,
     status: "Used",
+    amcVendor: "GigaSupplies",
   },
   {
     id: "C004",
@@ -60,6 +63,7 @@ const consumables = [
     updatedOn: "2025-05-08",
     location: 2,
     status: "Unused",
+    amcVendor: "ByteWare",
   },
   {
     id: "C005",
@@ -71,6 +75,7 @@ const consumables = [
     updatedOn: "2025-05-10",
     location: 1,
     status: "Unused",
+    amcVendor: "MegaParts",
   },
   {
     id: "C006",
@@ -82,6 +87,7 @@ const consumables = [
     updatedOn: "2025-05-11",
     location: 2,
     status: "Used",
+    amcVendor: "SmartSource",
   },
   {
     id: "C007",
@@ -93,6 +99,7 @@ const consumables = [
     updatedOn: "2025-05-09",
     location: 2,
     status: "Vendor",
+    amcVendor: "SupplyHub",
   },
   {
     id: "C008",
@@ -104,6 +111,7 @@ const consumables = [
     updatedOn: "2025-05-10",
     location: 1,
     status: "Unused",
+    amcVendor: "CoreTech",
   },
   {
     id: "C009",
@@ -115,6 +123,7 @@ const consumables = [
     updatedOn: "2025-05-12",
     location: 2,
     status: "Used",
+    amcVendor: "NeoVendors",
   },
   {
     id: "C010",
@@ -126,6 +135,7 @@ const consumables = [
     updatedOn: "2025-05-11",
     location: 1,
     status: "Vendor",
+    amcVendor: "InfoLine",
   },
   {
     id: "C011",
@@ -137,6 +147,7 @@ const consumables = [
     updatedOn: "2025-05-13",
     location: 2,
     status: "Unused",
+    amcVendor: "TechNova",
   },
   {
     id: "C012",
@@ -148,6 +159,7 @@ const consumables = [
     updatedOn: "2025-05-10",
     location: 1,
     status: "Used",
+    amcVendor: "ElectroMart",
   },
   {
     id: "C013",
@@ -159,6 +171,7 @@ const consumables = [
     updatedOn: "2025-05-09",
     location: 2,
     status: "Unused",
+    amcVendor: "GigaSupplies",
   },
   {
     id: "C014",
@@ -170,6 +183,7 @@ const consumables = [
     updatedOn: "2025-05-13",
     location: 1,
     status: "Vendor",
+    amcVendor: "ByteWare",
   },
   {
     id: "C015",
@@ -181,6 +195,7 @@ const consumables = [
     updatedOn: "2025-05-08",
     location: 2,
     status: "Used",
+    amcVendor: "MegaParts",
   },
   {
     id: "C016",
@@ -192,6 +207,7 @@ const consumables = [
     updatedOn: "2025-05-11",
     location: 1,
     status: "Unused",
+    amcVendor: "SmartSource",
   },
   {
     id: "C017",
@@ -203,6 +219,7 @@ const consumables = [
     updatedOn: "2025-05-12",
     location: 1,
     status: "Vendor",
+    amcVendor: "SupplyHub",
   },
   {
     id: "C018",
@@ -214,6 +231,7 @@ const consumables = [
     updatedOn: "2025-05-10",
     location: 2,
     status: "Used",
+    amcVendor: "CoreTech",
   },
   {
     id: "C019",
@@ -225,6 +243,7 @@ const consumables = [
     updatedOn: "2025-05-09",
     location: 1,
     status: "Unused",
+    amcVendor: "NeoVendors",
   },
   {
     id: "C020",
@@ -236,6 +255,7 @@ const consumables = [
     updatedOn: "2025-05-13",
     location: 2,
     status: "Vendor",
+    amcVendor: "InfoLine",
   },
 ];
 
@@ -254,7 +274,7 @@ const ConsumableList = () => {
       Object.entries(filterData).every(([key, value]) => {
         if (!value) return true;
         if (["updatedOn", "status"].includes(key)) return item[key] === value;
-        if (["location", "qty", "updatedQty"].includes(key))
+        if (["location", "qty"].includes(key))
           return item[key] === Number(value);
 
         return item[key]?.toLowerCase().includes(value.toLowerCase());
@@ -277,12 +297,20 @@ const ConsumableList = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Consumables List</h2>
-        <button
-          onClick={() => navigate("/consumables/new")}
-          className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-        >
-          <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables
-        </button>
+        <div className="space-x-4">
+          <button
+            onClick={() => navigate("/consumables/new")}
+            className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
+          >
+            <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables
+          </button>
+          <button
+            onClick={() => navigate("/consumables/new")}
+            className="bg-yellow-500 hover:bg-amber-400 text-white p-2 rounded-lg cursor-pointer"
+          >
+            <SquarePen className="inline-block size-5 mb-1 mr-1" /> Mark Vendor
+          </button>
+        </div>
       </div>
 
       {/* Consumables Table */}
@@ -290,7 +318,7 @@ const ConsumableList = () => {
         <table className="w-full text-sm border-collapse">
           <thead className="bg-gray-100">
             <tr>
-              <th className="w-[4%] border px-3 py-2 text-left">#</th>
+              <th className="w-[4%] border px-3 py-2">#</th>
               <th className="w-[12%] border px-3 py-2 text-left">Category</th>
               <th className="w-[20%] border px-3 py-2 text-left">
                 Specifications
@@ -298,9 +326,7 @@ const ConsumableList = () => {
               <th className="w-[8%] border px-3 py-2 text-left">Quantity</th>
               <th className="w-[15%] border px-3 py-2 text-left">Updated By</th>
               <th className="w-[10%] border px-3 py-2 text-left">Updated On</th>
-              <th className="w-[12%] border px-3 py-2 text-left">
-                Updated Quantity
-              </th>
+              <th className="w-[12%] border px-3 py-2 text-left">AMC Vendor</th>
               <th className="w-[10%] border px-3 py-2 text-left">Status</th>
               <th className="w-[9%] border px-3 py-2 text-left">Location</th>
               {/* <th className="border px-3 py-2">Actions</th> */}
@@ -364,12 +390,12 @@ const ConsumableList = () => {
               </td>
               <td className="border p-2">
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Filter..."
                   className="w-full border px-1 py-1 rounded"
-                  value={filterData.updatedQty}
+                  value={filterData.amcVendor}
                   onChange={(e) =>
-                    setFilterData({ ...filterData, updatedQty: e.target.value })
+                    setFilterData({ ...filterData, amcVendor: e.target.value })
                   }
                 />
               </td>
@@ -424,7 +450,7 @@ const ConsumableList = () => {
                 <td className="border px-3 py-2">
                   {format(consumable.updatedOn, "dd/MM/yyyy")}
                 </td>
-                <td className="border px-3 py-2">{consumable.updatedQty}</td>
+                <td className="border px-3 py-2">{consumable.amcVendor}</td>
                 <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded ${
@@ -441,15 +467,6 @@ const ConsumableList = () => {
                     <span>CRD</span>
                   )}
                 </td>
-
-                {/* <td className="border px-3 py-2">
-                  <button
-                    onClick={() => navigate(`/consumables/edit/${consumable.id}`)}
-                    className="text-gray-600 hover:text-black"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                </td> */}
               </tr>
             ))}
           </tbody>

@@ -17,12 +17,7 @@ const Consumable = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    prevQty: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    currQty: {
+    qty: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

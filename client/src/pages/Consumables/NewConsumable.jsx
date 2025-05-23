@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "../../components";
+import { Input, Select } from "../../components";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
@@ -8,6 +8,11 @@ const initialState = {
   qty: "",
   isUsed: false,
   amcVendor: "",
+  location: "",
+};
+
+const user = {
+  role: "it-head",
 };
 
 function NewConsumable() {
@@ -26,8 +31,11 @@ function NewConsumable() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log({
+      ...formData,
+      location: location === "HRD" ? 1 : 2,
+    });
     setFormData(initialState);
-    console.log(formData);
   };
 
   return (
@@ -72,8 +80,18 @@ function NewConsumable() {
             name="amcVendor"
             value={formData.amcVendor}
             onChange={handleChange}
-            required
           />
+          {user.role === "it-head" && (
+            <Select
+              label="Location"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              options={["HRD", "CRD"]}
+              placeholder="Select Store"
+              required
+            />
+          )}
           <div className="flex flex-row gap-2 justify-between">
             <span className="text-sm text-gray-700">
               Whether the consumable is/are used
