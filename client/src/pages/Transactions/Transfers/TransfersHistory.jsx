@@ -3,6 +3,7 @@ import { statusColors } from "../../../lib/constants";
 import { ChevronLeft, ChevronRight, Eye, Pencil, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const assets = [
   {
@@ -30,24 +31,23 @@ const assets = [
   },
 ];
 
+const initialState = {};
+
 function TransfersHistory() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
+  const [msg, setMsg] = useState("");
+  const [filterData, setFilterData] = useState({});
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterData, rows]);
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Transfers List</h2>
-        <button
-          onClick={() => navigate("/transactions/transfers/new")}
-          className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-        >
-          <Plus className="inline-block size-5 mb-1 mr-1" />
-          Create Transfer
-        </button>
-      </div>
+      <h2 className="text-2xl font-bold">Transfers List</h2>
 
       {/* Transfers Table */}
       <div className="overflow-auto">
@@ -104,6 +104,8 @@ function TransfersHistory() {
           </tbody>
         </table>
       </div>
+
+      {msg && <div className="text-center mt-4 text-red-500">{msg}</div>}
 
       {/* Pagination */}
       <div className="text-right text-sm text-gray-700 space-x-3">

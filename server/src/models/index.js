@@ -73,7 +73,7 @@ export const setupAssociations = async () => {
 
   // Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
   // Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
-  // Transit.belongsTo(User, { foreignKey: "approvedBy", as: "approver" });
+  // Transit.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
 
   User.hasMany(Request, { foreignKey: "requestedBy", as: "requests" });
   User.hasMany(AssetIssuance, { foreignKey: "issuedTo", as: "assetsReceived" });

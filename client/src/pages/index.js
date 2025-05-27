@@ -6,6 +6,7 @@ import NewAsset from "./Assets/NewAsset.jsx";
 import EditAsset from "./Assets/EditAsset.jsx";
 import ConsumableList from "./Consumables/ConsumableList.jsx";
 import NewConsumable from "./Consumables/NewConsumable.jsx";
+import EditConsumable from "./Consumables/EditConsumable.jsx";
 import DisposalHistory from "./Transactions/Disposals/DisposeHistory.jsx";
 import NewDisposal from "./Transactions/Disposals/NewDispose.jsx";
 import NewTransfer from "./Transactions/Transfers/NewTransfer.jsx";
@@ -28,6 +29,7 @@ export {
   EditAsset,
   ConsumableList,
   NewConsumable,
+  EditConsumable,
   DisposalHistory,
   NewDisposal,
   NewTransfer,

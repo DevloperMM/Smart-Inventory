@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { ArrowUpDown, Eye, Pencil, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
 import { PageFooter } from "../../components";
@@ -135,6 +135,7 @@ const AssetList = () => {
   const [msg, setMsg] = useState("");
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
+  const [isSortAsc, setIsSortAsc] = useState(false);
   const [filterData, setFilterData] = useState(initialState);
 
   useEffect(() => {
@@ -142,8 +143,6 @@ const AssetList = () => {
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    setMsg("");
-
     let data = assets.filter((item) =>
       Object.entries(filterData).every(([key, value]) => {
         if (!value) return true;
@@ -154,9 +153,18 @@ const AssetList = () => {
       })
     );
 
-    setMsg(data.length ? "" : "No records found");
+    data.sort((a, b) => {
+      const dateA = new Date(a.stockedOn);
+      const dateB = new Date(b.stockedOn);
+      return isSortAsc ? dateA - dateB : dateB - dateA;
+    });
+
     return data;
-  }, [filterData]);
+  }, [filterData, isSortAsc]);
+
+  useEffect(() => {
+    setMsg(filteredData.length ? "" : "No records found");
+  }, [filteredData]);
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
@@ -177,24 +185,27 @@ const AssetList = () => {
       {/* Assets Table */}
       <div className="overflow-auto">
         <table className="min-w-full text-sm border-collapse">
-          <thead className="bg-gray-100">
-            <tr className="h-12">
+          <thead className="bg-gray-100 text-left">
+            <tr>
               <th className="w-[4%] border px-3 py-2 text-center">#</th>
-              <th className="w-[8%] border px-3 py-2 text-left">Category</th>
-              <th className="w-[18%] border px-3 py-2 text-left">
-                Description
+              <th className="w-[8%] border px-3 py-2">Category</th>
+              <th className="w-[18%] border px-3 py-2">Description</th>
+              <th className="w-[7%] border px-3 py-2">Manufacturer</th>
+              <th className="w-[14%] border px-3 py-2">Serial No</th>
+              <th
+                className="w-[11%] border px-3 py-2 cursor-pointer break-words whitespace-normal"
+                onClick={() => setIsSortAsc(!isSortAsc)}
+              >
+                <span className="flex items-center gap-1 capitalize">
+                  Stocked On <ArrowUpDown className="w-4 h-4" />
+                </span>
               </th>
-              <th className="w-[7%] border px-3 py-2 text-left">
-                Manufacturer
-              </th>
-              <th className="w-[14%] border px-3 py-2 text-left">Serial No</th>
-              <th className="w-[11%] border px-3 py-2 text-left">Stocked On</th>
-              <th className="w-[11%] border px-3 py-2 text-left">Stocked By</th>
-              <th className="w-[11%] border px-3 py-2 text-left">Status</th>
-              <th className="w-[8%] border px-3 py-2 text-left">Location</th>
+              <th className="w-[11%] border px-3 py-2">Stocked By</th>
+              <th className="w-[11%] border px-3 py-2">Status</th>
+              <th className="w-[8%] border px-3 py-2">Location</th>
               <th className="w-[8%] border px-3 py-2 text-center">Actions</th>
             </tr>
-            <tr className="bg-white text-xs h-12">
+            <tr className="bg-white h-fit">
               <td className="border p-2" />
               <td className="border p-2">
                 <input
@@ -204,7 +215,7 @@ const AssetList = () => {
                     setFilterData({ ...filterData, category: e.target.value })
                   }
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 />
               </td>
               <td className="border p-2">
@@ -218,7 +229,7 @@ const AssetList = () => {
                     })
                   }
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 />
               </td>
               <td className="border p-2">
@@ -227,7 +238,7 @@ const AssetList = () => {
                   onChange={(e) =>
                     setFilterData({ ...filterData, mfgBy: e.target.value })
                   }
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 >
                   <option value="">Select</option>
                   <option value="HP">HP</option>
@@ -243,7 +254,7 @@ const AssetList = () => {
                     setFilterData({ ...filterData, serialNo: e.target.value })
                   }
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 />
               </td>
               <td className="border p-2">
@@ -253,7 +264,7 @@ const AssetList = () => {
                   onChange={(e) =>
                     setFilterData({ ...filterData, stockedOn: e.target.value })
                   }
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 />
               </td>
               <td className="border p-2">
@@ -264,7 +275,7 @@ const AssetList = () => {
                     setFilterData({ ...filterData, stockedBy: e.target.value })
                   }
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 />
               </td>
               <td className="border p-2">
@@ -273,7 +284,7 @@ const AssetList = () => {
                   onChange={(e) =>
                     setFilterData({ ...filterData, status: e.target.value })
                   }
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 >
                   <option value="">Select</option>
                   <option value="Available">Available</option>
@@ -289,7 +300,7 @@ const AssetList = () => {
                   onChange={(e) =>
                     setFilterData({ ...filterData, location: e.target.value })
                   }
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                 >
                   <option value="">Select</option>
                   <option value={1}>HRD</option>

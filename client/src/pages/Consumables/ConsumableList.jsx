@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Plus, SquarePen } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  Flag,
+  FlagOff,
+  Pencil,
+  Plus,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
 import { PageFooter } from "../../components";
@@ -26,7 +33,7 @@ const consumables = [
     updatedBy: "John Doe",
     updatedOn: "2025-05-10",
     location: 1,
-    status: "Unused",
+    status: "New",
     amcVendor: "TechNova",
   },
   {
@@ -62,7 +69,7 @@ const consumables = [
     updatedBy: "Alice Green",
     updatedOn: "2025-05-08",
     location: 2,
-    status: "Unused",
+    status: "New",
     amcVendor: "ByteWare",
   },
   {
@@ -74,7 +81,7 @@ const consumables = [
     updatedBy: "Bob Taylor",
     updatedOn: "2025-05-10",
     location: 1,
-    status: "Unused",
+    status: "New",
     amcVendor: "MegaParts",
   },
   {
@@ -110,7 +117,7 @@ const consumables = [
     updatedBy: "John Doe",
     updatedOn: "2025-05-10",
     location: 1,
-    status: "Unused",
+    status: "New",
     amcVendor: "CoreTech",
   },
   {
@@ -146,7 +153,7 @@ const consumables = [
     updatedBy: "John Doe",
     updatedOn: "2025-05-13",
     location: 2,
-    status: "Unused",
+    status: "New",
     amcVendor: "TechNova",
   },
   {
@@ -170,7 +177,7 @@ const consumables = [
     updatedBy: "Jane Smith",
     updatedOn: "2025-05-09",
     location: 2,
-    status: "Unused",
+    status: "New",
     amcVendor: "GigaSupplies",
   },
   {
@@ -206,7 +213,7 @@ const consumables = [
     updatedBy: "John Doe",
     updatedOn: "2025-05-11",
     location: 1,
-    status: "Unused",
+    status: "New",
     amcVendor: "SmartSource",
   },
   {
@@ -242,7 +249,7 @@ const consumables = [
     updatedBy: "Alice Green",
     updatedOn: "2025-05-09",
     location: 1,
-    status: "Unused",
+    status: "New",
     amcVendor: "NeoVendors",
   },
   {
@@ -265,11 +272,14 @@ const ConsumableList = () => {
   const [msg, setMsg] = useState("");
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
+  const [isSortAsc, setIsSortAsc] = useState(false);
   const [filterData, setFilterData] = useState(initialState);
 
-  const filteredData = useMemo(() => {
-    setMsg("");
+  useEffect(() => {
+    setPage(1);
+  }, [filterData, rows]);
 
+  const filteredData = useMemo(() => {
     let data = consumables.filter((item) =>
       Object.entries(filterData).every(([key, value]) => {
         if (!value) return true;
@@ -281,63 +291,66 @@ const ConsumableList = () => {
       })
     );
 
-    setMsg(data.length ? "" : "No records found");
+    data.sort((a, b) => {
+      const dateA = new Date(a.updatedOn);
+      const dateB = new Date(b.updatedOn);
+      return isSortAsc ? dateA - dateB : dateB - dateA;
+    });
+
     return data;
-  }, [filterData]);
+  }, [filterData, isSortAsc]);
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
 
   useEffect(() => {
-    setPage(1);
-  }, [filterData, rows]);
+    setMsg(filteredData.length ? "" : "No records found");
+  }, [filteredData]);
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Consumables List</h2>
-        <div className="space-x-4">
-          <button
-            onClick={() => navigate("/consumables/new")}
-            className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-          >
-            <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables
-          </button>
-          <button
-            onClick={() => navigate("/consumables/new")}
-            className="bg-yellow-500 hover:bg-amber-400 text-white p-2 rounded-lg cursor-pointer"
-          >
-            <SquarePen className="inline-block size-5 mb-1 mr-1" /> Mark Vendor
-          </button>
-        </div>
+        <button
+          onClick={() => navigate("/consumables/new")}
+          className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
+        >
+          <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables
+        </button>
       </div>
 
       {/* Consumables Table */}
       <div className="overflow-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-100">
+        <table className="min-w-full text-sm border-collapse">
+          <thead className="bg-gray-100 text-left">
             <tr>
               <th className="w-[4%] border px-3 py-2">#</th>
-              <th className="w-[12%] border px-3 py-2 text-left">Category</th>
-              <th className="w-[20%] border px-3 py-2 text-left">
-                Specifications
+              <th className="w-[12%] border px-3 py-2">Category</th>
+              <th className="w-[15%] border px-3 py-2">Specifications</th>
+              <th className="w-[8%] border px-3 py-2">Quantity</th>
+              <th className="w-[15%] border px-3 py-2">Updated By</th>
+              <th
+                className="w-[10%] border px-3 py-2 cursor-pointer break-words whitespace-normal"
+                onClick={() => setIsSortAsc(!isSortAsc)}
+              >
+                <span className="flex items-center gap-1 capitalize">
+                  Updated On <ArrowUpDown className="w-4 h-4" />
+                </span>
               </th>
-              <th className="w-[8%] border px-3 py-2 text-left">Quantity</th>
-              <th className="w-[15%] border px-3 py-2 text-left">Updated By</th>
-              <th className="w-[10%] border px-3 py-2 text-left">Updated On</th>
-              <th className="w-[12%] border px-3 py-2 text-left">AMC Vendor</th>
-              <th className="w-[10%] border px-3 py-2 text-left">Status</th>
-              <th className="w-[9%] border px-3 py-2 text-left">Location</th>
-              {/* <th className="border px-3 py-2">Actions</th> */}
+              <th className="w-[12%] border px-3 py-2">AMC Vendor</th>
+              <th className="w-[10%] border px-3 py-2">Status</th>
+              <th className="w-[9%] border px-3 py-2">Location</th>
+              <th className="w-[7%] border px-3 py-2">Mark</th>
+              <th className="w-[7%] border px-3 py-2">Edit</th>
             </tr>
-            <tr className="bg-white">
+            <tr className="bg-white h-fit">
               <td className="border p-2" />
               <td className="border p-2">
                 <input
                   type="text"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.category}
                   onChange={(e) =>
                     setFilterData({ ...filterData, category: e.target.value })
@@ -348,7 +361,7 @@ const ConsumableList = () => {
                 <input
                   type="text"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.specs}
                   onChange={(e) =>
                     setFilterData({ ...filterData, specs: e.target.value })
@@ -359,7 +372,7 @@ const ConsumableList = () => {
                 <input
                   type="number"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.qty}
                   onChange={(e) =>
                     setFilterData({ ...filterData, qty: e.target.value })
@@ -370,7 +383,7 @@ const ConsumableList = () => {
                 <input
                   type="text"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.updatedBy}
                   onChange={(e) =>
                     setFilterData({ ...filterData, updatedBy: e.target.value })
@@ -381,7 +394,7 @@ const ConsumableList = () => {
                 <input
                   type="date"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 text-xs rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.updatedOn}
                   onChange={(e) =>
                     setFilterData({ ...filterData, updatedOn: e.target.value })
@@ -392,7 +405,7 @@ const ConsumableList = () => {
                 <input
                   type="text"
                   placeholder="Filter..."
-                  className="w-full border px-1 py-1 rounded"
+                  className="w-full border p-1 rounded"
                   value={filterData.amcVendor}
                   onChange={(e) =>
                     setFilterData({ ...filterData, amcVendor: e.target.value })
@@ -402,14 +415,14 @@ const ConsumableList = () => {
               <td className="border p-2">
                 <div className="relative inline-block w-full">
                   <select
-                    className="appearance-none w-full border px-1 py-1 text-xs rounded"
+                    className="appearance-none w-full border p-1 rounded"
                     value={filterData.status}
                     onChange={(e) =>
                       setFilterData({ ...filterData, status: e.target.value })
                     }
                   >
                     <option value="">Select</option>
-                    <option value="Unused">Unused</option>
+                    <option value="New">New</option>
                     <option value="Used">Used</option>
                     <option value="Vendor">Vendor</option>
                   </select>
@@ -419,7 +432,7 @@ const ConsumableList = () => {
               <td className="border p-2">
                 <div className="relative inline-block w-full">
                   <select
-                    className="appearance-none w-full border px-1 py-1 text-xs rounded"
+                    className="appearance-none w-full border p-1 rounded"
                     value={filterData.location}
                     onChange={(e) =>
                       setFilterData({ ...filterData, location: e.target.value })
@@ -432,6 +445,8 @@ const ConsumableList = () => {
                   <ChevronDown className="absolute right-2.5 top-4/9 -translate-y-1/2 pointer-events-none text-black size-4" />
                 </div>
               </td>
+              <td className="border p-2" />
+              <td className="border p-2" />
             </tr>
           </thead>
           <tbody>
@@ -466,6 +481,28 @@ const ConsumableList = () => {
                   ) : (
                     <span>CRD</span>
                   )}
+                </td>
+                <td className="border px-3 py-2 text-center hover:text-black">
+                  {consumable.status !== "New" ? (
+                    <button>
+                      {consumable.status === "Vendor" ? (
+                        <FlagOff size={21} strokeWidth={2} />
+                      ) : (
+                        <Flag size={21} strokeWidth={2} />
+                      )}
+                    </button>
+                  ) : (
+                    <span>&ndash;</span>
+                  )}
+                </td>
+                <td className="border px-3 py-2 text-center hover:text-black">
+                  <button
+                    onClick={() =>
+                      navigate(`/consumables/edit/${consumable.id}`)
+                    }
+                  >
+                    <Pencil size={18} />
+                  </button>
                 </td>
               </tr>
             ))}

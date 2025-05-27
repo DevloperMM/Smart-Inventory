@@ -4,12 +4,12 @@ export const statusColors = {
   Cancelled: "text-gray-600 text-gray-100",
   Pending: "text-yellow-600 bg-yellow-100",
 
-  Available: "text-green-600 bg-green-100",
+  Available: "text-cyan-600 bg-cyan-100",
+  Disposed: "text-green-600 bg-green-100",
   Issued: "text-blue-600 bg-blue-100",
   AMC: "text-yellow-600 bg-yellow-100",
-  Disposed: "text-cyan-600 bg-cyan-100",
-  Sold: "text-gray-600 bg-gray-200",
-  Lost: "text-red-600 bg-red-100",
+  Sold: "text-red-600 bg-red-100",
+  Lost: "text-gray-600 bg-gray-200",
 
   Store: "text-green-600 bg-green-100",
   AMC: "text-yellow-600 bg-yellow-100",
@@ -24,7 +24,7 @@ export const statusColors = {
   Consumed: "text-pink-600 bg-pink-100",
   Integrated: "text-indigo-600 bg-indigo-100",
 
-  Unused: "text-green-600 bg-green-100",
+  New: "text-green-600 bg-green-100",
   Vendor: "text-yellow-600 bg-yellow-100",
   Used: "text-indigo-600 bg-indigo-100",
 };

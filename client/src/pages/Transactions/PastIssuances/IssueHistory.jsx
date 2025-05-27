@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IssuedAssets, IssuedConsumables } from "../../../components";
 
 function IssueHistory() {

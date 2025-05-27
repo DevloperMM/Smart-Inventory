@@ -30,7 +30,7 @@ function DisposedConsumables() {
     <div className="overflow-auto space-y-5">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Disposals List</h2>
+        <h2 className="text-2xl font-bold">All Consumable Disposes</h2>
         <button
           onClick={() => navigate("/transactions/disposals/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"

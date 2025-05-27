@@ -1,5 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
-import { ArrowUpDown, Search, ChevronDown, Plus } from "lucide-react";
+import {
+  ArrowUpDown,
+  Search,
+  ChevronDown,
+  Plus,
+  Pencil,
+  Trash,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
 import { PageFooter } from "../../components";
@@ -203,8 +210,6 @@ export default function Dashbaord() {
   }, [search, status, rows]);
 
   const filteredData = useMemo(() => {
-    setMsg("");
-
     let data = storeData.filter(
       (item) =>
         item.category.toLowerCase().includes(search.toLowerCase()) &&
@@ -228,10 +233,12 @@ export default function Dashbaord() {
       return 0;
     });
 
-    if (data.length === 0) setMsg("No such records found");
-
     return data;
   }, [search, status, sortCriteria]);
+
+  useEffect(() => {
+    setMsg(filteredData.length ? "" : "No records found");
+  }, [filteredData]);
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
@@ -245,6 +252,12 @@ export default function Dashbaord() {
         return [...prev, { field, asc: true }];
       }
     });
+  };
+
+  const handleAlert = {
+    edit: (id) => {},
+    delete: (id) => {},
+    input: () => {},
   };
 
   return (
@@ -279,7 +292,7 @@ export default function Dashbaord() {
           />
         </div>
 
-        <div className="relative inline-block w-36">
+        <div className="relative inline-block w-38">
           <select
             className="appearance-none w-full border border-gray-300 bg-white rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1"
             value={status}
@@ -300,30 +313,30 @@ export default function Dashbaord() {
         <table className="w-full table-fixed text-sm text-left">
           <thead className="bg-gray-100 text-gray-700 font-medium">
             <tr>
-              <th className="w-[4%] px-4 py-3 border-r text-center">#</th>
+              <th className="w-[5%] px-4 py-3 border-r text-center">#</th>
               <th
-                className="w-[20%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                className="w-[15%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
                 onClick={() => toggleSort("type")}
               >
                 <span className="flex items-center gap-1 capitalize">
                   Item type <ArrowUpDown className="w-4 h-4" />
                 </span>
               </th>
-              <th className="w-[20%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[22%] px-4 py-3 border-r break-words whitespace-normal">
                 Category
               </th>
               <th
-                className="w-[16%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                className="w-[15%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
                 onClick={() => toggleSort("storeId")}
               >
                 <span className="flex items-center gap-1 capitalize">
                   Store <ArrowUpDown className="w-4 h-4" />
                 </span>
               </th>
-              <th className="w-[12%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[11%] px-4 py-3 border-r break-words whitespace-normal">
                 Store Qty
               </th>
-              <th className="w-[12%] px-4 py-3 border-r break-words whitespace-normal">
+              <th className="w-[16%] px-4 py-3 border-r break-words whitespace-normal">
                 Alert Qty
               </th>
               <th className="w-[16%] px-4 py-3 break-words whitespace-normal">
@@ -350,7 +363,28 @@ export default function Dashbaord() {
                   {item.activeQty}
                 </td>
                 <td className="px-4 py-3 border-r break-words whitespace-normal">
-                  {item.alertQty}
+                  <div className="flex justify-between">
+                    <input
+                      name={item.id}
+                      value={item.alertQty}
+                      readOnly
+                      className="w-12 pl-2 rounded-lg outline-none"
+                    />
+                    <div className="space-x-3">
+                      <button
+                        onClick={() => handleAlert.edit(item.id)}
+                        className="text-gray-500 hover:text-black"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleAlert.delete(item.id)}
+                        className="text-gray-500 hover:text-black"
+                      >
+                        <Trash size={18} />
+                      </button>
+                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3 break-words whitespace-normal">
                   <span

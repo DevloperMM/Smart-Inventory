@@ -8,6 +8,7 @@ import {
   Dashbaord,
   DisposalHistory,
   EditAsset,
+  EditConsumable,
   IssueHistory,
   LoginPage,
   NewAsset,
@@ -66,6 +67,10 @@ function App() {
                         <Route
                           path="/consumables/new"
                           element={<NewConsumable />}
+                        />
+                        <Route
+                          path="/consumables/edit/:id"
+                          element={<EditConsumable />}
                         />
 
                         {/* Transactions */}

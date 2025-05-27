@@ -40,7 +40,7 @@ const Transit = db.define(
         key: "id",
       },
     },
-    approvedBy: {
+    decidedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",

@@ -12,6 +12,7 @@ import DisposedAssets from "./DisposedAssets.jsx";
 import DisposedConsumables from "./DisposedConsumables.jsx";
 import WelcomeCard from "./WelcomeCard.jsx";
 import PageFooter from "./PageFooter.jsx";
+import Modal from "./Modal.jsx";
 
 export {
   Sidebar,
@@ -28,4 +29,5 @@ export {
   DisposedConsumables,
   WelcomeCard,
   PageFooter,
+  Modal,
 };

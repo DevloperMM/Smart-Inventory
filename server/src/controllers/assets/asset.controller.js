@@ -100,18 +100,14 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
   }
 
   for (const key in assetDetails) {
-    if (assetDetails[key] == null || assetDetails[key] === "")
+    if (
+      typeof key === "string" &&
+      (assetDetails[key] == null || assetDetails[key].trim() === "")
+    )
       throw new ApiError(400, `Missing or invalid value: ${key}`);
   }
 
   try {
-    const isNotValid = Object.values(assetDetails).some((field) => {
-      if (typeof field === "string") return field.trim() === "";
-      return field === null || field === undefined;
-    });
-
-    if (isNotValid) throw new ApiError(400, "Please fill the marked fields");
-
     const asset = await Asset.create({
       ...assetDetails,
       ...(!req.storeId && { storeId: req.user.storeManaging }),
@@ -196,7 +192,7 @@ export const updateAssetDetails = asyncHandler(async (req, res) => {
       if (allowedFields.includes(key)) {
         asset[key] = updateDetails[key];
       } else {
-        throw new ApiError(400, "Details with asset identity can't be changed");
+        throw new ApiError(400, `You can not change ${key} of asset`);
       }
     });
 

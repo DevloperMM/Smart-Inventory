@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { statusColors } from "../lib/constants";
 import { ChevronLeft, ChevronRight, Eye, Plus } from "lucide-react";
 import { format } from "date-fns";
@@ -8,6 +8,7 @@ const disposedAssets = [
   {
     id: 1,
     category: "Laptop",
+    condition: "Retired",
     equipNo: "DL123456",
     raisedBy: "John Doe",
     raisedOn: "2025-04-10",
@@ -18,6 +19,7 @@ const disposedAssets = [
     id: 2,
     category: "Monitor",
     equipNo: "MN454R23",
+    condition: "Obsolete",
     raisedBy: "Kesh Pandey",
     raisedOn: "2025-03-07",
     approvedBy: "Bob Smith",
@@ -36,7 +38,7 @@ function DisposedAssets() {
     <div className="overflow-auto space-y-5">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Disposals List</h2>
+        <h2 className="text-2xl font-bold">All Asset Disposes</h2>
         <button
           onClick={() => navigate("/transactions/disposals/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
@@ -58,9 +60,9 @@ function DisposedAssets() {
             <th className="border-r border-gray-300 p-3">Raised On</th>
             <th className="border-r border-gray-300 p-3">Status</th>
             <th className="border-r border-gray-300 p-3">Approved By</th>
-            <th className="border-r border-gray-300 p-3">Approved On</th>
-            <th className="border-r border-gray-300 p-3">View</th>
             <th className="border-r border-gray-300 p-3">Action</th>
+            <th className="border-r border-gray-300 p-3 text-center">Info</th>
+            {/* Info: Approved On, soldBy, soldOn */}
           </tr>
         </thead>
         <tbody>
@@ -69,23 +71,10 @@ function DisposedAssets() {
               <td className="border-r border-gray-300 p-3">{index + 1}</td>
               <td className="border-r border-gray-300 p-3">{item.category}</td>
               <td className="border-r border-gray-300 p-3">{item.equipNo}</td>
+              <td className="border-r border-gray-300 p-3">{item.condition}</td>
               <td className="border-r border-gray-300 p-3">{item.raisedBy}</td>
               <td className="border-r border-gray-300 p-3">
                 {format(item.raisedOn, "dd/MM/yyyy")}
-              </td>
-              <td className="border-r border-gray-300 p-3">
-                {item.approvedBy || "-"}
-              </td>
-              <td className="border-r border-gray-300 p-3">
-                {item.approvedOn ? format(item.approvedOn, "dd/MM/yyyy") : "-"}
-              </td>
-              <td className="border-r border-gray-300 p-3">
-                <button
-                  onClick={() => navigate(`/assets/${item.id}`)}
-                  className="text-gray-600 hover:text-black text-center"
-                >
-                  <Eye size={20} />
-                </button>
               </td>
               <td className="border-r border-gray-300 p-3">
                 <span
@@ -97,12 +86,23 @@ function DisposedAssets() {
                 </span>
               </td>
               <td className="border-r border-gray-300 p-3">
-                <button className="w-fit bg-red-400 py-1.5 px-2.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400">
-                  {item.status === "Disposed" ? (
-                    <span>Disposed</span>
-                  ) : (
+                {item.approvedBy || "-"}
+              </td>
+              <td className="border-r border-gray-300 p-3">
+                <button
+                  disabled={item.status === "Sold"}
+                  className="w-fit bg-red-400 py-1.5 px-2.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
+                >
+                  {item.status === "Pending" ? (
                     <span>Sell out</span>
+                  ) : (
+                    <span>N/A</span>
                   )}
+                </button>
+              </td>
+              <td className="border-r border-gray-300 p-3 text-center">
+                <button className="text-gray-600 hover:text-black">
+                  <Eye size={20} />
                 </button>
               </td>
             </tr>
