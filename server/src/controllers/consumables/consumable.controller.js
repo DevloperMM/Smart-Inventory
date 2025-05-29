@@ -5,9 +5,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getAllConsumables = asyncHandler(async (req, res) => {
   try {
-    const consumables = await Consumable.findAll({
-      order: [["updatedOn", "DESC"]],
-    });
+    const consumables = await Consumable.findAll({});
 
     if (consumables.length <= 0)
       throw new ApiError(404, "No consumables found");
@@ -21,11 +19,7 @@ export const getAllConsumables = asyncHandler(async (req, res) => {
 });
 
 export const addConsumableInStore = asyncHandler(async (req, res) => {
-  const { category, specs, qty, storeId, amcVendor = "" } = req.body;
-
-  const status = req.body.status.toLowerCase();
-  if (!(status && ["used", "unused", "vendor"].includes(status)))
-    throw new ApiError(400, "You must provide the relevant status");
+  const { category, specs, qty, storeId, isUsed } = req.body;
 
   if (!(category.trim() && specs.trim() && qty))
     throw new ApiError(400, "Please fill the marked fields");
@@ -37,11 +31,10 @@ export const addConsumableInStore = asyncHandler(async (req, res) => {
     const consumable = await Consumable.create({
       category: category.toLowerCase(),
       specs,
-      qty,
       storeId: req.user.storeManaging || storeId,
       updatedBy: req.user.id,
-      amcVendor,
-      status,
+      updatedOn: new Date(),
+      ...(isUsed ? (usedQty += qty) : (newQty += qty)),
     });
 
     if (!consumable)
@@ -95,67 +88,3 @@ export const editConsumable = asyncHandler(async (req, res) => {
     throw new ApiError(err?.statusCode || 500, err?.message);
   }
 });
-
-export const markToVendor = asyncHandler(async (req, res) => {
-  const { consumableId } = req.params;
-  const { qty, amcVendor } = req.body;
-
-  try {
-    const consumable = await Consumable.findByPk(consumableId);
-    if (!consumable) throw new ApiError(400, "No such consumable found");
-
-    if (consumable.status === "new")
-      throw new ApiError(
-        400,
-        "These consumables are not eligible to mark vendor"
-      );
-
-    if (consumable.status === "vendor")
-      throw new ApiError(400, "You can mark your store consumables only");
-
-    if (!amcVendor && !consumable.amcVendor)
-      throw new ApiError(400, "Please provide vendor details to avail AMC");
-
-    if (qty <= 0 || qty > consumable.qty)
-      throw new ApiError(400, "Please provide valid qty to mark vendor");
-
-    let resultConsumable;
-
-    const existingVendorConsumable = await Consumable.findOne({
-      where: {
-        category: consumable.category,
-        specs: consumable.specs,
-        amcVendor,
-        storeId: consumable.storeId,
-        status: "vendor",
-      },
-    });
-
-    if (existingVendorConsumable) {
-      existingVendorConsumable.qty += qty;
-      existingVendorConsumable.updatedBy = req.user.id;
-      existingVendorConsumable.updatedOn = new Date();
-      await existingVendorConsumable.save();
-      resultConsumable = existingVendorConsumable;
-    } else {
-      resultConsumable = await Consumable.create({
-        ...consumable.toJSON(),
-        qty,
-        updatedBy: req.user.id,
-        updatedOn: new Date(),
-        amcVendor,
-        status: "vendor",
-      });
-    }
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, resultConsumable, "Marked to vendor !!"));
-  } catch (err) {
-    throw new ApiError(err.statusCode || 500, err?.message);
-  }
-});
-
-export const unmarkFromVendor = asyncHandler(async (req, res) => {});
-
-export const receiveFromVendor = asyncHandler(async (req, res) => {});

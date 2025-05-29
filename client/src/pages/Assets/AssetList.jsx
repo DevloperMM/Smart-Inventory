@@ -36,7 +36,7 @@ const assets = [
     serialNo: "HP404N-ZY6543",
     stockedOn: "2023-12-22",
     stockedBy: "Ali Khan",
-    status: "AMC",
+    status: "Maintenance",
     location: 1,
   },
   {
@@ -80,7 +80,7 @@ const assets = [
     serialNo: "CIS2960-AB2233",
     stockedOn: "2024-08-10",
     stockedBy: "John Doe",
-    status: "AMC",
+    status: "Maintenance",
     location: 1,
   },
   {
@@ -289,7 +289,8 @@ const AssetList = () => {
                   <option value="">Select</option>
                   <option value="Available">Available</option>
                   <option value="Issued">Issued</option>
-                  <option value="AMC">AMC</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="InTransit">InTransit</option>
                   <option value="Disposed">Disposed</option>
                   <option value="Sold">Sold</option>
                 </select>

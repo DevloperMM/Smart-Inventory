@@ -2,6 +2,34 @@ import { Eye, Pencil } from "lucide-react";
 import { statusColors } from "../lib/constants.js";
 import { format } from "date-fns";
 
+const assetIssuances = [
+  {
+    id: 2,
+    requestId: 9,
+    assetId: 5,
+    equipNo: "9080007458",
+    issuedBy: 1,
+    issuedTo: 1,
+    handledBy: null,
+    info: null,
+    status: "issued",
+    createdAt: "2025-05-22T06:47:43.218Z",
+    updatedAt: "2025-05-22T06:47:43.218Z",
+    deletedAt: null,
+    issuer: {
+      name: "System Admin",
+      role: "admin",
+      storeManaging: 0,
+    },
+    recipient: {
+      name: "System Admin",
+      role: "admin",
+      storeManaging: 0,
+    },
+    handler: null,
+  },
+];
+
 const assets = [
   {
     id: 1,

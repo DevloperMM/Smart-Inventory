@@ -75,12 +75,6 @@ function NewConsumable() {
             onChange={handleChange}
             required
           />
-          <Input
-            label="AMC Vendor"
-            name="amcVendor"
-            value={formData.amcVendor}
-            onChange={handleChange}
-          />
           {user.role === "it-head" && (
             <Select
               label="Location"

@@ -7,20 +7,22 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
     console.log({ email, password });
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: `url('/side.jpg')` }}
-    >
-      <div className="rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden backdrop-blur-sm bg-blue-300/30">
+    <div className="min-h-screen grid place-items-center">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_rgba(251,191,36,0.3)_0%,_rgba(245,158,11,0.2)_45%,_rgba(0,0,0,0.1)_100%)]" />
+        </div>
+      </div>
+
+      <div className="rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden backdrop-blur-xs bg-white/10">
         {/* Login Form */}
         <div className="py-10 px-14">
-          <h2 className="text-3xl text-white/75 font-bold text-center mb-8 underline underline-offset-8">
-            IT Store Login
+          <h2 className="text-3xl text-amber-600 text-center font-bold mb-8 underline underline-offset-8">
+            Inventory Login
           </h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
@@ -56,9 +58,9 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-1/2 mx-auto block bg-cyan-500/75 text-white py-2 rounded-lg hover:bg-cyan-600 transition"
+              className="w-1/3 mx-auto block bg-gray-500/75 text-white py-2 rounded-lg hover:bg-gray-600 transition"
             >
-              Login
+              Submit
             </button>
           </form>
         </div>

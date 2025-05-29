@@ -1,12 +1,5 @@
 import { WelcomeCard } from "../components";
-import {
-  Boxes,
-  ClipboardCheck,
-  FileText,
-  PackageCheck,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { Boxes, ClipboardCheck, PackageCheck, Users } from "lucide-react";
 
 function Welcome() {
   return (
@@ -16,7 +9,7 @@ function Welcome() {
           Welcome Back
         </h1>
         <p className="text-gray-600 text-center mb-6">
-          Manage and oversee the entire IT Inventory System from one place.
+          Manage and oversee the entire IT Inventory System from one place
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

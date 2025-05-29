@@ -17,7 +17,11 @@ const Consumable = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    qty: {
+    newQty: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    usedQty: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -37,14 +41,6 @@ const Consumable = db.define(
         model: "Users",
         key: "id",
       },
-    },
-    amcVendor: {
-      type: DataTypes.STRING,
-    },
-    status: {
-      // Unused, Used, Vendor
-      type: DataTypes.STRING,
-      allowNull: false,
     },
   },
   { paranoid: true, timestamps: true, createdAt: false, updatedAt: false }

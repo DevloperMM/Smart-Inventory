@@ -12,7 +12,7 @@ export const statusColors = {
   Lost: "text-gray-600 bg-gray-200",
 
   Store: "text-green-600 bg-green-100",
-  AMC: "text-yellow-600 bg-yellow-100",
+  Maintenance: "text-yellow-600 bg-yellow-100",
 
   InStock: "text-green-600 bg-green-100",
   LowStock: "text-yellow-600 bg-yellow-100",

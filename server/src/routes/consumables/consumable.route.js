@@ -5,7 +5,6 @@ import {
   addConsumableInStore,
   editConsumable,
   getAllConsumables,
-  markToVendor,
 } from "../../controllers/consumables/consumable.controller.js";
 
 const router = Router();
@@ -25,11 +24,6 @@ router
 
 router
   .route("/:consumableId")
-  .post(
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    markToVendor
-  )
   .patch(
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),
