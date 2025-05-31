@@ -24,6 +24,7 @@ const Consumable = db.define(
     usedQty: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     storeId: {
       type: DataTypes.INTEGER,

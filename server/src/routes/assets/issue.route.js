@@ -4,6 +4,7 @@ import isPermitted from "../../middlewares/role.middleware.js";
 import {
   getAllAssetIssuances,
   getAssetIssuancesByAssetId,
+  getUnissuedAssets,
   handleIssuedAsset,
   issueAssetForRequest,
 } from "../../controllers/assets/issue.controller.js";
@@ -23,15 +24,23 @@ router
     issueAssetForRequest
   );
 
+router
+  .route("/assets/filter/:equipNo")
+  .get(
+    verifyAuth,
+    isPermitted("admin", "store-manager", "it-head"),
+    getUnissuedAssets
+  );
+
 router.get(
-  "/assets/:assetId",
+  "/assets/a/:assetId",
   verifyAuth,
   isPermitted("admin", "it-head", "store-manager"),
   getAssetIssuancesByAssetId
 );
 
 router.patch(
-  "/assets/:assetIssueId",
+  "/assets/i/:assetIssueId",
   verifyAuth,
   isPermitted("admin", "it-head", "store-manager"),
   handleIssuedAsset

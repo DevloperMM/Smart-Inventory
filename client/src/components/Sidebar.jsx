@@ -21,7 +21,7 @@ function Sidebar() {
     }`;
 
   return (
-    <aside className="min-h-screen w-56 shadow-md p-4 text-gray-50 bg-amber-700">
+    <aside className="min-h-screen shadow-md p-4 text-gray-50 bg-amber-700">
       <div className="mb-4 text-center pb-4 border-b-2">
         <Link to="/user/profile">
           <img

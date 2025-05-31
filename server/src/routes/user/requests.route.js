@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 router
-  .route("/requests")
+  .route("/")
   .post(
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager", "user"),

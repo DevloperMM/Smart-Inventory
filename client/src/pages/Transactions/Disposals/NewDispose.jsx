@@ -51,7 +51,6 @@ function NewDispose() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormData(initialState);
     console.log(formData);
   };
 

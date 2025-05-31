@@ -23,6 +23,8 @@ import {
   Welcome,
 } from "./pages";
 
+import TestPage1 from "./pages/Test/TestPage1";
+
 function App() {
   const authUser = true;
 
@@ -47,6 +49,7 @@ function App() {
                     <main className="flex-1 p-4 overflow-x-auto bg-gray-100">
                       <Routes>
                         <Route path="/" element={<Welcome />} />
+                        <Route path="/test1" element={<TestPage1 />} />
                         <Route path="/dashboard" element={<Dashbaord />} />
 
                         {/* Assets */}

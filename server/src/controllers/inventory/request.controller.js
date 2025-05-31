@@ -99,8 +99,8 @@ export const cancelRequest = asyncHandler(async (req, res) => {
   }
 });
 
-// Approve or Reject request
-export const decideRequest = asyncHandler(async (req, res) => {
+// Approve or Reject asset request
+export const decideAssetRequest = asyncHandler(async (req, res) => {
   const { status, decisionInfo } = req.body;
   const { requestId } = req.params;
 
@@ -113,6 +113,11 @@ export const decideRequest = asyncHandler(async (req, res) => {
 
     if (!["approved", "rejected"].includes(status.toLowerCase()))
       throw new ApiError(400, "The request can only be approved or rejected");
+
+    if (!decisionInfo)
+      throw new ApiError(
+        "Provide reason to cancel request for future reference"
+      );
 
     request.decidedBy = req.user.id;
     request.decisionInfo = decisionInfo;
@@ -127,6 +132,43 @@ export const decideRequest = asyncHandler(async (req, res) => {
           200,
           { ...request.dataValues, decider: req.user },
           "Request decided !!"
+        )
+      );
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+// Reject consumable request
+export const rejectConsumableRequest = asyncHandler(async (req, res) => {
+  const { decisionInfo } = req.body || {};
+  const { requestId } = req.params;
+
+  try {
+    const request = await Request.findByPk(requestId);
+    if (!request) throw new ApiError(404, "No such request found");
+
+    if (request.status !== "pending")
+      throw new ApiError(400, "Only pending requests can be decided");
+
+    if (!decisionInfo)
+      throw new ApiError(
+        "Provide reason to cancel request for future reference"
+      );
+
+    request.decidedBy = req.user.id;
+    request.decisionInfo = decisionInfo;
+    request.status = "rejected";
+
+    await request.save({ validate: true });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { ...request.toJSON(), decider: req.user },
+          "Request Rejected !!"
         )
       );
   } catch (err) {

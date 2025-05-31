@@ -1,4 +1,4 @@
-import { Asset, AssetIssuance } from "../../models/index.js";
+import { Asset } from "../../models/index.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
@@ -46,35 +46,6 @@ export const getAssetsByFilter = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, assets, "Categories fetched !!"));
-  } catch (err) {
-    throw new ApiError(err.statusCode || 500, err?.message);
-  }
-});
-
-export const getAssetByEquipNo = asyncHandler(async (req, res) => {
-  const { equipNo } = req.params;
-
-  try {
-    const issuance = await AssetIssuance.findOne({
-      where: { equipNo },
-      include: [{ model: Asset, as: "asset" }],
-    });
-
-    if (!issuance)
-      throw new ApiError(
-        404,
-        "This equipment number is not issued to any asset yet"
-      );
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          issuance.asset,
-          "Asset fetched from equipment number !!"
-        )
-      );
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
@@ -208,3 +179,32 @@ export const updateAssetDetails = asyncHandler(async (req, res) => {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
 });
+
+// export const getAssetByEquipNo = asyncHandler(async (req, res) => {
+//   const { equipNo } = req.params;
+
+//   try {
+//     const issuance = await AssetIssuance.findOne({
+//       where: { equipNo },
+//       include: [{ model: Asset, as: "asset" }],
+//     });
+
+//     if (!issuance)
+//       throw new ApiError(
+//         404,
+//         "This equipment number is not issued to any asset yet"
+//       );
+
+//     return res
+//       .status(200)
+//       .json(
+//         new ApiResponse(
+//           200,
+//           issuance.asset,
+//           "Asset fetched from equipment number !!"
+//         )
+//       );
+//   } catch (err) {
+//     throw new ApiError(err.statusCode || 500, err?.message);
+//   }
+// });

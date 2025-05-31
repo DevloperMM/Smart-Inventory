@@ -14,6 +14,10 @@ export const setupAssociations = async () => {
   Asset.belongsTo(User, { foreignKey: "stockedBy", as: "storeKeeper" });
   Asset.hasMany(AssetIssuance, { foreignKey: "assetId", as: "assetIssuances" });
   Asset.hasMany(AssetDisposal, { foreignKey: "assetId", as: "assetDisposal" });
+  Asset.hasMany(ConsumableIssuance, {
+    foreignKey: "toAssetId",
+    as: "consumableIssuances",
+  });
 
   AssetIssuance.belongsTo(Request, { foreignKey: "requestId", as: "request" });
   AssetIssuance.belongsTo(Asset, { foreignKey: "assetId", as: "asset" });
@@ -36,6 +40,10 @@ export const setupAssociations = async () => {
   ConsumableIssuance.belongsTo(Request, {
     foreignKey: "requestId",
     as: "request",
+  });
+  ConsumableIssuance.belongsTo(Asset, {
+    foreignKey: "toAssetId",
+    as: "asset",
   });
   ConsumableIssuance.belongsTo(Consumable, {
     foreignKey: "consumableId",

@@ -5,6 +5,7 @@ import {
   addConsumableInStore,
   editConsumable,
   getAllConsumables,
+  updateQty,
 } from "../../controllers/consumables/consumable.controller.js";
 
 const router = Router();
@@ -24,6 +25,7 @@ router
 
 router
   .route("/:consumableId")
+  .post(verifyAuth, isPermitted("admin", "it-head", "store-manager"), updateQty)
   .patch(
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),

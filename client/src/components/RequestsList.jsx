@@ -21,7 +21,7 @@ const requests = [
     requestedBy: "John Doe",
     requestedOn: "2025-05-01",
     purpose: "New employee onboarding",
-    status: "Approved",
+    status: "Issued",
     decidedOn: "2025-05-03",
     decidedBy: "Arpit Singh",
     decidedComments: "Approved for onboarding",
@@ -40,7 +40,7 @@ const requests = [
     requestedBy: "Raj Patel",
     requestedOn: "2025-05-03",
     purpose: "Replacement of broken keyboard",
-    status: "Approved",
+    status: "Issued",
     decidedOn: "2025-05-04",
     decidedBy: "Samarth Bhardwaj",
     decidedComments: "Request approved",
@@ -198,7 +198,8 @@ const RequestsList = () => {
     const filterOrder = {
       Pending: 0,
       Approved: 1,
-      Rejected: 2,
+      Issued: 2,
+      Rejected: 3,
     };
 
     let data = requests
@@ -306,6 +307,7 @@ const RequestsList = () => {
                   <option value="Pending">Pending</option>
                   <option value="Rejected">Rejected</option>
                   <option value="Approved">Approved</option>
+                  <option value="Issued">Issued</option>
                 </select>
               </td>
               <td className="border p-2">
@@ -397,7 +399,7 @@ const RequestsList = () => {
                         <X strokeWidth={3} size={22} />
                       </button>
                     </div>
-                  ) : request.status !== "Rejected" ? (
+                  ) : ["Approved", "Pending"].includes(request.status) ? (
                     <button
                       disabled={request.status !== "Approved"}
                       onClick={() =>
@@ -407,6 +409,12 @@ const RequestsList = () => {
                     >
                       <span>Issue</span>
                     </button>
+                  ) : request.status === "Issued" ? (
+                    <div className="inline-block w-full bg-emerald-100 text-black text-sm font-semibold px-4 py-1 rounded-xl border-4 border-dashed border-emerald-500 shadow-md relative">
+                      <span className="block text-center tracking-wide">
+                        Issued
+                      </span>
+                    </div>
                   ) : (
                     ""
                   )}

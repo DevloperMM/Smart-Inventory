@@ -184,13 +184,13 @@ const AssetList = () => {
 
       {/* Assets Table */}
       <div className="overflow-auto">
-        <table className="min-w-full text-sm border-collapse">
+        <table className="max-w-screen text-sm border-collapse">
           <thead className="bg-gray-100 text-left">
             <tr>
               <th className="w-[4%] border px-3 py-2 text-center">#</th>
-              <th className="w-[8%] border px-3 py-2">Category</th>
-              <th className="w-[18%] border px-3 py-2">Description</th>
-              <th className="w-[7%] border px-3 py-2">Manufacturer</th>
+              <th className="w-[10%] border px-3 py-2">Category</th>
+              <th className="w-[25%] border px-3 py-2">Description</th>
+              <th className="w-[7%] border px-3 py-2">Brand</th>
               <th className="w-[14%] border px-3 py-2">Serial No</th>
               <th
                 className="w-[11%] border px-3 py-2 cursor-pointer break-words whitespace-normal"
@@ -200,9 +200,8 @@ const AssetList = () => {
                   Stocked On <ArrowUpDown className="w-4 h-4" />
                 </span>
               </th>
-              <th className="w-[11%] border px-3 py-2">Stocked By</th>
-              <th className="w-[11%] border px-3 py-2">Status</th>
-              <th className="w-[8%] border px-3 py-2">Location</th>
+              <th className="w-[12%] border px-3 py-2">Status</th>
+              <th className="w-[9%] border px-3 py-2">Location</th>
               <th className="w-[8%] border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white h-fit">
@@ -268,17 +267,6 @@ const AssetList = () => {
                 />
               </td>
               <td className="border p-2">
-                <input
-                  type="text"
-                  value={filterData.stockedBy}
-                  onChange={(e) =>
-                    setFilterData({ ...filterData, stockedBy: e.target.value })
-                  }
-                  placeholder="Filter..."
-                  className="w-full border p-1 rounded"
-                />
-              </td>
-              <td className="border p-2">
                 <select
                   value={filterData.status}
                   onChange={(e) =>
@@ -327,7 +315,6 @@ const AssetList = () => {
                 <td className="border px-3 py-2">
                   {format(asset.stockedOn, "dd/MM/yyyy")}
                 </td>
-                <td className="border px-3 py-2">{asset.stockedBy}</td>
                 <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded ${

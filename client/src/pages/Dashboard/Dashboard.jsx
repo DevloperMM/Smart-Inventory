@@ -309,60 +309,42 @@ export default function Dashbaord() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto rounded-lg border">
-        <table className="w-full table-fixed text-sm text-left">
-          <thead className="bg-gray-100 text-gray-700 font-medium">
+      <div className="overflow-auto">
+        <table className="w-full text-sm border-collapse">
+          <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="w-[5%] px-4 py-3 border-r text-center">#</th>
+              <th className="w-[5%] border px-4 py-3 text-center">#</th>
               <th
-                className="w-[15%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                className="w-[12%] border px-4 py-3 cursor-pointer"
                 onClick={() => toggleSort("type")}
               >
-                <span className="flex items-center gap-1 capitalize">
-                  Item type <ArrowUpDown className="w-4 h-4" />
-                </span>
+                Item type{" "}
+                <ArrowUpDown size={15} strokeWidth={2.5} className="inline" />
               </th>
-              <th className="w-[22%] px-4 py-3 border-r break-words whitespace-normal">
-                Category
-              </th>
+              <th className="w-[22%] border px-4 py-3">Category</th>
               <th
-                className="w-[15%] px-4 py-3 border-r cursor-pointer break-words whitespace-normal"
+                className="w-[15%] border px-4 py-3"
                 onClick={() => toggleSort("storeId")}
               >
-                <span className="flex items-center gap-1 capitalize">
-                  Store <ArrowUpDown className="w-4 h-4" />
-                </span>
+                Store{" "}
+                <ArrowUpDown size={15} strokeWidth={2.5} className="inline" />
               </th>
-              <th className="w-[11%] px-4 py-3 border-r break-words whitespace-normal">
-                Store Qty
-              </th>
-              <th className="w-[16%] px-4 py-3 border-r break-words whitespace-normal">
-                Alert Qty
-              </th>
-              <th className="w-[16%] px-4 py-3 break-words whitespace-normal">
-                Status
-              </th>
+              <th className="w-[14%] border px-4 py-3">Store Qty</th>
+              <th className="w-[16%] border px-4 py-3">Alert Qty</th>
+              <th className="w-[16%] border px-4 py-3">Status</th>
             </tr>
           </thead>
           <tbody>
             {pageData.map((item, i) => (
               <tr key={i} className="border-t hover:bg-gray-50">
-                <td className="px-4 py-3 border-r text-center">
+                <td className="border px-4 py-3 text-center">
                   {(page - 1) * rows + i + 1}
                 </td>
-                <td className="px-4 py-3 border-r break-words whitespace-normal">
-                  {item.type}
-                </td>
-                <td className="px-4 py-3 border-r break-words whitespace-normal">
-                  {item.category}
-                </td>
-                <td className="px-4 py-3 border-r break-words whitespace-normal">
-                  {item.storeId}
-                </td>
-                <td className="px-4 py-3 border-r break-words whitespace-normal">
-                  {item.activeQty}
-                </td>
-                <td className="px-4 py-3 border-r break-words whitespace-normal">
+                <td className="border px-4 py-3">{item.type}</td>
+                <td className="border px-4 py-3">{item.category}</td>
+                <td className="border px-4 py-3">{item.storeId}</td>
+                <td className="border px-4 py-3">{item.activeQty}</td>
+                <td className="border px-4 py-3">
                   <div className="flex justify-between">
                     <input
                       name={item.id}
@@ -370,7 +352,7 @@ export default function Dashbaord() {
                       readOnly
                       className="w-12 pl-2 rounded-lg outline-none"
                     />
-                    <div className="space-x-3">
+                    <div className="flex space-x-2">
                       <button
                         onClick={() => handleAlert.edit(item.id)}
                         className="text-gray-500 hover:text-black"
@@ -386,7 +368,7 @@ export default function Dashbaord() {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 break-words whitespace-normal">
+                <td className="border px-4 py-3">
                   <span
                     className={`px-2 py-1 rounded font-medium ${
                       statusColors[item.status]

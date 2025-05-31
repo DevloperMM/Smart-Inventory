@@ -1,4 +1,5 @@
 import { Asset, AssetIssuance, Request, User } from "../../models/index.js";
+import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
@@ -42,13 +43,13 @@ export const issueAssetForRequest = asyncHandler(async (req, res) => {
       );
 
     asset.status = "issued";
-    await asset.save();
+    request.status = "issued";
+    await Promise.all[(asset.save(), request.save({ silent: true }))];
 
     return res
       .status(200)
       .json(new ApiResponse(200, issuance, "Asset Issued !!"));
   } catch (err) {
-    console.log(err);
     throw new ApiError(err.statusCode, err?.message);
   }
 });
@@ -56,7 +57,6 @@ export const issueAssetForRequest = asyncHandler(async (req, res) => {
 export const getAllAssetIssuances = asyncHandler(async (req, res) => {
   try {
     const assetIssuances = await AssetIssuance.findAll({
-      order: [["createdAt", "DESC"]],
       include: [
         { model: Asset, as: "asset" },
         { model: User, as: "issuer" },
@@ -126,6 +126,53 @@ export const getAssetsIssuedToMe = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, assets, "Issued assets fetched !!"));
+  } catch (err) {
+    throw new ApiError(err?.statusCode || 500, err?.message);
+  }
+});
+
+export const getUnissuedAssets = asyncHandler(async (req, res) => {
+  const { equipNo } = req.params;
+  const { category } = req.body || {};
+
+  try {
+    const issued = await AssetIssuance.findOne({
+      where: { equipNo },
+      include: [{ model: Asset, as: "asset" }],
+    });
+
+    if (issued)
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, issued.asset, `Asset fetched with ${equipNo} !!`)
+        );
+
+    if (!category) throw new ApiError(404, "Please provide valid category");
+    const isManager = req.user.storeManaging !== 0;
+
+    const unissuedAssets = await Asset.findAll({
+      where: {
+        category,
+        ...(isManager ? { storeId: req.user.storeManaging } : {}),
+        "$assetIssuances.id$": { [Op.is]: null },
+      },
+      include: [
+        {
+          model: AssetIssuance,
+          as: "assetIssuances",
+          required: false,
+          attributes: [],
+        },
+      ],
+    });
+
+    if (!unissuedAssets || unissuedAssets.length <= 0)
+      throw new ApiError(404, "No assets for the given details");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, unissuedAssets, "Records fetched !!"));
   } catch (err) {
     throw new ApiError(err?.statusCode || 500, err?.message);
   }

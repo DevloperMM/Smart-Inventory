@@ -19,22 +19,32 @@ export const getAllConsumables = asyncHandler(async (req, res) => {
 });
 
 export const addConsumableInStore = asyncHandler(async (req, res) => {
-  const { category, specs, qty, storeId, isUsed } = req.body;
+  const { category, specs, qty, storeId } = req.body;
 
-  if (!(category.trim() && specs.trim() && qty))
+  if (!category.trim() || !specs.trim())
     throw new ApiError(400, "Please fill the marked fields");
 
   if (req.user.storeManaging === 0 && !storeId)
     throw new ApiError(400, "You must provide the storeId to add");
 
   try {
+    const isConsumableExist = await Consumable.findOne({
+      where: { category: category.trim(), specs: specs.trim(), storeId },
+    });
+
+    if (isConsumableExist)
+      throw new ApiError(
+        400,
+        "Consumable already exist in store with these specifications"
+      );
+
     const consumable = await Consumable.create({
-      category: category.toLowerCase(),
+      category,
       specs,
+      newQty: qty,
       storeId: req.user.storeManaging || storeId,
       updatedBy: req.user.id,
       updatedOn: new Date(),
-      ...(isUsed ? (usedQty += qty) : (newQty += qty)),
     });
 
     if (!consumable)
@@ -54,9 +64,8 @@ export const addConsumableInStore = asyncHandler(async (req, res) => {
 export const editConsumable = asyncHandler(async (req, res) => {
   const { consumableId } = req.params;
 
-  const { specs, amcVendor } = req.body || {};
-  if (!specs && !amcVendor)
-    throw new ApiError(400, "Please fill the marked fields");
+  const specs = req.body?.specs || "";
+  if (!specs) throw new ApiError(400, "Please provide specifications");
 
   try {
     const consumable = await Consumable.findByPk(consumableId);
@@ -68,18 +77,39 @@ export const editConsumable = asyncHandler(async (req, res) => {
     )
       throw new ApiError(400, "You do not manage this consumable");
 
-    Object.keys(req.body || {}).forEach((key) => {
-      if (!["specs", "amcVendor"].includes(key))
-        throw new ApiError(
-          400,
-          `Either ${key} is invalid property or unchangeable`
-        );
-    });
+    consumable.specs = specs;
+    await consumable.save();
 
-    if (specs) consumable.specs = specs;
-    if (amcVendor) consumable.amcVendor = amcVendor;
+    return res
+      .status(200)
+      .json(new ApiResponse(200, consumable, "Consumable updated !!"));
+  } catch (err) {
+    throw new ApiError(err?.statusCode || 500, err?.message);
+  }
+});
 
-    await consumable.save({ validate: true });
+export const updateQty = asyncHandler(async (req, res) => {
+  const { consumableId } = req.params;
+
+  const { qty, isUsed } = req.body || {};
+  if (!qty) throw new ApiError(400, "Please provide valid quantity");
+
+  try {
+    const consumable = await Consumable.findByPk(consumableId);
+    if (!consumable) throw new ApiError(404, "No such consumable found");
+
+    if (
+      req.user.storeManaging > 0 &&
+      req.user.storeManaging !== consumable.storeId
+    )
+      throw new ApiError(400, "You do not manage this consumable");
+
+    if (isUsed) consumable.usedQty += qty;
+    else consumable.newQty += qty;
+
+    consumable.updatedBy = req.user.id;
+    consumable.updatedOn = new Date();
+    await consumable.save();
 
     return res
       .status(200)

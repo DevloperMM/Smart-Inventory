@@ -308,7 +308,7 @@ const ConsumableList = () => {
               <th className="w-[4%] border px-3 py-2">#</th>
               <th className="w-[12%] border px-3 py-2">Category</th>
               <th className="w-[20%] border px-3 py-2">Specifications</th>
-              <th className="w-[13%] border px-3 py-2">Last Updated By</th>
+              <th className="w-[13%] border px-3 py-2">Updated By</th>
               <th
                 className="w-[8%] border px-3 py-2 cursor-pointer break-words whitespace-normal"
                 onClick={() => setIsSortAsc(!isSortAsc)}
@@ -317,9 +317,9 @@ const ConsumableList = () => {
                   Updated On <ArrowUpDown className="w-4 h-4" />
                 </span>
               </th>
-              <th className="w-[9%] border px-3 py-2">New Stock</th>
-              <th className="w-[9%] border px-3 py-2">Used Stock</th>
-              <th className="w-[9%] border px-3 py-2">Total Stock</th>
+              <th className="w-[9%] border px-3 py-2">New</th>
+              <th className="w-[9%] border px-3 py-2">Used</th>
+              <th className="w-[9%] border px-3 py-2">Total</th>
               <th className="w-[8%] border px-3 py-2">Location</th>
               <th className="w-[8%] border px-3 py-2 text-center">Actions</th>
             </tr>
@@ -406,9 +406,13 @@ const ConsumableList = () => {
                 <td className="border px-3 py-2">
                   {format(consumable.updatedOn, "dd/MM/yyyy")}
                 </td>
-                <td className="border px-3 py-2">{consumable.newStock}</td>
-                <td className="border px-3 py-2">{consumable.oldStock}</td>
-                <td className="border px-3 py-2">
+                <td className="border px-3 py-2 bg-emerald-50">
+                  {consumable.newStock}
+                </td>
+                <td className="border px-3 py-2 bg-indigo-50">
+                  {consumable.oldStock}
+                </td>
+                <td className="border px-3 py-2 bg-yellow-50 font-bold">
                   {consumable.oldStock + consumable.newStock}
                 </td>
                 <td className="border px-3 py-2">
@@ -485,8 +489,8 @@ const ConsumableList = () => {
             {modalType === "increase" && (
               <div className="flex flex-row gap-2 justify-between items-center">
                 <span className="text-sm text-gray-700">
-                  Whether the consumable is/are used
-                  <span className="text-red-500">*</span>
+                  Provided Qunatity is used{" "}
+                  <span className="text-red-500 align-top">*</span>
                 </span>
                 <div className="flex items-center gap-6">
                   <label className="flex items-center gap-1">

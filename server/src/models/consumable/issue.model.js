@@ -58,7 +58,6 @@ const ConsumableIssuance = db.define(
     },
     handleInfo: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     status: {
       // Consumed, Integrated, Returned, Exempted

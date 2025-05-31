@@ -35,7 +35,6 @@ function NewConsumable() {
       ...formData,
       location: location === "HRD" ? 1 : 2,
     });
-    setFormData(initialState);
   };
 
   return (
@@ -86,7 +85,7 @@ function NewConsumable() {
               required
             />
           )}
-          <div className="flex flex-row gap-2 justify-between">
+          {/* <div className="flex flex-row gap-2 justify-between">
             <span className="text-sm text-gray-700">
               Whether the consumable is/are used
               <span className="text-red-500">*</span>
@@ -115,7 +114,7 @@ function NewConsumable() {
                 <span className="text-sm">No</span>
               </label>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="md:col-span-2 flex flex-row justify-between mt-2">
