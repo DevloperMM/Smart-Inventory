@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { KeyRound, LogOut, User } from "lucide-react";
+import { useUserStore } from "../store/useUserStore.js";
 
 function Navbar() {
   const navigate = useNavigate();
-  const logout = () => {
-    console.log("logout");
-  };
+
+  const { logout } = useUserStore();
 
   return (
     <header className="bg-white shadow border-b sticky top-0 z-30">
@@ -39,7 +39,7 @@ function Navbar() {
           </Link>
 
           <button
-            onClick={logout}
+            onClick={() => logout()}
             className="flex items-center text-red-400 hover:text-red-500 cursor-pointer"
           >
             <LogOut className="h-5 w-5 mr-2" />

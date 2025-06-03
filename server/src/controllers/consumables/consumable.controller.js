@@ -19,7 +19,7 @@ export const getAllConsumables = asyncHandler(async (req, res) => {
 });
 
 export const addConsumableInStore = asyncHandler(async (req, res) => {
-  const { category, specs, qty, storeId } = req.body;
+  const { category, specs, qty, storeId } = req.body || {};
 
   if (!category.trim() || !specs.trim())
     throw new ApiError(400, "Please fill the marked fields");

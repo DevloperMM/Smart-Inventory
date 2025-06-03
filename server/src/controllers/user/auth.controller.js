@@ -12,7 +12,7 @@ const options = {
 
 // Login with user details
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
 
   if (!(email && password))
     throw new ApiError(400, "Fill the mentioned details");
@@ -20,6 +20,10 @@ export const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({
     where: { email },
     attributes: { include: ["password"] },
+    include: [
+      { model: User, as: "profileCreator" },
+      { model: User, as: "profileUpdator", required: false },
+    ],
   });
 
   if (!user) throw new ApiError(409, "No such user exist");
@@ -45,17 +49,27 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 // Change old password with new
 export const changePassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword } = req.body || {};
   if (!(oldPassword && newPassword))
     throw new ApiError(400, "Please fill the marked fields");
 
-  const user = await User.findByPk(req.user.id);
-  const isPassValid = await user.isPasswordCorrect(oldPassword);
+  const user = await User.findByPk(req.user.id, {
+    attributes: { include: ["password"] },
+  });
 
+  const isPassValid = await user.isPasswordCorrect(oldPassword);
   if (!isPassValid) throw new ApiError(400, "Invalid current password");
 
   user.password = newPassword;
   await user.save({ validate: true });
 
   return res.status(200).json(new ApiResponse(200, {}, "Password updated !!"));
+});
+
+// Fetch the user profile
+export const getProfile = asyncHandler(async (req, res) => {
+  const user = req.user;
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile fetched"));
 });

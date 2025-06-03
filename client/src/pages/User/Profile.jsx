@@ -1,21 +1,9 @@
-import React from "react";
 import { Input } from "../../components";
 import { format } from "date-fns";
+import { useUserStore } from "../../store/useUserStore.js";
 
 function Profile() {
-  const user = {
-    id: 1,
-    name: "Alice Smith",
-    email: "alice@example.com",
-    empCode: "97268",
-    department: "IT & SAP",
-    role: "store-manager",
-    storeManaging: 1,
-    profileCreatedOn: "2025-03-01T10:30:00Z",
-    profileCreatedBy: "Admin Helpdesk",
-    profileUpdatedOn: "2025-04-10T16:45:00Z",
-    profileUpdatedBy: "Admin Helpdesk",
-  };
+  const { user } = useUserStore();
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-7">
@@ -45,19 +33,23 @@ function Profile() {
           />
           <Input
             label="Profile Created By"
-            value={user.profileCreatedBy}
+            value={user.profileCreator.name}
             disabled
           />
-          <Input
-            label="Profile Updated On"
-            value={format(user.profileUpdatedOn, "dd/MM/yyyy")}
-            disabled
-          />
-          <Input
-            label="Profile Updated By"
-            value={user.profileUpdatedBy}
-            disabled
-          />
+          {user.profileUpdatedOn && (
+            <Input
+              label="Profile Updated On"
+              value={format(user.profileUpdatedOn, "dd/MM/yyyy")}
+              disabled
+            />
+          )}
+          {user.profileUpdator && (
+            <Input
+              label="Profile Updated By"
+              value={user.profileUpdator.name || ""}
+              disabled
+            />
+          )}
         </div>
       </form>
     </div>

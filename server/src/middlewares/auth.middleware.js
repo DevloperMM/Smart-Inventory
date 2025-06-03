@@ -11,10 +11,16 @@ const verifyAuth = asyncHandler(async (req, _res, next) => {
     if (!token) throw new ApiError(401, "No token found !!");
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    const user = await User.findByPk(decodedToken?.id);
+    const user = await User.findByPk(decodedToken?.id, {
+      include: [
+        { model: User, as: "profileCreator" },
+        { model: User, as: "profileUpdator" },
+      ],
+    });
+
     if (!user) throw new ApiError(401, "Token expired !!");
 
-    req.user = user;
+    req.user = user.toJSON();
     next();
   } catch (err) {
     throw new ApiError(401, err?.message || "Token forged !!");

@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { Navbar, PageNotFound, Sidebar } from "./components";
+import { Loader, Navbar, PageNotFound, Sidebar } from "./components";
 import {
   AssetInfo,
   AssetList,
@@ -24,15 +24,23 @@ import {
 } from "./pages";
 
 import TestPage1 from "./pages/Test/TestPage1";
+import { useUserStore } from "./store/useUserStore.js";
+import { useEffect } from "react";
 
 function App() {
-  const authUser = true;
+  const { checkAuth, checkingAuth, user } = useUserStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (checkingAuth) return <Loader />;
 
   return (
     <>
       <Toaster />
       <Routes>
-        {authUser ? (
+        {user ? (
           <>
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route

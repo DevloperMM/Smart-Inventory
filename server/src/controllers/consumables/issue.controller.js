@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import {
   Asset,
   AssetIssuance,
@@ -72,12 +73,10 @@ export const issueConsumableForRequest = asyncHandler(async (req, res) => {
     assetId,
     isUsed = false,
     isIntegrable = false,
-  } = req.body;
+  } = req.body || {};
 
-  if (!requestId) throw new ApiError(404, "No request found for this issuance");
-
-  if (!consumableId || !assetId)
-    throw new ApiError(404, "Either asset or consumable details not provided");
+  if (!consumableId || !assetId || !requestId)
+    throw new ApiError(404, "Please provide necessary details");
 
   try {
     const request = await Request.findByPk(requestId);
@@ -99,8 +98,6 @@ export const issueConsumableForRequest = asyncHandler(async (req, res) => {
       );
 
     if (!asset) throw new ApiError(404, "No such asset found");
-    if (asset.status !== "issued")
-      throw new ApiError(400, "No such asset is issued");
 
     const issuedAsset = await AssetIssuance.findOne({
       where: {
@@ -133,7 +130,7 @@ export const issueConsumableForRequest = asyncHandler(async (req, res) => {
       toAssetId: assetId,
       issuedBy: req.user.id,
       issuedTo: request.requestedBy,
-      status: isIntegrable ? "integrated" : "consumed",
+      status: isIntegrable ? "embedded" : "standalone",
     });
 
     if (!issuance)
@@ -157,7 +154,9 @@ export const issueConsumableForRequest = asyncHandler(async (req, res) => {
 
 export const handleIssuedConsumable = asyncHandler(async (req, res) => {
   const { consumableIssuanceId } = req.params;
-  const { reason, status = "returned" } = req.body;
+  const { reason, status = "returned" } = req.body || {};
+
+  const statusValue = status.toLowerCase();
 
   try {
     const issuance = await ConsumableIssuance.findByPk(consumableIssuanceId);
@@ -172,15 +171,24 @@ export const handleIssuedConsumable = asyncHandler(async (req, res) => {
     )
       throw new ApiError(400, "You do not manage this consumable");
 
-    if (req.user.storeManaging > 0 && status.toLowerCase() !== "returned")
+    if (req.user.storeManaging > 0 && statusValue !== "returned")
       throw new ApiError(401, "You can not exempt this return");
 
-    if (issuance.status !== "issued")
-      throw new ApiError(400, "You can handle return of issued assets only");
+    // if (!["standalone", "embedded"].includes(issuance.status))
+    //   throw new ApiError(
+    //     400,
+    //     "You can handle return of issued consumables only"
+    //   );
+
+    if (!reason)
+      throw new ApiError(
+        400,
+        "You must add appropriate reason for your action for future reference"
+      );
 
     issuance.handledBy = req.user.id;
-    issuance.info = reason;
-    issuance.status = status.toLowerCase();
+    issuance.handleInfo = reason;
+    issuance.status = statusValue;
 
     if (status === "returned") consumable.usedQty += 1;
 
@@ -192,9 +200,38 @@ export const handleIssuedConsumable = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           { ...issuance.toJSON(), consumable },
-          "Return request raised !!"
+          "Return successful !!"
         )
       );
+  } catch (err) {
+    throw new ApiError(err?.statusCode || 500, err?.message);
+  }
+});
+
+export const getIssuedConsumablestoAsset = asyncHandler(async (req, res) => {
+  const { assetId } = req.params;
+
+  try {
+    const consumables = await ConsumableIssuance.findAll({
+      where: {
+        toAssetId: assetId,
+        status: {
+          [Op.in]: ["embedded", "standalone"],
+        },
+      },
+      include: [
+        { model: Consumable, as: "consumable" },
+        { model: Asset, as: "asset" },
+        { model: User, as: "recipient" },
+      ],
+    });
+
+    if (consumables.length <= 0)
+      throw new ApiError(404, "No consumables issued against this asset");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, consumables, "Issued consumables fetched !!"));
   } catch (err) {
     throw new ApiError(err?.statusCode || 500, err?.message);
   }

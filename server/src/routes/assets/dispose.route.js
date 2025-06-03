@@ -24,7 +24,7 @@ router
   );
 
 router
-  .route("/assets/:assetDisposeId")
+  .route("/assets/ad/:assetDisposeId")
   .post(verifyAuth, isPermitted("admin", "it-head"), decideDisposeRequest)
   .patch(
     verifyAuth,

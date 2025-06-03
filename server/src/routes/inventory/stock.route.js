@@ -2,7 +2,7 @@ import { Router } from "express";
 import verifyAuth from "../../middlewares/auth.middleware.js";
 import isPermitted from "../../middlewares/role.middleware.js";
 import {
-  createStock,
+  changeStockAlert,
   getAllAssetCategories,
   getAllConsumableCategories,
   getStock,
@@ -12,12 +12,7 @@ const router = Router();
 
 router
   .route("/")
-  .get(verifyAuth, isPermitted("admin", "it-head", "store-manager"), getStock)
-  .post(
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    createStock
-  );
+  .get(verifyAuth, isPermitted("admin", "it-head", "store-manager"), getStock);
 
 router
   .route("/assets")
@@ -33,6 +28,14 @@ router
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),
     getAllConsumableCategories
+  );
+
+router
+  .route("/:stockId")
+  .patch(
+    verifyAuth,
+    isPermitted("admin", "it-head", "store-manager"),
+    changeStockAlert
   );
 
 export default router;

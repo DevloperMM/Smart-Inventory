@@ -1,11 +1,18 @@
-import { Asset, AssetIssuance, Request, User } from "../../models/index.js";
+import {
+  Asset,
+  AssetIssuance,
+  Consumable,
+  ConsumableIssuance,
+  Request,
+  User,
+} from "../../models/index.js";
 import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const issueAssetForRequest = asyncHandler(async (req, res) => {
-  const { requestId, assetId, equipNo } = req.body;
+  const { requestId, assetId, equipNo } = req.body || {};
 
   try {
     const request = await Request.findByPk(requestId);
@@ -180,7 +187,9 @@ export const getUnissuedAssets = asyncHandler(async (req, res) => {
 
 export const handleIssuedAsset = asyncHandler(async (req, res) => {
   const { assetIssueId } = req.params;
-  const { reason, status = "returned" } = req.body;
+  const { reason, status = "returned" } = req.body || {};
+
+  const statusValue = status.toLowerCase();
 
   try {
     const issuance = await AssetIssuance.findByPk(assetIssueId);
@@ -191,30 +200,66 @@ export const handleIssuedAsset = asyncHandler(async (req, res) => {
     if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
       throw new ApiError(400, "You do not manage this asset");
 
-    if (req.user.storeManaging > 0 && status.toLowerCase() !== "returned")
+    if (req.user.storeManaging > 0 && statusValue !== "returned")
       throw new ApiError(401, "You can not exempt the asset return");
 
     if (issuance.status !== "issued")
       throw new ApiError(400, "You can handle return of issued assets only");
 
+    if (!reason) throw new ApiError(400, "");
+
     issuance.handledBy = req.user.id;
     issuance.info = reason;
-    issuance.status = status.toLowerCase();
+    issuance.status = statusValue;
 
-    asset.status = status === "returned" ? "available" : "lost";
+    if (statusValue === "returned") asset.status = "available";
+    else if (statusValue === "exempted") asset.status = "exempted";
+    else
+      throw new ApiError("You are trying to provide status with no reference");
 
-    await Promise.all[(asset.save(), issuance.save())];
+    const consumableIssued = await ConsumableIssuance.findAll({
+      where: { toAssetId: asset.id },
+      transaction,
+    });
+
+    for (const ci of consumableIssued) {
+      const c = await Consumable.findByPk(ci.consumableId, { transaction });
+      if (!c)
+        throw new ApiError(
+          404,
+          "Consumable issued to this asset not found in store"
+        );
+
+      await ci.update(
+        {
+          handledBy: req.user.id,
+          handleInfo: "Returned with asset return",
+          status: ci.status === "embedded" ? "relieved" : "returned",
+        },
+        { transaction }
+      );
+
+      await c.update({ usedQty: c.usedQty + 1 }, { transaction });
+    }
+
+    await Promise.all([
+      asset.save({ transaction }),
+      issuance.save({ transaction }),
+    ]);
+
+    await transaction.commit();
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { ...issuance.toJSON(), asset },
-          "Return request raised !!"
+          { ...issuance.toJSON(), asset, consumables: consumableIssued },
+          "Return successful !!"
         )
       );
   } catch (err) {
+    await transaction.rollback();
     throw new ApiError(err?.statusCode || 500, err?.message);
   }
 });

@@ -14,11 +14,15 @@ const router = Router();
 router
   .route("/")
   .post(verifyAuth, isPermitted("admin", "it-head"), createUser)
-  .get(verifyAuth, isPermitted("admin", "it-head"), getUsers);
+  .get(verifyAuth, isPermitted("admin", "it-head", "store-manager"), getUsers);
 
 router
   .route("/:userId")
-  .get(verifyAuth, isPermitted("admin", "it-head"), getUserById)
+  .get(
+    verifyAuth,
+    isPermitted("admin", "it-head", "store-manager"),
+    getUserById
+  )
   .patch(verifyAuth, isPermitted("admin", "it-head"), updateUser)
   .delete(verifyAuth, isPermitted("admin", "it-head"), deleteUser);
 

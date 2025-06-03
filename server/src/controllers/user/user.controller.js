@@ -21,7 +21,7 @@ export const getUsers = asyncHandler(async (req, res) => {
 // Create new user
 export const createUser = asyncHandler(async (req, res) => {
   const { name, email, password, department, empCode, role, storeManaging } =
-    req.body;
+    req.body || {};
 
   if (
     !empCode ||
@@ -88,7 +88,7 @@ export const getUserById = asyncHandler(async (req, res) => {
 // Update user details
 export const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const details = req.body;
+  const details = req.body || {};
 
   const allowedFields = [
     "name",

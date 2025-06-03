@@ -40,7 +40,7 @@ export const getMyRequests = asyncHandler(async (req, res) => {
 
 // Raise new request
 export const createRequest = asyncHandler(async (req, res) => {
-  const { category, purpose, endUser, storeId } = req.body;
+  const { category, purpose, endUser, storeId } = req.body || {};
   const userRole = req.user.role;
 
   if (!(category && purpose && storeId))
@@ -73,7 +73,7 @@ export const createRequest = asyncHandler(async (req, res) => {
 // Cancel my raised request
 export const cancelRequest = asyncHandler(async (req, res) => {
   const { requestId } = req.params;
-  const { cancelReason } = req.body;
+  const cancelReason = req.body?.cancelReason || "";
 
   try {
     const request = await Request.findByPk(requestId);
@@ -101,8 +101,10 @@ export const cancelRequest = asyncHandler(async (req, res) => {
 
 // Approve or Reject asset request
 export const decideAssetRequest = asyncHandler(async (req, res) => {
-  const { status, decisionInfo } = req.body;
+  const { status, decisionInfo } = req.body || {};
   const { requestId } = req.params;
+
+  const statusValue = status.toLowerCase();
 
   try {
     const request = await Request.findByPk(requestId);
@@ -111,7 +113,7 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
     if (request.status !== "pending")
       throw new ApiError(400, "Only pending requests can be decided");
 
-    if (!["approved", "rejected"].includes(status.toLowerCase()))
+    if (!["approved", "rejected"].includes(statusValue))
       throw new ApiError(400, "The request can only be approved or rejected");
 
     if (!decisionInfo)
@@ -121,7 +123,7 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
 
     request.decidedBy = req.user.id;
     request.decisionInfo = decisionInfo;
-    request.status = status.toLowerCase();
+    request.status = statusValue;
 
     await request.save({ validate: true });
 
@@ -130,7 +132,7 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { ...request.dataValues, decider: req.user },
+          { ...request.toJSON(), decider: req.user },
           "Request decided !!"
         )
       );
@@ -141,7 +143,7 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
 
 // Reject consumable request
 export const rejectConsumableRequest = asyncHandler(async (req, res) => {
-  const { decisionInfo } = req.body || {};
+  const { decisionInfo } = req.body?.decisionInfo || "";
   const { requestId } = req.params;
 
   try {

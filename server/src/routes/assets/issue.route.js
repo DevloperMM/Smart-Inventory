@@ -40,7 +40,7 @@ router.get(
 );
 
 router.patch(
-  "/assets/i/:assetIssueId",
+  "/assets/ai/:assetIssueId",
   verifyAuth,
   isPermitted("admin", "it-head", "store-manager"),
   handleIssuedAsset

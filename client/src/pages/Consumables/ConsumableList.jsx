@@ -305,7 +305,7 @@ const ConsumableList = () => {
         <table className="min-w-full text-sm border-collapse">
           <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="w-[4%] border px-3 py-2">#</th>
+              <th className="w-[4%] border px-3 py-2 text-center">#</th>
               <th className="w-[12%] border px-3 py-2">Category</th>
               <th className="w-[20%] border px-3 py-2">Specifications</th>
               <th className="w-[13%] border px-3 py-2">Updated By</th>

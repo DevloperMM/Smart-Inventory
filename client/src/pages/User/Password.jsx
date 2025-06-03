@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import { toast } from "react-hot-toast";
+import { useState } from "react";
 import { Input } from "../../components";
+import { useUserStore } from "../../store/useUserStore.js";
+
+const initialState = {
+  currPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+};
 
 const Password = () => {
   const [err, setErr] = useState("");
-  const [form, setForm] = useState({
-    currPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [form, setForm] = useState(initialState);
+
+  const { changePass } = useUserStore();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  const handleClick = () => setErr("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,8 +30,8 @@ const Password = () => {
       return;
     }
 
-    toast.success("Password changed");
-    console.log(form);
+    changePass(form.currPassword, form.newPassword);
+    setForm(initialState);
   };
 
   return (
@@ -46,7 +48,6 @@ const Password = () => {
             name="currPassword"
             value={form.currPassword}
             onChange={handleChange}
-            onClick={handleClick}
             required
           />
           <Input
@@ -55,7 +56,6 @@ const Password = () => {
             type="password"
             value={form.newPassword}
             onChange={handleChange}
-            onClick={handleClick}
             required
           />
           <Input
@@ -64,7 +64,6 @@ const Password = () => {
             type="password"
             value={form.confirmPassword}
             onChange={handleChange}
-            onClick={handleClick}
             required
           />
 

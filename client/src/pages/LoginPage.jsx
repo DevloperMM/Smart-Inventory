@@ -1,34 +1,33 @@
 import { useState } from "react";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, LogIn, Loader } from "lucide-react";
+import { useUserStore } from "../store/useUserStore.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login, loading } = useUserStore();
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
+    login(email, password);
   };
 
   return (
-    <div className="min-h-screen grid place-items-center">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_rgba(251,191,36,0.3)_0%,_rgba(245,158,11,0.2)_45%,_rgba(0,0,0,0.1)_100%)]" />
-        </div>
-      </div>
-
-      <div className="rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden backdrop-blur-xs bg-white/10">
-        {/* Login Form */}
-        <div className="py-10 px-14">
-          <h2 className="text-3xl text-amber-600 text-center font-bold mb-8 underline underline-offset-8">
-            Inventory Login
+    <div
+      className="h-screen bg-cover bg-center flex items-center justify-start px-12"
+      style={{ backgroundImage: 'url("/login_bg.png")' }}
+    >
+      <div className="backdrop-blur-lg bg-gray-100/25 rounded-2xl shadow-2xl w-2/3 lg:w-1/2 xl:w-1/3 h-[50%] overflow-hidden">
+        <div className="p-12">
+          <h2 className="text-3xl font-bold text-center mb-6">
+            IT Inventory Login
           </h2>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-7">
             <div className="relative">
               <Mail
-                className="absolute left-3 top-2.5 text-gray-400"
+                className="absolute left-3 top-2.75 text-gray-400"
                 size={20}
               />
               <input
@@ -43,7 +42,7 @@ const Login = () => {
 
             <div className="relative">
               <Lock
-                className="absolute left-3 top-2.5 text-gray-400"
+                className="absolute left-3 top-2.75 text-gray-400"
                 size={20}
               />
               <input
@@ -58,9 +57,22 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-1/3 mx-auto block bg-gray-500/75 text-white py-2 rounded-lg hover:bg-gray-600 transition"
+              className="mx-auto w-1/3 flex justify-center bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition"
             >
-              Submit
+              {loading ? (
+                <>
+                  <Loader
+                    className="mt-0.5 mr-2 h-5 w-5 animate-spin"
+                    aria-hidden="true"
+                  />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <LogIn className="mt-0.5 mr-2 h-5 w-5" aria-hidden="true" />
+                  Login
+                </>
+              )}
             </button>
           </form>
         </div>

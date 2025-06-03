@@ -1,15 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-  ArrowUpDown,
-  Search,
-  ChevronDown,
-  Plus,
-  Pencil,
-  Trash,
-} from "lucide-react";
+import { ArrowUpDown, Search, ChevronDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
-import { PageFooter } from "../../components";
+import { PageFooter, StockAlertColumn } from "../../components";
 
 const storeData = [
   {
@@ -254,12 +247,6 @@ export default function Dashbaord() {
     });
   };
 
-  const handleAlert = {
-    edit: (id) => {},
-    delete: (id) => {},
-    input: () => {},
-  };
-
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
       <div className="flex justify-between items-center">
@@ -345,28 +332,7 @@ export default function Dashbaord() {
                 <td className="border px-4 py-3">{item.storeId}</td>
                 <td className="border px-4 py-3">{item.activeQty}</td>
                 <td className="border px-4 py-3">
-                  <div className="flex justify-between">
-                    <input
-                      name={item.id}
-                      value={item.alertQty}
-                      readOnly
-                      className="w-12 pl-2 rounded-lg outline-none"
-                    />
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleAlert.edit(item.id)}
-                        className="text-gray-500 hover:text-black"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleAlert.delete(item.id)}
-                        className="text-gray-500 hover:text-black"
-                      >
-                        <Trash size={18} />
-                      </button>
-                    </div>
-                  </div>
+                  <StockAlertColumn item={item} />
                 </td>
                 <td className="border px-4 py-3">
                   <span

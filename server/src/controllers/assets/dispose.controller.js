@@ -5,7 +5,7 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const createAssetDispose = asyncHandler(async (req, res) => {
-  const { assetId, condition, description, decisionInfo = "" } = req.body;
+  const { assetId, condition, description, decisionInfo } = req.body || {};
 
   if (!(assetId && condition && description))
     throw new ApiError(400, "Please fill the marked fields");
@@ -75,7 +75,7 @@ export const createAssetDispose = asyncHandler(async (req, res) => {
 });
 
 export const decideDisposeRequest = asyncHandler(async (req, res) => {
-  let { status, decisionInfo } = req.body || "";
+  const { status, decisionInfo } = req.body || {};
   const { assetDisposeId } = req.params;
 
   if (!status)
@@ -87,7 +87,7 @@ export const decideDisposeRequest = asyncHandler(async (req, res) => {
       "You must add approval comments for your future reference"
     );
 
-  status = status.toLowerCase();
+  const statusValue = status.toLowerCase();
 
   try {
     const assetDisposal = await AssetDisposal.findByPk(assetDisposeId);
@@ -98,13 +98,13 @@ export const decideDisposeRequest = asyncHandler(async (req, res) => {
     if (assetDisposal.status !== "pending")
       throw new ApiError(400, "Only pending requests can be decided");
 
-    if (!["disposed", "rejected"].includes(status))
+    if (!["disposed", "rejected"].includes(statusValue))
       throw new ApiError(400, "The request can only be approved or rejected");
 
     assetDisposal.decidedBy = req.user.id;
     assetDisposal.decidedOn = new Date();
     assetDisposal.decisionInfo = decisionInfo;
-    assetDisposal.status = status;
+    assetDisposal.status = statusValue;
 
     await assetDisposal.save();
     if (status === "disposed")
@@ -127,8 +127,8 @@ export const decideDisposeRequest = asyncHandler(async (req, res) => {
 });
 
 export const sellDisposedAsset = asyncHandler(async (req, res) => {
-  const { soldInfo } = req.body || "";
   const { assetDisposeId } = req.params;
+  const soldInfo = req.body?.soldInfo || "";
 
   if (!soldInfo)
     throw new ApiError(

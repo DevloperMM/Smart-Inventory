@@ -89,6 +89,14 @@ export const setupAssociations = async () => {
     foreignKey: "issuedTo",
     as: "consumablesReceived",
   });
+  User.belongsTo(User, {
+    foreignKey: "profileCreatedBy",
+    as: "profileCreator",
+  });
+  User.belongsTo(User, {
+    foreignKey: "profileUpdatedBy",
+    as: "profileUpdator",
+  });
 };
 
 export {

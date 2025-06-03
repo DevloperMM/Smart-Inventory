@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import {
-  RequestsList,
-  AssetOptions,
-  ConsumableOptions,
-} from "../../../components";
+import { IssueOptions, RequestsList } from "../../../components";
 
 function Requests() {
-  const [step, setStep] = useState(1);
-  const [isAssetActive, setIsAssetActive] = useState(true);
+  const [step, setStep] = useState(2);
 
   return (
     <>
       {step === 1 && <RequestsList />}
-      {step === 2 && (isAssetActive ? <AssetOptions /> : <ConsumableOptions />)}
+      {step === 2 && <IssueOptions />}
     </>
   );
 }

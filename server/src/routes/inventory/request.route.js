@@ -9,21 +9,17 @@ import {
 
 const router = Router();
 
+router.get(
+  "/",
+  verifyAuth,
+  isPermitted("admin", "it-head", "store-manager"),
+  getAllRequests
+);
+
 router
-  .get(
-    "/",
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    getAllRequests
-  )
-  .post(
-    "/a/:requestId",
-    verifyAuth,
-    isPermitted("admin", "it-head"),
-    decideAssetRequest
-  )
-  .post(
-    "/c/:requestId",
+  .route("/:requestId")
+  .post(verifyAuth, isPermitted("admin", "it-head"), decideAssetRequest)
+  .patch(
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),
     rejectConsumableRequest
