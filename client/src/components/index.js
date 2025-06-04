@@ -1,35 +1,31 @@
 import Navbar from "./Navbar.jsx";
-import Loader from "./Loader.jsx";
 import Sidebar from "./Sidebar.jsx";
-import PageNotFound from "./PageNotFound.jsx";
+import Loader from "./Loader.jsx";
 import Input from "./Input.jsx";
 import Select from "./Select.jsx";
-import IssuedAssets from "./IssuedAssets.jsx";
-import IssuedConsumables from "./IssuedConsumables.jsx";
-import RequestsList from "./RequestsList.jsx";
-import IssueOptions from "./IssueOptions.jsx";
-import DisposedAssets from "./DisposedAssets.jsx";
-import DisposedConsumables from "./DisposedConsumables.jsx";
+import Modal from "./Modal.jsx";
 import WelcomeCard from "./WelcomeCard.jsx";
 import PageFooter from "./PageFooter.jsx";
-import Modal from "./Modal.jsx";
+import PageNotFound from "./PageNotFound.jsx";
 import StockAlertColumn from "./StockAlertColumn.jsx";
+import AdminLayout from "./AdminLayout.jsx";
+import UserLayout from "./UserLayout.jsx";
+import ProtectRole from "./ProtectRole.jsx";
+import RoleRedirect from "./RoleRedirect.jsx";
 
 export {
-  Sidebar,
   Navbar,
+  Sidebar,
   Loader,
-  PageNotFound,
   Input,
   Select,
-  IssuedAssets,
-  IssuedConsumables,
-  RequestsList,
-  IssueOptions,
-  DisposedAssets,
-  DisposedConsumables,
+  Modal,
   WelcomeCard,
   PageFooter,
-  Modal,
+  PageNotFound,
   StockAlertColumn,
+  AdminLayout,
+  UserLayout,
+  ProtectRole,
+  RoleRedirect,
 };

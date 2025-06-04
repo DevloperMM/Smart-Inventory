@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { DisposedAssets, DisposedConsumables } from "../../../components";
 import { useNavigate } from "react-router-dom";
+import DisposedAssets from "./DisposedAssets";
+import DisposedConsumables from "./DisposedConsumables";
 
 function DisposeHistory() {
   const navigate = useNavigate();

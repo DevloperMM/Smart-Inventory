@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { IssuedAssets, IssuedConsumables } from "../../../components";
+import IssuedAssets from "./IssuedAssets";
+import IssuedConsumables from "./IssuedConsumables";
 
 function IssueHistory() {
   const [isAssetTab, setIsAssetTab] = useState(true);

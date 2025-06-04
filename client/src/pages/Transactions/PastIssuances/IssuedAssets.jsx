@@ -1,5 +1,5 @@
 import { Eye, Pencil } from "lucide-react";
-import { statusColors } from "../lib/constants.js";
+import { statusColors } from "../../../lib/constants.js";
 import { format } from "date-fns";
 
 const assetIssuances = [
@@ -26,33 +26,13 @@ const assetIssuances = [
       role: "admin",
       storeManaging: 0,
     },
+    asset: {
+      serialNo: "HVWVDV2",
+    },
+    request: {
+      category: "Laptop",
+    },
     handler: null,
-  },
-];
-
-const assets = [
-  {
-    id: 1,
-    requestId: "REQ-47896",
-    category: "Laptop",
-    serialNo: "UEN72N82",
-    equipNo: "9080003641",
-    issuedTo: "John Doe",
-    issuedBy: "Admin A",
-    issuedOn: "2024-12-01",
-    returnedOn: "2025-01-15",
-    status: "Returned",
-  },
-  {
-    id: 2,
-    requestId: "REQ-78123",
-    category: "Printer",
-    serialNo: "B23JS73H",
-    equipNo: "9080007428",
-    issuedTo: "Jane Smith",
-    issuedBy: "Admin B",
-    issuedOn: "2025-03-20",
-    status: "Issued",
   },
 ];
 
@@ -62,7 +42,6 @@ function IssuedAssets() {
       <thead className="bg-gray-100 text-left">
         <tr>
           <th className="p-3">#</th>
-          <th className="p-3">Issuance ID</th>
           <th className="p-3">Category</th>
           <th className="p-3">Serial No</th>
           <th className="p-3">Equipment No</th>
@@ -74,16 +53,15 @@ function IssuedAssets() {
         </tr>
       </thead>
       <tbody>
-        {assets.map((item, index) => (
+        {assetIssuances.map((item, index) => (
           <tr key={item.id} className="border-t hover:bg-gray-50">
             <td className="p-3">{index + 1}</td>
-            <td className="p-3">{item.requestId}</td>
-            <td className="p-3">{item.category}</td>
-            <td className="p-3">{item.serialNo}</td>
+            <td className="p-3">{item.request.category}</td>
+            <td className="p-3">{item.asset.serialNo}</td>
             <td className="p-3">{item.equipNo}</td>
-            <td className="p-3">{item.issuedTo}</td>
-            <td className="p-3">{item.issuedBy}</td>
-            <td className="p-3">{format(item.issuedOn, "dd/MM/yyyy")}</td>
+            <td className="p-3">{item.recipient.name}</td>
+            <td className="p-3">{item.issuer.name}</td>
+            <td className="p-3">{format(item.createdAt, "dd/MM/yyyy")}</td>
             <td className="p-3">
               <span
                 className={`px-2 py-1 rounded-lg ${statusColors[item.status]}`}

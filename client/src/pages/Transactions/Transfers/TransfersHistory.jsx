@@ -55,22 +55,73 @@ function TransfersHistory() {
           <thead className="bg-gray-100 text-left">
             <tr>
               <th className="p-3">#</th>
-              <th className="p-3">Transfer ID</th>
-              <th className="p-3">Category</th>
-              <th className="p-3">Serial No</th>
-              <th className="p-3">Equipment No</th>
-              <th className="p-3">Issued To</th>
-              <th className="p-3">Issued By</th>
-              <th className="p-3">Issued On</th>
+              <th className="p-3">Assets</th>
+              <th className="p-3">Consumables</th>
+              <th className="p-3">Transferred By</th>
+              <th className="p-3">Transferred On</th>
+              <th className="p-3">Received By</th>
+              <th className="p-3">Received On</th>
               <th className="p-3">Status</th>
               <th className="p-3">Action</th>
+            </tr>
+            <tr className="bg-white h-fit">
+              <td className="border p-2" />
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="input"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                />
+              </td>
+              <td className="border p-2" />
             </tr>
           </thead>
           <tbody>
             {assets.map((item, index) => (
               <tr key={item.id} className="border-t hover:bg-gray-50">
                 <td className="p-3">{(page - 1) * rows + index + 1}</td>
-                <td className="p-3">{item.requestId}</td>
                 <td className="p-3">{item.category}</td>
                 <td className="p-3">{item.serialNo}</td>
                 <td className="p-3">{item.equipNo}</td>

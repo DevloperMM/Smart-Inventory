@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { ArrowUpDown, Search, ChevronDown, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
-import { PageFooter, StockAlertColumn } from "../../components";
+import { PageFooter, StockAlertColumn } from "../../components/index.js";
 
 const storeData = [
   {

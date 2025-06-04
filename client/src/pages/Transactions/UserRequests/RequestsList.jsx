@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Eye, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { statusColors } from "../lib/constants.js";
-import { PageFooter, Modal } from "./";
+import { statusColors } from "../../../lib/constants.js";
+import { PageFooter, Modal } from "../../../components/index.js";
 import { format } from "date-fns";
+import { useUserStore } from "../../../store/useUserStore.js";
 
 const initialState = {
   category: "",
@@ -175,7 +176,7 @@ const requests = [
   },
 ];
 
-const RequestsList = () => {
+const RequestsList = ({ setStep }) => {
   const navigate = useNavigate();
 
   const [msg, setMsg] = useState("");
@@ -186,9 +187,7 @@ const RequestsList = () => {
   const [selectedRequest, setSelectedRequest] = useState({});
   const [filterData, setFilterData] = useState(initialState);
 
-  const user = {
-    role: "it-head",
-  };
+  const { user } = useUserStore();
 
   useEffect(() => {
     setPage(1);
@@ -402,9 +401,7 @@ const RequestsList = () => {
                   ) : ["Approved", "Pending"].includes(request.status) ? (
                     <button
                       disabled={request.status !== "Approved"}
-                      onClick={() =>
-                        navigate(`/transactions/requests/${request.id}`)
-                      }
+                      onClick={() => setStep(2)}
                       className="w-full bg-teal-500 px-3 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                     >
                       <span>Issue</span>

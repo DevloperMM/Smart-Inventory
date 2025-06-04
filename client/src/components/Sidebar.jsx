@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import { useUserStore } from "../store/useUserStore.js";
 
 function Sidebar() {
   const location = useLocation();
   const currPath = location.pathname;
 
   const [transactDown, setTransactDown] = useState(() =>
-    currPath.startsWith("/transactions")
+    currPath.startsWith("/admin/transactions")
   );
 
-  const user = {
-    name: "Alice Smith",
-    role: "it-head",
-  };
+  const { user } = useUserStore();
 
   const navLinkClass = (path) =>
     `block p-2 rounded hover:bg-amber-200 hover:text-black ${
@@ -23,7 +21,7 @@ function Sidebar() {
   return (
     <aside className="min-h-screen shadow-md p-4 text-gray-50 bg-amber-700">
       <div className="mb-4 text-center pb-4 border-b-2">
-        <Link to="/user/profile">
+        <Link to="/admin/profile">
           <img
             src="/avatar.png"
             alt="logo"
@@ -34,21 +32,27 @@ function Sidebar() {
       </div>
 
       <nav className="space-y-3">
-        <Link to="/dashboard" className={navLinkClass("/dashboard")}>
+        <Link
+          to="/admin/dashboard"
+          className={navLinkClass("/admin/dashboard")}
+        >
           Dashboard
         </Link>
 
         {user.role.toLowerCase() !== "store-manager" && (
-          <Link to="/users" className={navLinkClass("/users")}>
+          <Link to="/admin/users" className={navLinkClass("/admin/users")}>
             Manage Users
           </Link>
         )}
 
-        <Link to="/assets" className={navLinkClass("/assets")}>
+        <Link to="/admin/assets" className={navLinkClass("/admin/assets")}>
           Assets
         </Link>
 
-        <Link to="/consumables" className={navLinkClass("/consumables")}>
+        <Link
+          to="/admin/consumables"
+          className={navLinkClass("/admin/consumables")}
+        >
           Consumables
         </Link>
 
@@ -69,32 +73,32 @@ function Sidebar() {
           {transactDown && (
             <div className="ml-4 space-y-1">
               <Link
-                to="/transactions/requests"
-                className={navLinkClass("/transactions/requests")}
+                to="/admin/transactions/requests"
+                className={navLinkClass("/admin/transactions/requests")}
               >
                 User Requests
               </Link>
               <Link
-                to="/transactions/transits"
-                className={navLinkClass("/transactions/transits")}
+                to="/admin/transactions/transits"
+                className={navLinkClass("/admin/transactions/transits")}
               >
                 Transit Requests
               </Link>
               <Link
-                to="/transactions/issuances"
-                className={navLinkClass("/transactions/issuances")}
+                to="/admin/transactions/issuances"
+                className={navLinkClass("/admin/transactions/issuances")}
               >
                 Past Issuances
               </Link>
               <Link
-                to="/transactions/transfers"
-                className={navLinkClass("/transactions/transfers")}
+                to="/admin/transactions/transfers"
+                className={navLinkClass("/admin/transactions/transfers")}
               >
                 Transfers
               </Link>
               <Link
-                to="/transactions/disposals"
-                className={navLinkClass("/transactions/disposals")}
+                to="/admin/transactions/disposals"
+                className={navLinkClass("/admin/transactions/disposals")}
               >
                 Disposals
               </Link>

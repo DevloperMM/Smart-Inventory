@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { statusColors } from "../lib/constants";
+import { statusColors } from "../../../lib/constants";
 import { ChevronLeft, ChevronRight, Eye, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";

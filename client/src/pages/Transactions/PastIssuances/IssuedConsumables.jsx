@@ -1,5 +1,5 @@
 import { Eye } from "lucide-react";
-import { statusColors } from "../lib/constants";
+import { statusColors } from "../../../lib/constants.js";
 import { format } from "date-fns";
 
 const consumables = [
