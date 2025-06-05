@@ -230,7 +230,7 @@ const RequestsList = ({ setStep }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Requests List</h2>
         <button
-          onClick={() => navigate("/transactions/requests/new")}
+          onClick={() => navigate("/admin/transactions/requests/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
           <Plus className="inline-block size-5 mb-1 mr-1" />

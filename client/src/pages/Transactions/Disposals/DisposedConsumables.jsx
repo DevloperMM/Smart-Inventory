@@ -32,7 +32,7 @@ function DisposedConsumables() {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">All Consumable Disposes</h2>
         <button
-          onClick={() => navigate("/transactions/disposals/new")}
+          onClick={() => navigate("/admin/transactions/disposals/new")}
           className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
         >
           <Plus className="inline-block size-5 mb-1 mr-1" />

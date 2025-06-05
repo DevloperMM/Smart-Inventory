@@ -1,7 +1,7 @@
 import React from "react";
 
 function UserPage() {
-  return <div>UserPage</div>;
+  return <div className="bg-red-200">UserPage</div>;
 }
 
 export default UserPage;

@@ -17,6 +17,8 @@ import assetsDisposals from "./routes/assets/dispose.route.js";
 import consumablesRouter from "./routes/consumables/consumable.route.js";
 import consumableIssuances from "./routes/consumables/issue.route.js";
 import consumableDisposals from "./routes/consumables/dispose.route.js";
+import transitRouter from "./routes/inventory/transit.route.js";
+import transferRouter from "./routes/inventory/transfer.route.js";
 
 import userAuthRouter from "./routes/user/auth.route.js";
 import userRequestRouter from "./routes/user/requests.route.js";
@@ -30,6 +32,8 @@ app.use("/api/v1/admin/assets", assetsRouter);
 app.use("/api/v1/admin/consumables", consumablesRouter);
 app.use("/api/v1/admin/issuances", assetsIssuances, consumableIssuances);
 app.use("/api/v1/admin/disposals", assetsDisposals, consumableDisposals);
+app.use("/api/v1/admin/transits", transitRouter);
+app.use("/api/v1/admin/transfers", transferRouter);
 
 app.use("/api/v1/users/auth", userAuthRouter);
 app.use("/api/v1/users/requests", userRequestRouter);

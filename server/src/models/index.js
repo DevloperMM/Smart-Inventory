@@ -75,13 +75,13 @@ export const setupAssociations = async () => {
   Request.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
   Request.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
 
-  // Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
-  // Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });
-  // Transfer.belongsTo(User, { foreignKey: "receivedBy", as: "receiver" });
+  Transfer.belongsTo(Transit, { foreignKey: "transitId", as: "transit" });
+  Transfer.belongsTo(User, { foreignKey: "transferredBy", as: "sender" });
+  Transfer.belongsTo(User, { foreignKey: "receivedBy", as: "receiver" });
 
-  // Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
-  // Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
-  // Transit.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
+  Transit.hasOne(Transfer, { foreignKey: "transitId", as: "transfer" });
+  Transit.belongsTo(User, { foreignKey: "requestedBy", as: "requester" });
+  Transit.belongsTo(User, { foreignKey: "decidedBy", as: "decider" });
 
   User.hasMany(Request, { foreignKey: "requestedBy", as: "requests" });
   User.hasMany(AssetIssuance, { foreignKey: "issuedTo", as: "assetsReceived" });

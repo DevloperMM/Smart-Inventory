@@ -13,11 +13,11 @@ const Transit = db.define(
     items: {
       type: DataTypes.TEXT,
       get() {
-        const rawValue = this.getDataValue("request");
+        const rawValue = this.getDataValue("items");
         return rawValue ? JSON.parse(rawValue) : [];
       },
       set(value) {
-        this.setDataValue("request", JSON.stringify(value));
+        this.setDataValue("items", JSON.stringify(value));
       },
     },
     description: {
@@ -47,8 +47,10 @@ const Transit = db.define(
         key: "id",
       },
     },
+    decisionReason: {
+      type: DataTypes.STRING,
+    },
     status: {
-      // Pending, Cancelled, Rejected, Approved
       type: DataTypes.STRING,
       allowNull: false,
     },

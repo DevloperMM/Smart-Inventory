@@ -253,13 +253,13 @@ export default function Dashbaord() {
         <h2 className="text-2xl font-bold">IT Store Overview</h2>
         <div className="space-x-4">
           <button
-            onClick={() => navigate("/assets/new")}
+            onClick={() => navigate("/admin/assets/new")}
             className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
           >
             <Plus className="inline-block size-5 mb-1 mr-1" /> Add Asset
           </button>
           <button
-            onClick={() => navigate("/consumables/new")}
+            onClick={() => navigate("/admin/consumables/new")}
             className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
           >
             <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables

@@ -10,8 +10,6 @@ import PageNotFound from "./PageNotFound.jsx";
 import StockAlertColumn from "./StockAlertColumn.jsx";
 import AdminLayout from "./AdminLayout.jsx";
 import UserLayout from "./UserLayout.jsx";
-import ProtectRole from "./ProtectRole.jsx";
-import RoleRedirect from "./RoleRedirect.jsx";
 
 export {
   Navbar,
@@ -26,6 +24,4 @@ export {
   StockAlertColumn,
   AdminLayout,
   UserLayout,
-  ProtectRole,
-  RoleRedirect,
 };

@@ -23,7 +23,9 @@ import DisposedAssets from "./Transactions/Disposals/DisposedAssets.jsx";
 import DisposedConsumables from "./Transactions/Disposals/DisposedConsumables.jsx";
 
 import TransitRequests from "./Transactions/Transits/TransitRequests.jsx";
+import TransitsList from "./Transactions/Transits/TransitsList.jsx";
 import NewTransit from "./Transactions/Transits/NewTransit.jsx";
+import TransferOptions from "./Transactions/Transits/TransferOptions.jsx";
 import TransfersHistory from "./Transactions/Transfers/TransfersHistory.jsx";
 import NewTransfer from "./Transactions/Transfers/NewTransfer.jsx";
 
@@ -53,6 +55,8 @@ export {
   DisposedAssets,
   DisposedConsumables,
   TransitRequests,
+  TransitsList,
+  TransferOptions,
   NewTransit,
   TransfersHistory,
   NewTransfer,

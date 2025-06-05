@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import db from "../../lib/db.js";
+import ApiError from "../../utils/ApiError.js";
 
 const Transfer = db.define(
   "Transfer",
@@ -29,6 +30,7 @@ const Transfer = db.define(
     // Store assetId in array
     assets: {
       type: DataTypes.TEXT,
+      defaultValue: "[]",
       get() {
         const rawValue = this.getDataValue("assets");
         return rawValue ? JSON.parse(rawValue) : [];
@@ -40,6 +42,7 @@ const Transfer = db.define(
     // Store consumableId in array
     consumables: {
       type: DataTypes.TEXT,
+      defaultValue: "[]",
       get() {
         const rawValue = this.getDataValue("consumables");
         return rawValue ? JSON.parse(rawValue) : [];
@@ -56,12 +59,25 @@ const Transfer = db.define(
       },
     },
     status: {
-      // Moved, InTransit
       type: DataTypes.STRING,
       allowNull: false,
     },
   },
   { timestamps: true, paranoid: true }
 );
+
+Transfer.beforeCreate((transfer) => {
+  const assets = JSON.parse(transfer.assets || "[]");
+  const consumables = JSON.parse(transfer.consumables || "[]");
+
+  if (
+    (!assets || assets.length === 0) &&
+    (!consumables || consumables.length === 0)
+  )
+    throw new ApiError(
+      402,
+      "Atleast one consumable or asset should be there to transfer"
+    );
+});
 
 export default Transfer;

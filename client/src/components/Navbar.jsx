@@ -21,7 +21,7 @@ function Navbar() {
         {/* Actions */}
         <div className="flex items-center space-x-8">
           <Link
-            to="/password"
+            to="/admin/password"
             className="flex items-center text-gray-700 hover:text-black transition"
           >
             <KeyRound className="h-5 w-5 md:mr-2" />
@@ -31,7 +31,7 @@ function Navbar() {
           </Link>
 
           <Link
-            to="/profile"
+            to="/admin/profile"
             className="flex items-center text-gray-700 hover:text-black transition"
           >
             <User className="h-5 w-5 mr-2" />

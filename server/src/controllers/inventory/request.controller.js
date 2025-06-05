@@ -85,6 +85,9 @@ export const cancelRequest = asyncHandler(async (req, res) => {
     if (request.status !== "pending")
       throw new ApiError(400, "Only pending requests can be cancelled");
 
+    if (!cancelReason)
+      throw new ApiError(400, "You must add info for the future reference");
+
     request.status = "cancelled";
     request.decidedBy = req.user.id;
     request.decisionInfo = cancelReason;
@@ -118,6 +121,7 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
 
     if (!decisionInfo)
       throw new ApiError(
+        400,
         "Provide reason to cancel request for future reference"
       );
 
