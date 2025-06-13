@@ -1,5 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "../src/lib/swagger.js";
 
 const app = express();
 
@@ -38,5 +40,12 @@ app.use("/api/v1/admin/transfers", transferRouter);
 app.use("/api/v1/users/auth", userAuthRouter);
 app.use("/api/v1/users/requests", userRequestRouter);
 app.use("/api/v1/users/issuances", userIssueRouter);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get("/swagger.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
 
 export default app;

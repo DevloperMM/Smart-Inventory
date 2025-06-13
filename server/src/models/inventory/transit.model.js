@@ -40,6 +40,19 @@ const Transit = db.define(
         key: "id",
       },
     },
+    validatedBy: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    validatedOn: {
+      type: DataTypes.DATE,
+    },
+    validateInfo: {
+      type: DataTypes.STRING,
+    },
     decidedBy: {
       type: DataTypes.INTEGER,
       references: {

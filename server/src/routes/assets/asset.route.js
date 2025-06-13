@@ -12,18 +12,44 @@ import {
 
 const router = Router();
 
-router
-  .route("/")
-  .get(
-    verifyAuth,
-    isPermitted("admin", "store-manager", "it-head"),
-    getAllAssets
-  )
-  .post(
-    verifyAuth,
-    isPermitted("admin", "store-manager", "it-head"),
-    addAssetInStore
-  );
+/**
+ * @swagger
+ * tags:
+ *   name: Assets
+ *   description: Admin Routes to manage assets
+ */
+
+/**
+ * @swagger
+ * /api/v1/admin/assets:
+ *   get:
+ *     summary: Get all Assets
+ *     tags: [Assets]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of Assets
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Asset'
+ */
+router.get(
+  "/",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  getAllAssets
+);
+
+router.post(
+  "/",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  addAssetInStore
+);
 
 router.get(
   "/filter",
@@ -32,22 +58,25 @@ router.get(
   getAssetsByFilter
 );
 
-router
-  .route("/:assetId")
-  .get(
-    verifyAuth,
-    isPermitted("admin", "store-manager", "it-head"),
-    getAssetById
-  )
-  .put(
-    verifyAuth,
-    isPermitted("admin", "store-manager", "it-head"),
-    updateAssetDetails
-  )
-  .patch(
-    verifyAuth,
-    isPermitted("admin", "store-manager", "it-head"),
-    toggleAssetMaintenance
-  );
+router.get(
+  "/:assetId",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  getAssetById
+);
+
+router.put(
+  "/:assetId",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  updateAssetDetails
+);
+
+router.patch(
+  "/:assetId",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  toggleAssetMaintenance
+);
 
 export default router;

@@ -142,7 +142,7 @@ export const issueConsumableForRequest = asyncHandler(async (req, res) => {
     request.status = "issued";
     isUsed ? (consumable.usedQty -= 1) : (consumable.newQty -= 1);
 
-    await Promise.all[(consumable.save(), request.save({ silent: true }))];
+    await Promise.all([consumable.save(), request.save({ silent: true })]);
 
     return res
       .status(200)
@@ -174,11 +174,11 @@ export const handleIssuedConsumable = asyncHandler(async (req, res) => {
     if (req.user.storeManaging > 0 && statusValue !== "returned")
       throw new ApiError(401, "You can not exempt this return");
 
-    // if (!["standalone", "embedded"].includes(issuance.status))
-    //   throw new ApiError(
-    //     400,
-    //     "You can handle return of issued consumables only"
-    //   );
+    if (!["standalone", "embedded"].includes(issuance.status))
+      throw new ApiError(
+        400,
+        "You can handle return of issued consumables only"
+      );
 
     if (!reason)
       throw new ApiError(
@@ -192,7 +192,7 @@ export const handleIssuedConsumable = asyncHandler(async (req, res) => {
 
     if (status === "returned") consumable.usedQty += 1;
 
-    await Promise.all[(consumable.save(), issuance.save())];
+    await Promise.all([consumable.save(), issuance.save()]);
 
     return res
       .status(200)

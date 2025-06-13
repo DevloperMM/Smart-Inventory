@@ -18,7 +18,7 @@ const AssetDisposal = db.define(
       },
     },
     condition: {
-      type: DataTypes.ENUM("Retired", "Obsolete"),
+      type: DataTypes.ENUM("retired", "obsolete", "damaged"),
       allowNull: false,
     },
     description: {

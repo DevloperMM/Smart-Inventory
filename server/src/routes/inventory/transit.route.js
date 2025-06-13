@@ -6,6 +6,7 @@ import {
   createTransitRequest,
   decideTransitRequest,
   getTransitRequests,
+  validateTransitRequest,
 } from "../../controllers/inventory/transit.controller.js";
 
 const router = Router();
@@ -23,13 +24,25 @@ router
     createTransitRequest
   );
 
-router
-  .route("/:transitId")
-  .post(verifyAuth, isPermitted("admin", "it-head"), decideTransitRequest)
-  .patch(
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    cancelTransitRequest
-  );
+router.patch(
+  "/validate/:transitId",
+  verifyAuth,
+  isPermitted("admin", "it-head", "store-manager"),
+  validateTransitRequest
+);
+
+router.patch(
+  "/decide/:transitId",
+  verifyAuth,
+  isPermitted("admin", "it-head"),
+  decideTransitRequest
+);
+
+router.patch(
+  "/cancel/:transitId",
+  verifyAuth,
+  isPermitted("admin", "it-head", "store-manager"),
+  cancelTransitRequest
+);
 
 export default router;

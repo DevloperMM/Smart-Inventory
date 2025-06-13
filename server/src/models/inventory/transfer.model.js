@@ -39,7 +39,7 @@ const Transfer = db.define(
         this.setDataValue("assets", JSON.stringify(value));
       },
     },
-    // Store consumableId in array
+    // Store array of (consumableId with isUsed and qty) in array
     consumables: {
       type: DataTypes.TEXT,
       defaultValue: "[]",
@@ -65,19 +65,5 @@ const Transfer = db.define(
   },
   { timestamps: true, paranoid: true }
 );
-
-Transfer.beforeCreate((transfer) => {
-  const assets = JSON.parse(transfer.assets || "[]");
-  const consumables = JSON.parse(transfer.consumables || "[]");
-
-  if (
-    (!assets || assets.length === 0) &&
-    (!consumables || consumables.length === 0)
-  )
-    throw new ApiError(
-      402,
-      "Atleast one consumable or asset should be there to transfer"
-    );
-});
 
 export default Transfer;

@@ -106,21 +106,13 @@ export const decideDisposeRequest = asyncHandler(async (req, res) => {
     assetDisposal.decisionInfo = decisionInfo;
     assetDisposal.status = statusValue;
 
-    await assetDisposal.save();
+    const update = await assetDisposal.save();
     if (status === "disposed")
       await Asset.update({ status }, { where: { id: assetDisposal.assetId } });
 
-    const updatedDisposal = await AssetDisposal.findByPk(assetDisposeId, {
-      include: [
-        { model: Asset, as: "asset" },
-        { model: User, as: "requester" },
-        { model: User, as: "decider" },
-      ],
-    });
-
     return res
       .status(200)
-      .json(new ApiResponse(200, updatedDisposal, "Asset dispose decided !!"));
+      .json(new ApiResponse(200, update, "Asset dispose decided !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
@@ -149,26 +141,17 @@ export const sellDisposedAsset = asyncHandler(async (req, res) => {
     assetDisposal.soldInfo = soldInfo;
     assetDisposal.status = "sold";
 
-    await Promise.all[
-      (assetDisposal.save(),
+    const [updatedDispose, updatedAsset] = await Promise.all([
+      assetDisposal.save(),
       await Asset.update(
         { status: "sold" },
         { where: { id: assetDisposal.assetId } }
-      ))
-    ];
-
-    const updatedDisposal = await AssetDisposal.findByPk(assetDisposeId, {
-      include: [
-        { model: Asset, as: "asset" },
-        { model: User, as: "requester" },
-        { model: User, as: "decider" },
-        { model: User, as: "seller" },
-      ],
-    });
+      ),
+    ]);
 
     return res
       .status(200)
-      .json(new ApiResponse(200, updatedDisposal, "Asset sold !!"));
+      .json(new ApiResponse(200, updatedAsset, "Asset sold !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
@@ -187,11 +170,57 @@ export const getAllAssetDisposals = asyncHandler(async (req, res) => {
     });
 
     if (!assetDisposals || assetDisposals.length <= 0)
-      throw new ApiError(404, "No asset is issued yet");
+      throw new ApiError(404, "No asset is disposed yet");
 
     return res
       .status(200)
-      .json(new ApiResponse(200, assetDisposals, "Asset Issuances fetched !!"));
+      .json(new ApiResponse(200, assetDisposals, "Asset disposals fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const cancelDisposeRequest = asyncHandler(async (req, res) => {
+  const { cancelInfo } = req.body || {};
+  const { assetDisposeId } = req.params;
+
+  if (!cancelInfo)
+    throw new ApiError(
+      400,
+      "You must add approval comments for your future reference"
+    );
+
+  try {
+    const assetDisposal = await AssetDisposal.findByPk(assetDisposeId, {
+      include: [{ model: User, as: "requester" }],
+    });
+
+    if (!assetDisposal)
+      throw new ApiError(404, "No such dispose found against any consumable");
+
+    if (assetDisposal.status !== "pending")
+      throw new ApiError(400, "Only pending requests can be cancelled");
+
+    if (assetDisposal.requester.storeManaging !== req.user.storeManaging)
+      throw new ApiError(
+        400,
+        "You can not cancel this as not requested by your store"
+      );
+
+    assetDisposal.decidedBy = req.user.id;
+    assetDisposal.decidedOn = new Date();
+    assetDisposal.decisionInfo = cancelInfo;
+    assetDisposal.status = "cancelled";
+
+    const item = await Asset.findByPk(assetDisposal.assetId);
+    if (!item)
+      throw new ApiError(404, "No valid asset found with this disposal");
+
+    const update = await assetDisposal.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, update, "Consumable dispose cancelled !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }

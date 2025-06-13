@@ -22,9 +22,13 @@ const ConsumableDisposal = db.define(
       allowNull: false,
       defaultValue: 1,
     },
+    isUsed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
     condition: {
-      // Damaged, Retired
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("damaged", "retired"),
       allowNull: false,
     },
     raisedOn: {

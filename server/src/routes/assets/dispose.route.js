@@ -2,6 +2,7 @@ import { Router } from "express";
 import verifyAuth from "../../middlewares/auth.middleware.js";
 import isPermitted from "../../middlewares/role.middleware.js";
 import {
+  cancelDisposeRequest,
   createAssetDispose,
   decideDisposeRequest,
   getAllAssetDisposals,
@@ -23,13 +24,25 @@ router
     createAssetDispose
   );
 
-router
-  .route("/assets/ad/:assetDisposeId")
-  .post(verifyAuth, isPermitted("admin", "it-head"), decideDisposeRequest)
-  .patch(
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    sellDisposedAsset
-  );
+router.patch(
+  "/assets/cancel/:assetDisposeId",
+  verifyAuth,
+  isPermitted("admin", "it-head", "store-manager"),
+  cancelDisposeRequest
+);
+
+router.patch(
+  "/assets/decide/:assetDisposeId",
+  verifyAuth,
+  isPermitted("admin", "it-head"),
+  decideDisposeRequest
+);
+
+router.patch(
+  "/assets/sell/:assetDisposeId",
+  verifyAuth,
+  isPermitted("admin", "it-head", "store-manager"),
+  sellDisposedAsset
+);
 
 export default router;

@@ -24,19 +24,19 @@ router
   );
 
 router
-  .route("/consumables/ci/:consumableIssuanceId")
-  .post(
-    verifyAuth,
-    isPermitted("admin", "it-head", "store-manager"),
-    handleIssuedConsumable
-  );
-
-router
   .route("/consumables/a/:assetId")
   .get(
     verifyAuth,
     isPermitted("admin", "it-head", "store-manager"),
     getIssuedConsumablestoAsset
+  );
+
+router
+  .route("/consumables/:consumableIssuanceId")
+  .post(
+    verifyAuth,
+    isPermitted("admin", "it-head", "store-manager"),
+    handleIssuedConsumable
   );
 
 export default router;

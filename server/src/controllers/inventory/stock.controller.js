@@ -37,12 +37,18 @@ export const getStock = asyncHandler(async (req, res) => {
           where: { category, storeId, itemType },
         });
 
+        let status;
+        if (Number(record.count) === 0) status = "OutStock";
+        else if (Number(record.count) <= stock.alertQty) status = "LowStock";
+        else status = "InStock";
+
         return {
           category,
           storeId,
           itemType,
           storeQty: Number(record.count),
           alertQty: stock.alertQty,
+          status,
         };
       })
     );

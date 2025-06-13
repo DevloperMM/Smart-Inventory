@@ -1,7 +1,8 @@
 import { Asset, Consumable } from "../models/index.js";
 
-export async function getAssetCategories() {
+export async function getAssetCategories(whereClause) {
   const records = await Asset.findAll({
+    where: whereClause,
     attributes: ["category"],
     group: ["category"],
     raw: true,
@@ -13,8 +14,9 @@ export async function getAssetCategories() {
   return categories;
 }
 
-export async function getConsumableCategories() {
+export async function getConsumableCategories(whereClause) {
   const records = await Consumable.findAll({
+    where: whereClause,
     attributes: ["category"],
     group: ["category"],
     raw: true,

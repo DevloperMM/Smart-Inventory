@@ -3,6 +3,10 @@ import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
+import {
+  getAssetCategories,
+  getConsumableCategories,
+} from "../../utils/categories.js";
 
 // Dashboard of user requests
 export const getAllRequests = asyncHandler(async (req, res) => {
@@ -46,8 +50,20 @@ export const createRequest = asyncHandler(async (req, res) => {
   if (!(category && purpose && storeId))
     throw new ApiError(400, "Please fill the marked fields");
 
+  const [assetCategories, consumableCategories] = await Promise.all([
+    getAssetCategories(),
+    getConsumableCategories(),
+  ]);
+
+  if (
+    !assetCategories.includes(category) &&
+    !consumableCategories.includes(category)
+  )
+    throw new ApiError(404, "This category items do not exist in store");
+
   try {
     const request = await Request.create({
+      itemType: assetCategories.includes(category) ? "asset" : "consumable",
       requestedBy: req.user.id,
       storeId,
       category: category.toLowerCase(),

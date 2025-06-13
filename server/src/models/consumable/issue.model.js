@@ -60,7 +60,7 @@ const ConsumableIssuance = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      // Consumed, Integrated, Returned, Exempted
+      // Standalone, Embedded, Returned, Exempted
       type: DataTypes.STRING,
       allowNull: false,
     },

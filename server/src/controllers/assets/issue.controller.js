@@ -51,7 +51,7 @@ export const issueAssetForRequest = asyncHandler(async (req, res) => {
 
     asset.status = "issued";
     request.status = "issued";
-    await Promise.all[(asset.save(), request.save({ silent: true }))];
+    await Promise.all([asset.save(), request.save({ silent: true })]);
 
     return res
       .status(200)

@@ -9,6 +9,10 @@ const Request = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    itemType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     requestedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
