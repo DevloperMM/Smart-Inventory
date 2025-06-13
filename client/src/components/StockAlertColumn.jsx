@@ -1,15 +1,26 @@
-import { useState } from "react";
-import { Pencil, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CircleCheckBig, Pencil } from "lucide-react";
 
 function StockAlertColumn({ item }) {
-  const [inputValue, setInputValue] = useState(item.alertQty || 0);
+  const [inputValue, setInputValue] = useState(item.alertQty);
   const [isReadOnly, setIsReadOnly] = useState(true);
+
+  useEffect(() => {
+    setInputValue(item.alertQty);
+  }, [item.alertQty]);
+
+  const handleSave = () => {
+    const numericVal = Number(inputValue);
+    if (!isNaN(numericVal)) {
+      onQtyChange(item.id, numericVal);
+      setIsReadOnly(true);
+    }
+  };
 
   return (
     <div className="flex justify-between gap-3">
       <div className="flex space-x-2 ml-2">
         <input
-          name={item.id}
           value={inputValue}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -25,7 +36,7 @@ function StockAlertColumn({ item }) {
             onClick={() => setIsReadOnly(true)}
             className="text-gray-500 hover:text-black"
           >
-            <Check size={20} strokeWidth={3} />
+            <CircleCheckBig size={20} strokeWidth={2} />
           </button>
         )}
       </div>

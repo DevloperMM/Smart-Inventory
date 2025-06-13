@@ -18,7 +18,7 @@ const Login = () => {
       className="h-screen bg-cover bg-center flex items-center justify-start px-12"
       style={{ backgroundImage: 'url("/login_bg.png")' }}
     >
-      <div className="backdrop-blur-lg bg-gray-100/25 rounded-2xl shadow-2xl w-2/3 lg:w-1/2 xl:w-1/3 h-[50%] overflow-hidden">
+      <div className="hidden sm:block backdrop-blur-lg bg-gray-100/25 rounded-2xl shadow-2xl w-2/3 lg:w-1/2 xl:w-1/3 h-[50%] overflow-hidden">
         <div className="p-12">
           <h2 className="text-3xl font-bold text-center mb-6">
             IT Inventory Login

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../../lib/constants";
 import { format } from "date-fns";
 import { PageFooter, Modal } from "../../../components";
+import { useUserStore } from "../../../store/useUserStore";
 
 const transits = [
   {
@@ -192,10 +193,7 @@ const TransitsList = ({ setStep }) => {
   const [filterData, setFilterData] = useState(initialState);
   const [selectedTransit, setSelectedTransit] = useState({});
 
-  const user = {
-    role: "store-manager",
-    storeManaging: 1,
-  };
+  const { user } = useUserStore();
 
   useEffect(() => {
     setPage(1);
@@ -217,7 +215,9 @@ const TransitsList = ({ setStep }) => {
           if (key === "fromStore" || key === "toStore")
             return transit[key] === parseInt(value);
 
-          return transit[key]?.toLowerCase().includes(value.toLowerCase());
+          return transit[key]
+            ?.toLowerCase()
+            .includes(value.trim().toLowerCase());
         })
       )
       .sort((a, b) => {
@@ -400,19 +400,20 @@ const TransitsList = ({ setStep }) => {
                   </span>
                 </td>
                 <td className="border px-3 py-2 text-center">
-                  {user.role === "it-head" && transit.status === "Pending" ? (
+                  {["admin", "it-head"].includes(user.role) &&
+                  transit.status === "Pending" ? (
                     <div className="flex justify-between">
                       <button
                         onClick={() => handleApprove(transit.id)}
-                        className="bg-green-500 px-3 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
+                        className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
                       >
-                        <Check strokeWidth={3} size={22} />
+                        <Check strokeWidth={2.5} size={22} />
                       </button>
                       <button
                         onClick={() => handleReject(transit.id)}
-                        className="bg-red-400 px-3 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
+                        className="bg-red-400 px-2 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
                       >
-                        <X strokeWidth={3} size={22} />
+                        <X strokeWidth={2.5} size={22} />
                       </button>
                     </div>
                   ) : (

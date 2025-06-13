@@ -267,7 +267,7 @@ const ConsumableList = () => {
         if (["updatedOn"].includes(key)) return item[key] === value;
         if (key === "location") return item[key] === Number(value);
 
-        return item[key]?.toLowerCase().includes(value.toLowerCase());
+        return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
       })
     );
 

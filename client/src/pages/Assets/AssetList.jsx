@@ -11,7 +11,7 @@ const assets = [
     category: "Laptop",
     description: "Dell Latitude 7420",
     mfgBy: "Dell",
-    serialNo: "DL7420-AX1234",
+    serialNo: "DL7420",
     stockedOn: "2024-09-01",
     stockedBy: "Jane Smith",
     status: "Available",
@@ -22,7 +22,7 @@ const assets = [
     category: "Monitor",
     description: 'Samsung 27" Curved',
     mfgBy: "HP",
-    serialNo: "SM27C-BX7890",
+    serialNo: "SM27C",
     stockedOn: "2024-10-15",
     stockedBy: "John Doe",
     status: "Issued",
@@ -33,7 +33,7 @@ const assets = [
     category: "Printer",
     description: "HP LaserJet Pro M404n",
     mfgBy: "HP",
-    serialNo: "HP404N-ZY6543",
+    serialNo: "HP404N",
     stockedOn: "2023-12-22",
     stockedBy: "Ali Khan",
     status: "Maintenance",
@@ -44,7 +44,7 @@ const assets = [
     category: "Router",
     description: "TP-Link Archer AX6000",
     mfgBy: "Dell",
-    serialNo: "TPLAX6000-RT1123",
+    serialNo: "TPLAX6000",
     stockedOn: "2024-06-09",
     stockedBy: "Lisa Ray",
     status: "Available",
@@ -55,7 +55,7 @@ const assets = [
     category: "Keyboard",
     description: "Logitech MX Keys",
     mfgBy: "HP",
-    serialNo: "LOGMX-KEYS88",
+    serialNo: "LOGMX",
     stockedOn: "2025-01-05",
     stockedBy: "Raj Mehta",
     status: "Disposed",
@@ -66,7 +66,7 @@ const assets = [
     category: "Webcam",
     description: "Logitech C920 HD",
     mfgBy: "HP",
-    serialNo: "LOGC920-HD3321",
+    serialNo: "LOGC920",
     stockedOn: "2023-11-30",
     stockedBy: "Jane Smith",
     status: "Sold",
@@ -77,7 +77,7 @@ const assets = [
     category: "Switch",
     description: "Cisco Catalyst 2960",
     mfgBy: "Dell",
-    serialNo: "CIS2960-AB2233",
+    serialNo: "CIS2960",
     stockedOn: "2024-08-10",
     stockedBy: "John Doe",
     status: "Maintenance",
@@ -88,7 +88,7 @@ const assets = [
     category: "Tablet",
     description: "Apple iPad Air",
     mfgBy: "Apple",
-    serialNo: "APLIPAD-AIR567",
+    serialNo: "APLIPAD",
     stockedOn: "2024-05-18",
     stockedBy: "Ali Khan",
     status: "Issued",
@@ -99,7 +99,7 @@ const assets = [
     category: "Projector",
     description: "Epson EX3260",
     mfgBy: "HP",
-    serialNo: "EPS3260-PJ999",
+    serialNo: "EPS3260",
     stockedOn: "2024-02-03",
     stockedBy: "Lisa Ray",
     status: "Available",
@@ -110,7 +110,7 @@ const assets = [
     category: "Headphones",
     description: "Sony WH-1000XM4",
     mfgBy: "Dell",
-    serialNo: "SONYXM4-HP001",
+    serialNo: "SONYXM4",
     stockedOn: "2025-03-21",
     stockedBy: "Raj Mehta",
     status: "Sold",
@@ -149,7 +149,7 @@ const AssetList = () => {
         if (key === "location") return item.location === Number(value);
         if (key === "stockedOn") return item.stockedOn === value;
 
-        return item[key]?.toLowerCase().includes(value.toLowerCase());
+        return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
       })
     );
 
@@ -184,7 +184,7 @@ const AssetList = () => {
 
       {/* Assets Table */}
       <div className="overflow-auto">
-        <table className="max-w-screen text-sm border-collapse">
+        <table className="min-w-full text-sm border-collapse">
           <thead className="bg-gray-100 text-left">
             <tr>
               <th className="w-[4%] border px-3 py-2 text-center">#</th>
@@ -321,7 +321,7 @@ const AssetList = () => {
                       statusColors[asset.status]
                     }`}
                   >
-                    {asset.status}
+                    {asset.status.toLowerCase()}
                   </span>
                 </td>
                 <td className="border px-3 py-2">
@@ -330,13 +330,13 @@ const AssetList = () => {
                 <td className="border px-3 py-2">
                   <div className="flex justify-center space-x-3">
                     <button
-                      onClick={() => navigate(`/assets/${asset.id}`)}
+                      onClick={() => navigate(`/admin/assets/${asset.id}`)}
                       className="text-gray-600 hover:text-black"
                     >
                       <Eye size={20} />
                     </button>
                     <button
-                      onClick={() => navigate(`/assets/edit/${asset.id}`)}
+                      onClick={() => navigate(`/admin/assets/edit/${asset.id}`)}
                       className="text-gray-600 hover:text-black"
                     >
                       <Pencil size={18} />

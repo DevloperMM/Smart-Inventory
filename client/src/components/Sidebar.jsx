@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, SquareArrowOutUpRight } from "lucide-react";
 import { useUserStore } from "../store/useUserStore.js";
 
 function Sidebar() {
@@ -14,13 +14,13 @@ function Sidebar() {
   const { user } = useUserStore();
 
   const navLinkClass = (path) =>
-    `block p-2 rounded hover:bg-amber-200 hover:text-black ${
-      currPath === path ? "font-semibold underline underline-offset-4" : ""
+    `block p-2 rounded hover:bg-zinc-800 ${
+      currPath === path ? "underline underline-offset-6" : ""
     }`;
 
   return (
-    <aside className="min-h-screen shadow-md p-4 text-gray-50 bg-amber-700">
-      <div className="mb-4 text-center pb-4 border-b-2">
+    <aside className="h-screen overflow-y-auto shadow-md p-4 text-gray-50 bg-neutral-600">
+      <div className="text-center pb-4 space-y-2">
         <Link to="/admin/profile">
           <img
             src="/avatar.png"
@@ -28,7 +28,16 @@ function Sidebar() {
             className="h-20 w-24 mx-auto cursor-pointer"
           />
         </Link>
-        <span className="block mt-2 text-sm font-medium">{user.name}</span>
+      </div>
+
+      <div className="pb-4 text-center text-sm">
+        <a
+          href="/user"
+          className="italic hover:underline hover:underline-offset-4"
+        >
+          <SquareArrowOutUpRight className="inline-block mr-1 pb-1" size={20} />
+          Open as user page
+        </a>
       </div>
 
       <nav className="space-y-3">
@@ -59,7 +68,7 @@ function Sidebar() {
         <div>
           <button
             onClick={() => setTransactDown(!transactDown)}
-            className={`w-full text-left p-2 mb-1 rounded hover:bg-amber-200 hover:text-black ${
+            className={`w-full text-left p-2 mb-1 rounded hover:bg-neutral-800 ${
               !transactDown ? "shadow-lg" : ""
             }`}
           >

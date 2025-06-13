@@ -207,7 +207,9 @@ const RequestsList = ({ setStep }) => {
           if (!value) return true;
           if (["requestedOn", "decidedOn"].includes(key))
             return request[key] === value;
-          return request[key]?.toLowerCase().includes(value.toLowerCase());
+          return request[key]
+            ?.toLowerCase()
+            .includes(value.trim().toLowerCase());
         })
       )
       .sort((a, b) => {
@@ -345,7 +347,7 @@ const RequestsList = ({ setStep }) => {
             {pageData.map((request, i) => (
               <tr
                 key={request.id}
-                className={i % 2 === 0 ? "bg-white h-12" : "bg-gray-50 h-12"}
+                className={i % 2 === 0 ? "bg-white h-fit" : "bg-gray-50 h-fit"}
               >
                 <td className="border px-3 py-2 text-center">
                   {(page - 1) * rows + i + 1}
@@ -361,7 +363,7 @@ const RequestsList = ({ setStep }) => {
                       statusColors[request.status]
                     }`}
                   >
-                    {request.status}
+                    {request.status.toLowerCase()}
                   </span>
                 </td>
                 <td className="border px-3 py-2">{request?.decidedBy}</td>
@@ -382,32 +384,33 @@ const RequestsList = ({ setStep }) => {
                     View
                   </span>
                 </td>
-                <td className="border px-3 py-2">
-                  {user.role === "it-head" && request.status === "Pending" ? (
-                    <div className="inline-block space-x-3">
+                <td className="border px-4 py-2 text-center">
+                  {["admin", "it-head"].includes(user.role) &&
+                  request.status === "Pending" ? (
+                    <div className="flex justify-between">
                       <button
                         onClick={(request) => (request.status = "Approved")}
-                        className="bg-green-500 px-3 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
+                        className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
                       >
-                        <Check strokeWidth={3} size={22} />
+                        <Check strokeWidth={2} size={22} />
                       </button>
                       <button
                         onClick={(request) => (request.status = "Rejected")}
-                        className="bg-red-400 px-3 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
+                        className="bg-red-400 px-2 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
                       >
-                        <X strokeWidth={3} size={22} />
+                        <X strokeWidth={2} size={22} />
                       </button>
                     </div>
                   ) : ["Approved", "Pending"].includes(request.status) ? (
                     <button
                       disabled={request.status !== "Approved"}
                       onClick={() => setStep(2)}
-                      className="w-full bg-teal-500 px-3 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
+                      className="w-full bg-teal-500 px-1 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                     >
                       <span>Issue</span>
                     </button>
                   ) : request.status === "Issued" ? (
-                    <div className="inline-block w-full bg-emerald-100 text-black text-sm font-semibold px-4 py-1 rounded-xl border-4 border-dashed border-emerald-500 shadow-md relative">
+                    <div className="inline-block w-full bg-blue-100 text-black text-sm font-semibold px-1 py-1.5 rounded-xl border-2 border-blue-500 shadow-md relative">
                       <span className="block text-center tracking-wide">
                         Issued
                       </span>
@@ -423,7 +426,7 @@ const RequestsList = ({ setStep }) => {
       </div>
 
       {/* Pagination */}
-      {!msg && (
+      {!msg ? (
         <PageFooter
           rows={rows}
           page={page}
@@ -431,9 +434,9 @@ const RequestsList = ({ setStep }) => {
           setRows={setRows}
           totalPages={totalPages}
         />
+      ) : (
+        <div className="text-center mt-4 text-red-500">{msg}</div>
       )}
-
-      {msg && <div className="text-center mt-4 text-red-500">{msg}</div>}
 
       {show && (
         <Modal
@@ -441,7 +444,7 @@ const RequestsList = ({ setStep }) => {
           onClose={() => setShow(false)}
           data={{
             "Request Purpose": selectedRequest.purpose,
-            "Decision Reason": selectedRequest?.decidedComments || "Pending",
+            Decision: selectedRequest?.decidedComments || "",
           }}
         />
       )}

@@ -9,35 +9,35 @@ const storeData = [
     id: 1,
     type: "Asset",
     category: "Laptop",
-    storeId: "HRD",
-    activeQty: 12,
-    alertQty: 2,
+    storeId: 1,
+    storeQty: 12,
+    alertQty: 1,
     status: "InStock",
   },
   {
     id: 2,
     type: "Asset",
     category: "Laptop",
-    storeId: "CRD",
-    activeQty: 1,
-    alertQty: 2,
+    storeId: 2,
+    storeQty: 1,
+    alertQty: 4,
     status: "LowStock",
   },
   {
     id: 3,
     type: "Asset",
     category: "Monitor",
-    storeId: "HRD",
-    activeQty: 0,
-    alertQty: 1,
+    storeId: 1,
+    storeQty: 0,
+    alertQty: 7,
     status: "OutStock",
   },
   {
     id: 4,
     type: "Asset",
     category: "Monitor",
-    storeId: "HRD",
-    activeQty: 8,
+    storeId: 1,
+    storeQty: 8,
     alertQty: 2,
     status: "InStock",
   },
@@ -45,26 +45,26 @@ const storeData = [
     id: 5,
     type: "Consumable",
     category: "Ethernet Cable",
-    storeId: "CRD",
-    activeQty: 5,
-    alertQty: 2,
+    storeId: 2,
+    storeQty: 5,
+    alertQty: 3,
     status: "InStock",
   },
   {
     id: 6,
     type: "Consumable",
     category: "Ethernet Cable",
-    storeId: "HRD",
-    activeQty: 1,
-    alertQty: 2,
+    storeId: 1,
+    storeQty: 1,
+    alertQty: 3,
     status: "LowStock",
   },
   {
     id: 7,
     type: "Consumable",
     category: "HDMI Cable",
-    storeId: "HRD",
-    activeQty: 0,
+    storeId: 1,
+    storeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
@@ -72,8 +72,8 @@ const storeData = [
     id: 8,
     type: "Consumable",
     category: "HDMI Cable",
-    storeId: "HRD",
-    activeQty: 3,
+    storeId: 1,
+    storeQty: 3,
     alertQty: 2,
     status: "InStock",
   },
@@ -81,8 +81,8 @@ const storeData = [
     id: 9,
     type: "Consumable",
     category: "Mouse",
-    storeId: "HRD",
-    activeQty: 0,
+    storeId: 1,
+    storeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
@@ -90,35 +90,35 @@ const storeData = [
     id: 10,
     type: "Consumable",
     category: "Mouse",
-    storeId: "CRD",
-    activeQty: 6,
-    alertQty: 2,
+    storeId: 2,
+    storeQty: 6,
+    alertQty: 5,
     status: "InStock",
   },
   {
     id: 11,
     type: "Consumable",
     category: "Keyboard",
-    storeId: "HRD",
-    activeQty: 3,
-    alertQty: 3,
+    storeId: 1,
+    storeQty: 3,
+    alertQty: 0,
     status: "LowStock",
   },
   {
     id: 12,
     type: "Consumable",
     category: "Keyboard",
-    storeId: "CRD",
-    activeQty: 7,
-    alertQty: 2,
+    storeId: 2,
+    storeQty: 7,
+    alertQty: 4,
     status: "InStock",
   },
   {
     id: 13,
     type: "Asset",
     category: "Docking Station",
-    storeId: "HRD",
-    activeQty: 2,
+    storeId: 1,
+    storeQty: 2,
     alertQty: 2,
     status: "LowStock",
   },
@@ -126,8 +126,8 @@ const storeData = [
     id: 14,
     type: "Asset",
     category: "Docking Station",
-    storeId: "CRD",
-    activeQty: 5,
+    storeId: 2,
+    storeQty: 5,
     alertQty: 1,
     status: "InStock",
   },
@@ -135,8 +135,8 @@ const storeData = [
     id: 15,
     type: "Asset",
     category: "Tablet",
-    storeId: "CRD",
-    activeQty: 0,
+    storeId: 2,
+    storeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
@@ -144,8 +144,8 @@ const storeData = [
     id: 16,
     type: "Asset",
     category: "Tablet",
-    storeId: "HRD",
-    activeQty: 10,
+    storeId: 1,
+    storeQty: 10,
     alertQty: 3,
     status: "InStock",
   },
@@ -153,8 +153,8 @@ const storeData = [
     id: 17,
     type: "Consumable",
     category: "Power Adapter",
-    storeId: "CRD",
-    activeQty: 0,
+    storeId: 2,
+    storeQty: 0,
     alertQty: 2,
     status: "OutStock",
   },
@@ -162,8 +162,8 @@ const storeData = [
     id: 18,
     type: "Consumable",
     category: "Power Adapter",
-    storeId: "CRD",
-    activeQty: 3,
+    storeId: 2,
+    storeQty: 3,
     alertQty: 2,
     status: "LowStock",
   },
@@ -171,8 +171,8 @@ const storeData = [
     id: 19,
     type: "Consumable",
     category: "SSD",
-    storeId: "HRD",
-    activeQty: 4,
+    storeId: 1,
+    storeQty: 4,
     alertQty: 2,
     status: "InStock",
   },
@@ -180,8 +180,8 @@ const storeData = [
     id: 20,
     type: "Consumable",
     category: "SSD",
-    storeId: "HRD",
-    activeQty: 0,
+    storeId: 1,
+    storeQty: 0,
     alertQty: 1,
     status: "OutStock",
   },
@@ -190,7 +190,7 @@ const storeData = [
 export default function Dashbaord() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  const [sortCriteria, setSortCriteria] = useState([]);
+  const [isSortAsc, setIsSortAsc] = useState(false);
 
   const [page, setPage] = useState(1);
   const [msg, setMsg] = useState("");
@@ -203,31 +203,18 @@ export default function Dashbaord() {
   }, [search, status, rows]);
 
   const filteredData = useMemo(() => {
-    let data = storeData.filter(
-      (item) =>
-        item.category.toLowerCase().includes(search.toLowerCase()) &&
-        (status ? item.status === status : true)
-    );
-
-    data.sort((a, b) => {
-      for (const { field, asc } of sortCriteria) {
-        const valA = a[field];
-        const valB = b[field];
-
-        let result = 0;
-        if (typeof valA === "string" && typeof valB === "string") {
-          result = valA.localeCompare(valB);
-        } else {
-          result = valA - valB;
-        }
-
-        if (result !== 0) return asc ? result : -result;
-      }
-      return 0;
-    });
+    let data = storeData
+      .filter(
+        (item) =>
+          item.category.toLowerCase().includes(search.toLowerCase()) &&
+          (status ? item.status === status : true)
+      )
+      .sort((a, b) =>
+        isSortAsc ? b["storeId"] - a["storeId"] : a["storeId"] - b["storeId"]
+      );
 
     return data;
-  }, [search, status, sortCriteria]);
+  }, [search, status, isSortAsc]);
 
   useEffect(() => {
     setMsg(filteredData.length ? "" : "No records found");
@@ -236,15 +223,12 @@ export default function Dashbaord() {
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
 
-  const toggleSort = (field) => {
-    setSortCriteria((prev) => {
-      const existing = prev.find((c) => c.field === field);
-      if (existing) {
-        return prev.map((c) => (c.field === field ? { ...c, asc: !c.asc } : c));
-      } else {
-        return [...prev, { field, asc: true }];
-      }
-    });
+  const handleAlertQtyChange = (id, newQty) => {
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, alertQty: newQty } : item
+      )
+    );
   };
 
   return (
@@ -301,17 +285,11 @@ export default function Dashbaord() {
           <thead className="bg-gray-100 text-left">
             <tr>
               <th className="w-[5%] border px-4 py-3 text-center">#</th>
-              <th
-                className="w-[12%] border px-4 py-3 cursor-pointer"
-                onClick={() => toggleSort("type")}
-              >
-                Item type{" "}
-                <ArrowUpDown size={15} strokeWidth={2.5} className="inline" />
-              </th>
+              <th className="w-[12%] border px-4 py-3">Item type</th>
               <th className="w-[22%] border px-4 py-3">Category</th>
               <th
-                className="w-[15%] border px-4 py-3"
-                onClick={() => toggleSort("storeId")}
+                className="w-[15%] border px-4 py-3 cursor-pointer"
+                onClick={() => setIsSortAsc(!isSortAsc)}
               >
                 Store{" "}
                 <ArrowUpDown size={15} strokeWidth={2.5} className="inline" />
@@ -329,10 +307,15 @@ export default function Dashbaord() {
                 </td>
                 <td className="border px-4 py-3">{item.type}</td>
                 <td className="border px-4 py-3">{item.category}</td>
-                <td className="border px-4 py-3">{item.storeId}</td>
-                <td className="border px-4 py-3">{item.activeQty}</td>
                 <td className="border px-4 py-3">
-                  <StockAlertColumn item={item} />
+                  {item.storeId === 1 ? "HRD" : "CRD"}
+                </td>
+                <td className="border px-4 py-3">{item.storeQty}</td>
+                <td className="border px-4 py-3">
+                  <StockAlertColumn
+                    item={item}
+                    onQtyChange={handleAlertQtyChange}
+                  />
                 </td>
                 <td className="border px-4 py-3">
                   <span

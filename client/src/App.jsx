@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AdminLayout, Loader, PageNotFound, UserLayout } from "./components";
 import {
@@ -22,13 +22,17 @@ import {
   TransfersHistory,
   TransitRequests,
   WelcomePage,
+  UserRequests,
+  NewUserRequest,
+  UserIssuances,
+  UserProfile,
+  UserPassword,
 } from "./pages";
 import { useUserStore } from "./store/useUserStore.js";
 import { useEffect } from "react";
 
 function App() {
   const { checkAuth, checkingAuth, user } = useUserStore();
-  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -58,11 +62,16 @@ function App() {
 
             <Route path="/user" element={<UserLayout />}>
               <Route index element={<UserPage />} />
+              <Route path="requests" element={<UserRequests />} />
+              <Route path="request/new" element={<NewUserRequest />} />
+              <Route path="issuances" element={<UserIssuances />} />
+              <Route path="profile" element={<UserProfile />} />
+              <Route path="password" element={<UserPassword />} />
               <Route
                 path="*"
                 element={
                   <div className="flex-1 flex items-center justify-center p-4 min-h-screen overflow-x-auto bg-gray-500/10">
-                    <PageNotFound />
+                    <PageNotFound homeLink={"/user"} />
                   </div>
                 }
               />
@@ -114,7 +123,10 @@ function App() {
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="password" element={<PasswordPage />} />
 
-                <Route path="*" element={<PageNotFound />} />
+                <Route
+                  path="*"
+                  element={<PageNotFound homeLink={"/admin"} />}
+                />
               </Route>
             )}
 
