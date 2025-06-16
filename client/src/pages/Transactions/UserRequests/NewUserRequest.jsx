@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CustomSelect } from "../../../components";
 
 function NewUserRequest() {
   const [itemName, setItemName] = useState("");
@@ -9,6 +10,8 @@ function NewUserRequest() {
     e.preventDefault();
     console.log({ itemName, quantity, remarks });
   };
+
+  const options = ["laptop", "keyboard", "mouse", "desktop"];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-10 px-4">

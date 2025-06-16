@@ -38,7 +38,7 @@ function TransfersHistory() {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
   const [msg, setMsg] = useState("");
-  const [filterData, setFilterData] = useState({});
+  const [filterData, setFilterData] = useState(initialState);
 
   useEffect(() => {
     setPage(1);
@@ -51,19 +51,25 @@ function TransfersHistory() {
 
       {/* Transfers Table */}
       <div className="overflow-auto">
-        <table className="w-full border border-gray-300 rounded-lg text-sm">
+        <table className="max-w-screen lg:w-full border border-gray-300 rounded-lg text-sm">
           <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="p-3">#</th>
-              <th className="p-3">Assets</th>
-              <th className="p-3">Consumables</th>
-              <th className="p-3">Transferred By</th>
-              <th className="p-3">Transferred On</th>
-              <th className="p-3">Received By</th>
-              <th className="p-3">Received On</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
+              <th className="w-[2%] border px-3 py-2 text-center">#</th>
+              <th className="w-[10%] border px-3 py-2">Assets</th>
+              <th className="w-[40%] border px-3 py-2">
+                <div className="flex justify-between px-1">
+                  <span>Category</span>
+                  <span>Specs</span>
+                  <span>Qty</span>
+                </div>
+              </th>
+              <th className="w-[10%] border px-3 py-2">Moved By</th>
+              <th className="w-[10%] border px-3 py-2">Moved On</th>
+              <th className="w-[10%] border px-3 py-2">Received By</th>
+              <th className="w-[10%] border px-3 py-2">Received On</th>
+              <th className="w-[8%] border px-3 py-2">Status</th>
             </tr>
+
             <tr className="bg-white h-fit">
               <td className="border p-2" />
               <td className="border p-2">
@@ -115,7 +121,6 @@ function TransfersHistory() {
                   className="w-full border p-1 rounded"
                 />
               </td>
-              <td className="border p-2" />
             </tr>
           </thead>
           <tbody>
@@ -136,19 +141,6 @@ function TransfersHistory() {
                   >
                     {item.status}
                   </span>
-                </td>
-                <td className="px-3 py-2">
-                  <div className="space-x-3">
-                    <button
-                      onClick={() => navigate(`/assets/${item.id}`)}
-                      className="text-gray-600 hover:text-black"
-                    >
-                      <Eye size={20} />
-                    </button>
-                    <button className="text-gray-600 hover:text-black">
-                      <Pencil size={18} />
-                    </button>
-                  </div>
                 </td>
               </tr>
             ))}

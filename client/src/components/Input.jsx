@@ -10,7 +10,7 @@ function Input({ label, list, rowSpan, ...props }) {
     <div className={`row-span-${rowSpan}`}>
       <label className="block text-black mb-1 pb-1">
         {label}
-        {props.required && <span className="text-red-500">*</span>}
+        {label && props.required && <span className="text-red-500">*</span>}
       </label>
 
       {rowSpan ? (

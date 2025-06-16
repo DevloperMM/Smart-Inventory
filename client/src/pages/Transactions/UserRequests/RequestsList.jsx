@@ -194,12 +194,12 @@ const RequestsList = ({ setStep }) => {
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    const filterOrder = {
-      Pending: 0,
-      Approved: 1,
-      Issued: 2,
-      Rejected: 3,
-    };
+    // const filterOrder = {
+    //   Pending: 0,
+    //   Approved: 1,
+    //   Issued: 2,
+    //   Rejected: 3,
+    // };
 
     let data = requests
       .filter((request) =>
@@ -213,7 +213,11 @@ const RequestsList = ({ setStep }) => {
         })
       )
       .sort((a, b) => {
-        return filterOrder[a.status] - filterOrder[b.status];
+        const dateA = new Date(a.requestedOn);
+        const dateB = new Date(b.requestedOn);
+        return dateB - dateA;
+
+        // return filterOrder[a.status] - filterOrder[b.status];
       });
 
     return data;
@@ -228,17 +232,7 @@ const RequestsList = ({ setStep }) => {
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Requests List</h2>
-        <button
-          onClick={() => navigate("/admin/transactions/requests/new")}
-          className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-        >
-          <Plus className="inline-block size-5 mb-1 mr-1" />
-          Create Request
-        </button>
-      </div>
+      <h2 className="text-2xl font-bold">Requests List</h2>
 
       {/* Requests Table */}
       <div className="overflow-auto">
@@ -347,7 +341,7 @@ const RequestsList = ({ setStep }) => {
             {pageData.map((request, i) => (
               <tr
                 key={request.id}
-                className={i % 2 === 0 ? "bg-white h-fit" : "bg-gray-50 h-fit"}
+                className={i % 2 === 0 ? "bg-white h-12" : "bg-gray-50 h-12"}
               >
                 <td className="border px-3 py-2 text-center">
                   {(page - 1) * rows + i + 1}

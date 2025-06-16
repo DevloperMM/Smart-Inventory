@@ -94,12 +94,6 @@ function Sidebar() {
                 Transit Requests
               </Link>
               <Link
-                to="/admin/transactions/issuances"
-                className={navLinkClass("/admin/transactions/issuances")}
-              >
-                Past Issuances
-              </Link>
-              <Link
                 to="/admin/transactions/transfers"
                 className={navLinkClass("/admin/transactions/transfers")}
               >
@@ -110,6 +104,12 @@ function Sidebar() {
                 className={navLinkClass("/admin/transactions/disposals")}
               >
                 Disposals
+              </Link>
+              <Link
+                to="/admin/transactions/issuances"
+                className={navLinkClass("/admin/transactions/issuances")}
+              >
+                Past Issuances
               </Link>
             </div>
           )}

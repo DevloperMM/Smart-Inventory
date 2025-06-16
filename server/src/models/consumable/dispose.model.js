@@ -74,7 +74,6 @@ const ConsumableDisposal = db.define(
       type: DataTypes.STRING,
     },
     status: {
-      // Pending, Cancelled, Rejected, Disposed, Sold
       type: DataTypes.STRING,
       allowNull: false,
     },

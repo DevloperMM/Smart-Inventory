@@ -13,8 +13,6 @@ import {
   LoginPage,
   NewAsset,
   NewConsumable,
-  NewDisposal,
-  NewRequest,
   NewTransit,
   PasswordPage,
   ProfilePage,
@@ -27,6 +25,9 @@ import {
   UserIssuances,
   UserProfile,
   UserPassword,
+  NewAssetDispose,
+  NewConsumableDispose,
+  ManageUser,
 } from "./pages";
 import { useUserStore } from "./store/useUserStore.js";
 import { useEffect } from "react";
@@ -81,6 +82,7 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<WelcomePage />} />
                 <Route path="dashboard" element={<AdminPage />} />
+                <Route path="users" element={<ManageUser />} />
 
                 <Route path="assets" element={<AssetList />} />
                 <Route path="assets/new" element={<NewAsset />} />
@@ -95,9 +97,14 @@ function App() {
                   element={<DisposalHistory />}
                 />
                 <Route
-                  path="transactions/disposals/new"
-                  element={<NewDisposal />}
+                  path="transactions/disposals/asset/new"
+                  element={<NewAssetDispose />}
                 />
+                <Route
+                  path="transactions/disposals/consumable/new"
+                  element={<NewConsumableDispose />}
+                />
+
                 <Route
                   path="transactions/issuances"
                   element={<IssueHistory />}
@@ -107,10 +114,6 @@ function App() {
                   element={<TransfersHistory />}
                 />
                 <Route path="transactions/requests" element={<Requests />} />
-                <Route
-                  path="transactions/requests/new"
-                  element={<NewRequest />}
-                />
                 <Route
                   path="transactions/transits"
                   element={<TransitRequests />}

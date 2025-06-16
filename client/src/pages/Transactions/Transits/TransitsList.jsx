@@ -200,11 +200,11 @@ const TransitsList = ({ setStep }) => {
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    const filterOrder = {
-      Pending: 0,
-      Approved: 1,
-      Rejected: 2,
-    };
+    // const filterOrder = {
+    //   Pending: 0,
+    //   Approved: 1,
+    //   Rejected: 2,
+    // };
 
     let data = transits
       .filter((transit) =>
@@ -221,7 +221,11 @@ const TransitsList = ({ setStep }) => {
         })
       )
       .sort((a, b) => {
-        return filterOrder[a.status] - filterOrder[b.status];
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateB - dateA;
+
+        // return filterOrder[a.status] - filterOrder[b.status];
       });
 
     return data;
@@ -425,7 +429,7 @@ const TransitsList = ({ setStep }) => {
                             user.storeManaging !== transit.fromStore)
                         }
                         onClick={() => setStep(2)}
-                        className="w-full bg-teal-500 px-1.5 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
+                        className="w-full bg-teal-500 px-1.5 py-1.5 text-sm rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                       >
                         <span>Transfer</span>
                       </button>

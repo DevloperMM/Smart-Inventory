@@ -8,7 +8,7 @@ export const statusColors = {
   Disposed: "text-green-600 bg-green-100",
   Issued: "text-blue-600 bg-blue-100",
   AMC: "text-yellow-600 bg-yellow-100",
-  Sold: "text-red-600 bg-red-100",
+  Sold: "text-purple-600 bg-purple-100",
   Lost: "text-gray-600 bg-gray-200",
 
   Store: "text-green-600 bg-green-100",
@@ -19,7 +19,7 @@ export const statusColors = {
   OutStock: "text-red-600 bg-red-100",
 
   Exempted: "text-red-600 bg-red-100",
-  Returned: "text-pink-600 bg-pink-100",
+  Returned: "text-violet-600 bg-violet-100",
 
   Consumed: "text-pink-600 bg-pink-100",
   Integrated: "text-indigo-600 bg-indigo-100",

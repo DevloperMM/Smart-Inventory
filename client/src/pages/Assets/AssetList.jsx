@@ -184,7 +184,7 @@ const AssetList = () => {
 
       {/* Assets Table */}
       <div className="overflow-auto">
-        <table className="min-w-full text-sm border-collapse">
+        <table className="max-w-screen text-sm border-collapse">
           <thead className="bg-gray-100 text-left">
             <tr>
               <th className="w-[4%] border px-3 py-2 text-center">#</th>

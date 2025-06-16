@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Select } from "../../../components";
+import { Input, CustomSelect } from "../../../components";
 
 const initialState = {
   category: "",
@@ -10,18 +10,24 @@ const initialState = {
   reason: "",
 };
 
-const desccriptions = [
-  "HP EliteBook 840 G8 Laptop - 16GB RAM, 512GB SSD",
-  "Dell UltraSharp 27'' Monitor - U2723QE 4K USB-C",
-  "Logitech MX Master 3S Wireless Mouse",
-  "Lenovo ThinkPad Docking Station Gen 2",
-  "Apple MacBook Pro 14'' - M2 Pro, 16GB RAM",
-  "Epson EcoTank L3250 All-in-One Printer",
-  "Microsoft Surface Laptop 5 - 13.5'' i5, 8GB RAM",
-  "WD My Passport 1TB External Hard Drive",
-  "Jabra Evolve2 65 Wireless Headset with Charging Stand",
-  "Keychron K8 Wireless Mechanical Keyboard (Red Switch)",
+const serialNos = [
+  "CE283BAS3232",
+  "BSE321HA2312",
+  "AKJ723KJNA98",
+  "LOISAH2382NJ",
+  "MAJE38BAJ203",
+  "IN9NJ2MKPIH4",
+  "ZEIE89H32NL4",
+  "AE239AN982W3",
+  "O8Y823JALS31",
+  "K0I2PJASE3B2",
 ];
+
+const serialNoOptions = serialNos.map((sn) => ({
+  label: sn,
+  value: sn,
+  description: `Asset for ${sn}`,
+}));
 
 function NewDispose() {
   const navigate = useNavigate();
@@ -56,7 +62,7 @@ function NewDispose() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-7">
-      <h2 className="text-2xl font-bold text-gray-800">Create Dispose</h2>
+      <h2 className="text-2xl font-bold text-gray-800">Create dispose</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -83,22 +89,36 @@ function NewDispose() {
             list={manufacturers}
           />
           <div className="flex gap-4">
-            <Select
-              label="Asset Description"
-              name="asset"
-              value={formData.asset}
-              onChange={handleChange}
-              required
-              options={desccriptions}
-              placeholder="Select asset"
-            />
-            <Input
-              label="Serial Number"
-              name="serialNo"
-              value={formData.asset}
-              onChange={handleChange}
-              disabled
-            />
+            <div className="w-1/3">
+              <CustomSelect
+                label="Serial Number"
+                name="asset"
+                value={
+                  serialNoOptions.find((opt) => opt.value === formData.asset) ||
+                  null
+                }
+                onChange={(selected) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    asset: selected?.value || "",
+                    serialNo: selected?.description || "",
+                  }))
+                }
+                options={serialNoOptions}
+                required
+              />
+            </div>
+
+            <div className="w-2/3">
+              <input
+                name="serialNo"
+                autoComplete="off"
+                value={formData.serialNo || "Select to preview description..."}
+                onChange={handleChange}
+                disabled
+                className={`w-full mt-8 rounded-lg px-3 py-1.5 border border-gray-300 focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 ${"bg-gray-100 text-gray-700 border-gray-400 cursor-not-allowed"}`}
+              />
+            </div>
           </div>
         </div>
 

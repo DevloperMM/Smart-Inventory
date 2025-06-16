@@ -35,7 +35,6 @@ const User = db.define(
       allowNull: false,
     },
     role: {
-      // Admin, IT-Head, Store-Manager, User
       type: DataTypes.STRING,
       defaultValue: "User",
       allowNull: false,

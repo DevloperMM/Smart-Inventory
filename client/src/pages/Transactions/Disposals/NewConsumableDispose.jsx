@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Input, Select } from "../../components";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserStore } from "../../store/useUserStore";
+import { useUserStore } from "../../../store/useUserStore";
+import { Input, Select } from "../../../components";
 
 const initialState = {
   category: "",
@@ -12,10 +12,23 @@ const initialState = {
   location: "",
 };
 
-function NewConsumable() {
+function NewConsumableDispose() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialState);
+
   const categories = ["Mouse", "Keyboard", "Hard disk", "RAM", "Cartridge"];
+  const specs = [
+    "Wired, USB",
+    "Wireless, Bluetooth",
+    "Mechanical, RGB",
+    "Membrane, USB",
+    "1TB, 7200 RPM, SATA",
+    "512GB, SSD, NVMe",
+    "8GB DDR4, 2666MHz",
+    "16GB DDR5, 3200MHz",
+    "Black, 82A HP",
+    "Color, 803 Tri-color HP",
+  ];
 
   const { user } = useUserStore();
 
@@ -38,9 +51,7 @@ function NewConsumable() {
 
   return (
     <div className="p-6 max-w-xl mx-auto space-y-7">
-      <h2 className="text-2xl text-gray-800 font-bold">
-        Enter consumable details
-      </h2>
+      <h2 className="text-2xl text-gray-800 font-bold">Create dispose</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -48,22 +59,23 @@ function NewConsumable() {
       >
         {/** First Column Inputs */}
         <div className="flex flex-col gap-5">
-          <Input
+          <Select
             label="Category"
             name="category"
-            placeholder="Select or enter the category"
+            placeholder="-- Select the category"
             value={formData.category}
             onChange={handleChange}
             required
-            list={categories}
+            options={categories}
           />
-          <Input
+          <Select
             label="Specifications"
             name="specs"
+            placeholder="-- Select the specifications"
             value={formData.specs}
             onChange={handleChange}
             required
-            rowSpan={3}
+            options={specs}
           />
           <Input
             type="number"
@@ -137,4 +149,4 @@ function NewConsumable() {
   );
 }
 
-export default NewConsumable;
+export default NewConsumableDispose;
