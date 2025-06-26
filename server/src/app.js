@@ -2,6 +2,11 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "../src/lib/swagger.js";
+import asyncHandler from "./utils/asyncHandler.js";
+import {
+  getAssetCategories,
+  getConsumableCategories,
+} from "./utils/categories.js";
 
 const app = express();
 
@@ -40,6 +45,30 @@ app.use("/api/v1/admin/transfers", transferRouter);
 app.use("/api/v1/users/auth", userAuthRouter);
 app.use("/api/v1/users/requests", userRequestRouter);
 app.use("/api/v1/users/issuances", userIssueRouter);
+
+app.get(
+  "/api/v1/asset/cats",
+  asyncHandler(async (req, res) => {
+    try {
+      const categories = await getAssetCategories();
+      return res.status(200).json(categories);
+    } catch (err) {
+      throw new Error("Error while getting assset categories");
+    }
+  })
+);
+
+app.get(
+  "/api/v1/consumable/cats",
+  asyncHandler(async (req, res) => {
+    try {
+      const categories = await getConsumableCategories();
+      return res.status(200).json(categories);
+    } catch (err) {
+      throw new Error("Error while getting consumable categories");
+    }
+  })
+);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

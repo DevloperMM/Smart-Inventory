@@ -3,7 +3,7 @@ import { statusColors } from "../../../lib/constants";
 import { Check, Eye, X } from "lucide-react";
 import { Modal, PageFooter } from "../../../components";
 import { format } from "date-fns";
-import { useUserStore } from "../../../store/useUserStore";
+import { useUserStore } from "../../../store";
 
 const disposedAssets = [
   {
@@ -434,10 +434,7 @@ function DisposedAssets() {
                 <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded-lg ${
-                      statusColors[
-                        item.status.charAt(0).toUpperCase() +
-                          item.status.slice(1)
-                      ]
+                      statusColors[item.status.toLowerCase()]
                     }`}
                   >
                     {item.status}
@@ -463,12 +460,12 @@ function DisposedAssets() {
                   ) : ["disposed", "pending"].includes(item.status) ? (
                     <button
                       disabled={item.status !== "disposed"}
-                      className="w-full bg-purple-400 px-1 py-1.5 text-base rounded-xl text-white hover:bg-purple-500 disabled:bg-gray-400"
+                      className="w-full bg-red-400 px-1 py-1.5 text-sm rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
                     >
-                      <span>Sell out</span>
+                      Sell out
                     </button>
                   ) : item.status === "sold" ? (
-                    <div className="inline-block w-full bg-red-100 text-black text-sm font-semibold px-1 py-1.5 rounded-xl border-2 border-red-500 shadow-md relative">
+                    <div className="inline-block w-full bg-red-100 text-black text-sm font-semibold px-2 py-1 rounded-xl border-2 border-red-500 shadow-md relative">
                       <span className="block text-center tracking-wide">
                         Sold
                       </span>

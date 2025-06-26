@@ -10,7 +10,9 @@ function Select({ label, options = [], ...props }) {
         <select
           {...props}
           className={`w-full rounded-lg px-3 py-2.5 shadow-lg focus:ring-1 ${
-            props.disabled ? "bg-gray-100 text-gray-700" : "border"
+            props.disabled
+              ? "bg-gray-100 text-gray-700 border border-gray-400"
+              : "border"
           }`}
         >
           {props.placeholder && <option value="">{props.placeholder}</option>}

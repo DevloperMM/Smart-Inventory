@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CircleCheckBig, Pencil } from "lucide-react";
 
-function StockAlertColumn({ item }) {
+function StockAlertColumn({ item, onQtyChange }) {
   const [inputValue, setInputValue] = useState(item.alertQty);
   const [isReadOnly, setIsReadOnly] = useState(true);
 
@@ -33,7 +33,7 @@ function StockAlertColumn({ item }) {
         />
         {!isReadOnly && (
           <button
-            onClick={() => setIsReadOnly(true)}
+            onClick={handleSave}
             className="text-gray-500 hover:text-black"
           >
             <CircleCheckBig size={20} strokeWidth={2} />

@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Input } from "../../components";
+import { Input, LoadIcon, Select } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { useAssetStore, useUserStore } from "../../store";
+
+// TODO: Get brand options here also
 
 const initialState = {
   category: "",
@@ -8,14 +11,10 @@ const initialState = {
   modelNo: "",
   description: "",
   serialNo: "",
-  materialCode: "",
   pr: "",
   po: "",
   grn: "",
   srr: "",
-  stockedOn: "",
-  stockedBy: "",
-  inWarranty: true,
   startDate: "",
   endDate: "",
   amcVendor: "",
@@ -25,20 +24,16 @@ const initialState = {
 
 function NewAsset() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(initialState);
+  const { assetCats, createNewAsset, loading } = useAssetStore();
+  const { user } = useUserStore();
+
+  const [formData, setFormData] = useState({
+    ...initialState,
+    storeId:
+      user.storeManaging === 1 ? "HRD" : user.storeManaging === 2 ? "CRD" : "",
+  });
+
   const manufacturers = ["HP", "Dell"];
-  const categories = [
-    "BARCODE PRINTER",
-    "BARCODE SCANNER",
-    "DESKTOP",
-    "LAPTOP",
-    "PRINTER",
-    "PROCESS LAPTOP",
-    "PROCESS PC",
-    "PROCESS SERVER",
-    "SCANNER",
-    "SERVER",
-  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,15 +41,30 @@ function NewAsset() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "endDate" && {
-        inWarranty: new Date() < new Date(value),
-      }),
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const res = await createNewAsset({
+      ...formData,
+      storeId: formData.storeId === "HRD" ? 1 : 2,
+    });
+
+    if (!res.success) return;
+
+    setFormData({
+      ...initialState,
+      storeId:
+        user.storeManaging === 1
+          ? "HRD"
+          : user.storeManaging === 2
+          ? "CRD"
+          : "",
+    });
+
+    navigate("/admin/assets");
   };
 
   return (
@@ -74,7 +84,7 @@ function NewAsset() {
             value={formData.category}
             onChange={handleChange}
             required
-            list={categories}
+            list={assetCats}
           />
           <Input
             label="Manufactured By"
@@ -127,6 +137,16 @@ function NewAsset() {
 
         {/** Second Column Inputs */}
         <div className="flex flex-col gap-4">
+          <Select
+            label="Store"
+            name="storeId"
+            value={formData.storeId}
+            onChange={handleChange}
+            options={["HRD", "CRD"]}
+            placeholder="-- Select Store"
+            disabled={user.storeManaging > 0}
+            required
+          />
           <Input
             label="PR Number"
             name="pr"
@@ -153,12 +173,6 @@ function NewAsset() {
             onChange={handleChange}
           />
           <Input
-            label="Material Code"
-            name="materialCode"
-            value={formData.materialCode}
-            onChange={handleChange}
-          />
-          <Input
             label="AMC Vendor"
             name="amcVendor"
             value={formData.amcVendor}
@@ -182,12 +196,16 @@ function NewAsset() {
             Back
           </button>
 
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-3 py-2.5 rounded-xl hover:bg-green-700 transition cursor-pointer"
-          >
-            Submit
-          </button>
+          {loading ? (
+            <LoadIcon />
+          ) : (
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-3 py-2.5 rounded-xl hover:bg-green-700 transition cursor-pointer"
+            >
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

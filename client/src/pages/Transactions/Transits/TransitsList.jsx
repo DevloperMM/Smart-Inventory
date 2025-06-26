@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../../lib/constants";
 import { format } from "date-fns";
 import { PageFooter, Modal } from "../../../components";
-import { useUserStore } from "../../../store/useUserStore";
+import { useUserStore } from "../../../store";
 
 const transits = [
   {
@@ -268,7 +268,7 @@ const TransitsList = ({ setStep }) => {
               <th className="w-[8%] border px-3 py-2">Decided On</th>
               <th className="w-[12%] border px-3 py-2">From Store</th>
               <th className="w-[12%] border px-3 py-2">To Store</th>
-              <th className="w-[12%] border px-3 py-2">Info</th>
+              <th className="w-[12%] border px-3 py-2">Details</th>
               <th className="w-[10%] border px-3 py-2">Status</th>
               <th className="w-[10%] border px-3 py-2 text-center">Actions</th>
             </tr>
@@ -391,13 +391,12 @@ const TransitsList = ({ setStep }) => {
                     }}
                   >
                     <Eye size={16} className="inline-block pb-0.5 mr-1.5" />
-                    View
                   </span>
                 </td>
                 <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
-                      statusColors[transit.status]
+                      statusColors[transit.status.toLowerCase()]
                     }`}
                   >
                     {transit.status}
@@ -420,20 +419,16 @@ const TransitsList = ({ setStep }) => {
                         <X strokeWidth={2.5} size={22} />
                       </button>
                     </div>
-                  ) : (
-                    transit.status === "Rejected" || (
-                      <button
-                        disabled={
-                          transit.status !== "Approved" ||
-                          (user.role === "store-manager" &&
-                            user.storeManaging !== transit.fromStore)
-                        }
-                        onClick={() => setStep(2)}
-                        className="w-full bg-teal-500 px-1.5 py-1.5 text-sm rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
-                      >
-                        <span>Transfer</span>
-                      </button>
-                    )
+                  ) : transit.status === "Rejected" ||
+                    (user.storeManaging > 0 &&
+                      user.storeManaging !== transit.fromStore) ? null : (
+                    <button
+                      disabled={transit.status !== "Approved"}
+                      onClick={() => setStep(2)}
+                      className="w-full bg-teal-500 px-1.5 py-1.5 text-sm rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
+                    >
+                      <span>Transfer</span>
+                    </button>
                   )}
                 </td>
               </tr>

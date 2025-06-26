@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { KeyRound, LogOut, User } from "lucide-react";
-import { useUserStore } from "../store/useUserStore.js";
+import { useUserStore } from "../store";
 
 function Navbar() {
   const { logout } = useUserStore();

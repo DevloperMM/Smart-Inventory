@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import db from "../../lib/db.js";
-import ApiError from "../../utils/ApiError.js";
 
 const Transfer = db.define(
   "Transfer",

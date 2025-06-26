@@ -10,6 +10,7 @@ import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
+import db from "../../lib/db.js";
 
 export const issueAssetForRequest = asyncHandler(async (req, res) => {
   const { requestId, assetId, equipNo } = req.body || {};
@@ -91,16 +92,17 @@ export const getAssetIssuancesByAssetId = asyncHandler(async (req, res) => {
       where: { assetId },
       order: [["createdAt", "ASC"]],
       include: [
-        { model: Asset, as: "asset" },
-        { model: User, as: "issuer" },
-        { model: User, as: "recipient" },
-        { model: User, as: "handler", required: false },
+        { model: User, as: "issuer", attributes: ["name", "empCode"] },
+        { model: User, as: "recipient", attributes: ["name", "empCode"] },
+        {
+          model: User,
+          as: "handler",
+          attributes: ["name", "empCode"],
+          required: false,
+        },
       ],
+      attributes: ["equipNo", "info", "status", "createdAt", "updatedAt"],
     });
-
-    if (!issuances || issuances.length === 0) {
-      throw new ApiError(404, "No issuances found for this asset");
-    }
 
     return res
       .status(200)
@@ -126,9 +128,6 @@ export const getAssetsIssuedToMe = asyncHandler(async (req, res) => {
         },
       ],
     });
-
-    if (assets.length <= 0)
-      throw new ApiError(404, "No issuances found against you");
 
     return res
       .status(200)
@@ -190,6 +189,7 @@ export const handleIssuedAsset = asyncHandler(async (req, res) => {
   const { reason, status = "returned" } = req.body || {};
 
   const statusValue = status.toLowerCase();
+  const transaction = await db.transaction();
 
   try {
     const issuance = await AssetIssuance.findByPk(assetIssueId);

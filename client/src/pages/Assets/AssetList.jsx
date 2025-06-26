@@ -2,121 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowUpDown, Eye, Pencil, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../lib/constants.js";
-import { PageFooter } from "../../components";
+import { LoadRecords, PageFooter } from "../../components";
 import { format } from "date-fns";
+import { useAssetStore } from "../../store/index.js";
 
-const assets = [
-  {
-    id: 1,
-    category: "Laptop",
-    description: "Dell Latitude 7420",
-    mfgBy: "Dell",
-    serialNo: "DL7420",
-    stockedOn: "2024-09-01",
-    stockedBy: "Jane Smith",
-    status: "Available",
-    location: 1,
-  },
-  {
-    id: 2,
-    category: "Monitor",
-    description: 'Samsung 27" Curved',
-    mfgBy: "HP",
-    serialNo: "SM27C",
-    stockedOn: "2024-10-15",
-    stockedBy: "John Doe",
-    status: "Issued",
-    location: 2,
-  },
-  {
-    id: 3,
-    category: "Printer",
-    description: "HP LaserJet Pro M404n",
-    mfgBy: "HP",
-    serialNo: "HP404N",
-    stockedOn: "2023-12-22",
-    stockedBy: "Ali Khan",
-    status: "Maintenance",
-    location: 1,
-  },
-  {
-    id: 4,
-    category: "Router",
-    description: "TP-Link Archer AX6000",
-    mfgBy: "Dell",
-    serialNo: "TPLAX6000",
-    stockedOn: "2024-06-09",
-    stockedBy: "Lisa Ray",
-    status: "Available",
-    location: 2,
-  },
-  {
-    id: 5,
-    category: "Keyboard",
-    description: "Logitech MX Keys",
-    mfgBy: "HP",
-    serialNo: "LOGMX",
-    stockedOn: "2025-01-05",
-    stockedBy: "Raj Mehta",
-    status: "Disposed",
-    location: 1,
-  },
-  {
-    id: 6,
-    category: "Webcam",
-    description: "Logitech C920 HD",
-    mfgBy: "HP",
-    serialNo: "LOGC920",
-    stockedOn: "2023-11-30",
-    stockedBy: "Jane Smith",
-    status: "Sold",
-    location: 2,
-  },
-  {
-    id: 7,
-    category: "Switch",
-    description: "Cisco Catalyst 2960",
-    mfgBy: "Dell",
-    serialNo: "CIS2960",
-    stockedOn: "2024-08-10",
-    stockedBy: "John Doe",
-    status: "Maintenance",
-    location: 1,
-  },
-  {
-    id: 8,
-    category: "Tablet",
-    description: "Apple iPad Air",
-    mfgBy: "Apple",
-    serialNo: "APLIPAD",
-    stockedOn: "2024-05-18",
-    stockedBy: "Ali Khan",
-    status: "Issued",
-    location: 2,
-  },
-  {
-    id: 9,
-    category: "Projector",
-    description: "Epson EX3260",
-    mfgBy: "HP",
-    serialNo: "EPS3260",
-    stockedOn: "2024-02-03",
-    stockedBy: "Lisa Ray",
-    status: "Available",
-    location: 1,
-  },
-  {
-    id: 10,
-    category: "Headphones",
-    description: "Sony WH-1000XM4",
-    mfgBy: "Dell",
-    serialNo: "SONYXM4",
-    stockedOn: "2025-03-21",
-    stockedBy: "Raj Mehta",
-    status: "Sold",
-    location: 2,
-  },
-];
+// TODO: fetch all brand options for using in select
 
 const initialState = {
   category: "",
@@ -124,9 +14,9 @@ const initialState = {
   mfgBy: "",
   serialNo: "",
   stockedBy: "",
-  stockedOn: "",
+  createdAt: "",
   status: "",
-  location: "",
+  storeId: "",
 };
 
 const AssetList = () => {
@@ -138,29 +28,39 @@ const AssetList = () => {
   const [isSortAsc, setIsSortAsc] = useState(false);
   const [filterData, setFilterData] = useState(initialState);
 
+  const { assets, fetchingAssets, getAssets } = useAssetStore();
+
+  useEffect(() => {
+    getAssets();
+  }, [getAssets]);
+
   useEffect(() => {
     setPage(1);
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    let data = assets.filter((item) =>
-      Object.entries(filterData).every(([key, value]) => {
-        if (!value) return true;
-        if (key === "location") return item.location === Number(value);
-        if (key === "stockedOn") return item.stockedOn === value;
+    let data = assets
+      .filter((item) =>
+        Object.entries(filterData).every(([key, value]) => {
+          if (!value) return true;
+          if (key === "storeId") return item.storeId === Number(value);
+          if (key === "createdAt") {
+            const createdDate = format(new Date(item.createdAt), "dd-MM-yyyy");
+            const valueDate = format(new Date(value), "dd-MM-yyyy");
+            return createdDate === valueDate;
+          }
 
-        return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
-      })
-    );
-
-    data.sort((a, b) => {
-      const dateA = new Date(a.stockedOn);
-      const dateB = new Date(b.stockedOn);
-      return isSortAsc ? dateA - dateB : dateB - dateA;
-    });
+          return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
+        })
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return isSortAsc ? dateA - dateB : dateB - dateA;
+      });
 
     return data;
-  }, [filterData, isSortAsc]);
+  }, [filterData, isSortAsc, assets]);
 
   useEffect(() => {
     setMsg(filteredData.length ? "" : "No records found");
@@ -168,6 +68,8 @@ const AssetList = () => {
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
+
+  if (fetchingAssets) return <LoadRecords />;
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
@@ -201,7 +103,7 @@ const AssetList = () => {
                 </span>
               </th>
               <th className="w-[12%] border px-3 py-2">Status</th>
-              <th className="w-[9%] border px-3 py-2">Location</th>
+              <th className="w-[9%] border px-3 py-2">Store</th>
               <th className="w-[8%] border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white h-fit">
@@ -259,9 +161,9 @@ const AssetList = () => {
               <td className="border p-2">
                 <input
                   type="date"
-                  value={filterData.stockedOn}
+                  value={filterData.createdAt}
                   onChange={(e) =>
-                    setFilterData({ ...filterData, stockedOn: e.target.value })
+                    setFilterData({ ...filterData, createdAt: e.target.value })
                   }
                   className="w-full border p-1 rounded"
                 />
@@ -275,19 +177,19 @@ const AssetList = () => {
                   className="w-full border p-1 rounded"
                 >
                   <option value="">Select</option>
-                  <option value="Available">Available</option>
-                  <option value="Issued">Issued</option>
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="InTransit">InTransit</option>
-                  <option value="Disposed">Disposed</option>
-                  <option value="Sold">Sold</option>
+                  <option value="available">Available</option>
+                  <option value="issued">Issued</option>
+                  <option value="amc">Maintenance</option>
+                  <option value="in-transit">InTransit</option>
+                  <option value="disposed">Disposed</option>
+                  <option value="sold">Sold</option>
                 </select>
               </td>
               <td className="border p-2">
                 <select
-                  value={filterData.location}
+                  value={filterData.storeId}
                   onChange={(e) =>
-                    setFilterData({ ...filterData, location: e.target.value })
+                    setFilterData({ ...filterData, storeId: e.target.value })
                   }
                   className="w-full border p-1 rounded"
                 >
@@ -313,7 +215,7 @@ const AssetList = () => {
                 <td className="border px-3 py-2">{asset.mfgBy}</td>
                 <td className="border px-3 py-2">{asset.serialNo}</td>
                 <td className="border px-3 py-2">
-                  {format(asset.stockedOn, "dd/MM/yyyy")}
+                  {format(new Date(asset.createdAt), "dd MMM yyyy")}
                 </td>
                 <td className="border px-3 py-2">
                   <span
@@ -325,7 +227,7 @@ const AssetList = () => {
                   </span>
                 </td>
                 <td className="border px-3 py-2">
-                  {asset.location === 1 ? <span>HRD</span> : <span>CRD</span>}
+                  {asset.storeId === 1 ? <span>HRD</span> : <span>CRD</span>}
                 </td>
                 <td className="border px-3 py-2">
                   <div className="flex justify-center space-x-3">

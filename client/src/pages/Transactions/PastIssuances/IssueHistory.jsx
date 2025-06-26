@@ -3,7 +3,7 @@ import { ArrowUpDown, EllipsisVertical, Undo2 } from "lucide-react";
 import { statusColors } from "../../../lib/constants.js";
 import { Modal, PageFooter } from "../../../components";
 import { format } from "date-fns";
-import { useUserStore } from "../../../store/useUserStore.js";
+import { useUserStore } from "../../../store";
 import { useOutsideClick } from "../../../hooks/useOutsideClick.js";
 
 const initialState = {
@@ -165,7 +165,7 @@ const issuances = [
     id: 12,
     requestId: 112,
     equipNo: "9080001012",
-    info: null,
+    info: "Returned for asset return to clear no dues after serving notice period",
     status: "returned",
     createdAt: "2025-06-01T09:00:00.000Z",
     updatedAt: "2025-06-03T14:00:00.000Z",
@@ -186,7 +186,7 @@ function IssueHistory() {
   const [filterData, setFilterData] = useState(initialState);
 
   const [selectedIssuance, setSelectedIssuance] = useState({});
-  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(1);
 
   const { user } = useUserStore();
   useOutsideClick(() => setOpenDropdownId(null));
@@ -257,7 +257,7 @@ function IssueHistory() {
                 </span>
               </th>
               <th className="w-[12.5%] border px-3 py-2">Issued to</th>
-              <th className="w-[12.5%] border px-3 py-2">Received By</th>
+              <th className="w-[12.5%] border px-3 py-2">Returned To</th>
               <th className="w-[12.5%] border px-3 py-2">Received On</th>
               <th className="w-[8%] border px-3 py-2">Status</th>
               <th className="w-[2%] -2 bg-white"></th>
@@ -342,20 +342,18 @@ function IssueHistory() {
                 />
               </td>
               <td className="border p-2">
-                <div className="relative inline-block w-full">
-                  <select
-                    className="w-full max-w-full border p-1 rounded truncate"
-                    value={filterData.status}
-                    onChange={(e) =>
-                      setFilterData({ ...filterData, status: e.target.value })
-                    }
-                  >
-                    <option value="">Select</option>
-                    <option value="issued">Issued</option>
-                    <option value="returned">Returned</option>
-                    <option value="exempted">Exempted</option>
-                  </select>
-                </div>
+                <select
+                  className="w-full max-w-full border p-1 rounded truncate"
+                  value={filterData.status}
+                  onChange={(e) =>
+                    setFilterData({ ...filterData, status: e.target.value })
+                  }
+                >
+                  <option value="">Select</option>
+                  <option value="issued">Issued</option>
+                  <option value="returned">Returned</option>
+                  <option value="exempted">Exempted</option>
+                </select>
               </td>
               <td className="p-2" />
             </tr>
@@ -389,15 +387,12 @@ function IssueHistory() {
                 <td className="border px-3 py-2">
                   <span
                     className={`px-2 py-1 rounded font-medium ${
-                      statusColors[
-                        item.status[0].toUpperCase() + item.status.slice(1)
-                      ]
+                      statusColors[item.status.toLowerCase()]
                     }`}
                   >
-                    {item.status[0].toUpperCase() + item.status.slice(1)}
+                    {item.status}
                   </span>
                 </td>
-
                 <td className="relative px-3 py-2 text-center">
                   <button
                     onClick={() => toggleDropdown(item.id)}
@@ -483,7 +478,7 @@ function IssueHistory() {
           show={show}
           onClose={() => setShow(false)}
           data={{
-            "Receive Comments": selectedIssuance?.purpose || "",
+            "Receive Comments": selectedIssuance?.info || "",
           }}
         />
       )}

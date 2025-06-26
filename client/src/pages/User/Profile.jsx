@@ -1,6 +1,6 @@
 import { Input } from "../../components";
 import { format } from "date-fns";
-import { useUserStore } from "../../store/useUserStore.js";
+import { useUserStore } from "../../store";
 
 function Profile() {
   const { user } = useUserStore();

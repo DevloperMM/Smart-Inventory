@@ -20,37 +20,74 @@ export const getTranferRecords = asyncHandler(async (req, res) => {
           : [];
 
         // --- CONSUMABLES POPULATION ---
-        const rawConsumables = Array.isArray(transfer.consumables)
+        // const rawConsumables = Array.isArray(transfer.consumables)
+        //   ? transfer.consumables
+        //   : [];
+
+        // const consumableIDs = rawConsumables.map((c) => c.id);
+
+        // const consumableRecords = consumableIDs.length
+        //   ? await Consumable.findAll({
+        //       where: { id: consumableIDs },
+        //       attributes: ["id", "category"],
+        //       raw: true,
+        //     })
+        //   : [];
+
+        // const consumableMap = Object.fromEntries(
+        //   consumableRecords.map((c) => [c.id, c])
+        // );
+
+        // const consumableDetails = rawConsumables.map((item) => {
+        //   const matched = consumableMap[item.id];
+        //   return {
+        //     category: matched.category,
+        //     qty: item.qty,
+        //     isUsed: item.isUsed,
+        //   };
+        // });
+
+        // return {
+        //   ...transfer.toJSON(),
+        //   assetDetails,
+        //   consumableDetails,
+        // };
+
+        const consumables = Array.isArray(transfer.consumables)
           ? transfer.consumables
           : [];
 
-        const consumableIDs = rawConsumables.map((c) => c.id);
+        // Group by id and sum qty
+        const consumableQtyMap = {};
+        for (const item of consumables) {
+          if (!item?.id || typeof item.qty !== "number") continue;
 
-        const consumableRecords = consumableIDs.length
+          if (consumableQtyMap[item.id]) {
+            consumableQtyMap[item.id] += item.qty;
+          } else {
+            consumableQtyMap[item.id] = item.qty;
+          }
+        }
+
+        const consumableIds = Object.keys(consumableQtyMap);
+
+        const consumableDetails = consumableIds.length
           ? await Consumable.findAll({
-              where: { id: consumableIDs },
+              where: { id: consumableIds },
               attributes: ["id", "category"],
-              raw: true,
             })
           : [];
 
-        const consumableMap = Object.fromEntries(
-          consumableRecords.map((c) => [c.id, c])
-        );
-
-        const consumableDetails = rawConsumables.map((item) => {
-          const matched = consumableMap[item.id];
-          return {
-            category: matched.category,
-            qty: item.qty,
-            isUsed: item.isUsed,
-          };
-        });
+        const consumableSummary = consumableDetails.map((c) => ({
+          id: c.id,
+          category: c.category,
+          qty: consumableQtyMap[c.id] || 0,
+        }));
 
         return {
           ...transfer.toJSON(),
-          assetDetails,
-          consumableDetails,
+          assets: assetDetails,
+          consumables: consumableSummary,
         };
       })
     );
@@ -59,12 +96,15 @@ export const getTranferRecords = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, result, "Transfers fetched successfully"));
   } catch (err) {
+    console.log(err);
     throw new ApiError(err?.statusCode || 500, err?.message);
   }
 });
 
 export const createTransfer = asyncHandler(async (req, res) => {
   const { transitId, assets = [], consumables = [] } = req.body || {};
+  // assets is array of asset IDs
+  // consumables is array of object of consumable IDs, isUsed, qty
 
   if (!Array.isArray(assets) || !Array.isArray(consumables))
     throw new ApiError(

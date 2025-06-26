@@ -204,7 +204,7 @@ export const decideTransitRequest = asyncHandler(async (req, res) => {
     if (!["approved", "rejected"].includes(statusValue))
       throw new ApiError(400, "The request can only be approved or rejected");
 
-    if (["pending", "accepted"].includes(transit.status))
+    if (transit.status !== "pending")
       throw new ApiError(400, "Only pending transit requests can be decided");
 
     transit.decidedBy = req.user.id;

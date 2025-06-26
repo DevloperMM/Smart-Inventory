@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Mail, Lock, LogIn, Loader } from "lucide-react";
-import { useUserStore } from "../store/useUserStore.js";
+import { useUserStore } from "../store";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,6 +8,7 @@ const Login = () => {
 
   const { login, loading } = useUserStore();
 
+  // TODO: Clean password after submit
   const handleLogin = async (e) => {
     e.preventDefault();
     login(email, password);

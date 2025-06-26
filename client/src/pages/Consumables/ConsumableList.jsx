@@ -1,245 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  Pencil,
-  Plus,
-  PlusSquare,
-} from "lucide-react";
+import { ArrowUpDown, Pencil, Plus, PlusSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { PageFooter } from "../../components";
+import { LoadIcon, LoadRecords, PageFooter } from "../../components";
 import { format } from "date-fns";
+import { useConsumableStore } from "../../store";
 
 const initialState = {
   category: "",
   specs: "",
   updatedBy: "",
   updatedOn: "",
-  location: "",
+  storeId: "",
 };
-
-const consumables = [
-  {
-    id: "C001",
-    category: "USB Drive",
-    specs: "SanDisk 32GB USB 3.0",
-    newStock: 50,
-    oldStock: 10,
-    totalStock: 60,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-10",
-    location: 1,
-  },
-  {
-    id: "C002",
-    category: "HDMI Cable",
-    specs: "1.5m, Gold Plated",
-    newStock: 30,
-    oldStock: 5,
-    totalStock: 35,
-    updatedBy: "Jane Smith",
-    updatedOn: "2025-05-11",
-    location: 2,
-  },
-  {
-    id: "C003",
-    category: "Ethernet Cable",
-    specs: "Cat6, 3m",
-    newStock: 75,
-    oldStock: 8,
-    totalStock: 83,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-12",
-    location: 1,
-  },
-  {
-    id: "C004",
-    category: "AA Battery",
-    specs: "Duracell, Pack of 4",
-    newStock: 100,
-    oldStock: 12,
-    totalStock: 112,
-    updatedBy: "Alice Green",
-    updatedOn: "2025-05-08",
-    location: 2,
-  },
-  {
-    id: "C005",
-    category: "Mouse Pad",
-    specs: "Standard, Black",
-    newStock: 45,
-    oldStock: 6,
-    totalStock: 51,
-    updatedBy: "Bob Taylor",
-    updatedOn: "2025-05-10",
-    location: 1,
-  },
-  {
-    id: "C006",
-    category: "Keyboard Cover",
-    specs: "Universal Silicone",
-    newStock: 20,
-    oldStock: 9,
-    totalStock: 29,
-    updatedBy: "Jane Smith",
-    updatedOn: "2025-05-11",
-    location: 2,
-  },
-  {
-    id: "C007",
-    category: "Laptop Stand",
-    specs: "Adjustable Aluminum",
-    newStock: 15,
-    oldStock: 4,
-    totalStock: 19,
-    updatedBy: "Alice Green",
-    updatedOn: "2025-05-09",
-    location: 2,
-  },
-  {
-    id: "C008",
-    category: "Cleaning Wipes",
-    specs: "Alcohol-based, 50 pcs",
-    newStock: 60,
-    oldStock: 7,
-    totalStock: 67,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-10",
-    location: 1,
-  },
-  {
-    id: "C009",
-    category: "HDMI Splitter",
-    specs: "1x2, 4K Support",
-    newStock: 10,
-    oldStock: 3,
-    totalStock: 13,
-    updatedBy: "Jane Smith",
-    updatedOn: "2025-05-12",
-    location: 2,
-  },
-  {
-    id: "C010",
-    category: "USB Hub",
-    specs: "4-Port, USB 3.0",
-    newStock: 25,
-    oldStock: 11,
-    totalStock: 36,
-    updatedBy: "Bob Taylor",
-    updatedOn: "2025-05-11",
-    location: 1,
-  },
-  {
-    id: "C011",
-    category: "Printer Ink",
-    specs: "HP 682 Black",
-    newStock: 18,
-    oldStock: 2,
-    totalStock: 20,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-13",
-    location: 2,
-  },
-  {
-    id: "C012",
-    category: "Label Tape",
-    specs: "12mm, Black on White",
-    newStock: 22,
-    oldStock: 6,
-    totalStock: 28,
-    updatedBy: "Alice Green",
-    updatedOn: "2025-05-10",
-    location: 1,
-  },
-  {
-    id: "C013",
-    category: "SSD Enclosure",
-    specs: "2.5'' SATA to USB 3.0",
-    newStock: 12,
-    oldStock: 7,
-    totalStock: 19,
-    updatedBy: "Jane Smith",
-    updatedOn: "2025-05-09",
-    location: 2,
-  },
-  {
-    id: "C014",
-    category: "Thermal Paste",
-    specs: "1g Syringe",
-    newStock: 40,
-    oldStock: 5,
-    totalStock: 45,
-    updatedBy: "Bob Taylor",
-    updatedOn: "2025-05-13",
-    location: 1,
-  },
-  {
-    id: "C015",
-    category: "Cable Ties",
-    specs: "100 pcs, 6 inch",
-    newStock: 150,
-    oldStock: 15,
-    totalStock: 165,
-    updatedBy: "Alice Green",
-    updatedOn: "2025-05-08",
-    location: 2,
-  },
-  {
-    id: "C016",
-    category: "DisplayPort Cable",
-    specs: "1.8m, v1.4",
-    newStock: 25,
-    oldStock: 9,
-    totalStock: 34,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-11",
-    location: 1,
-  },
-  {
-    id: "C017",
-    category: "Mouse",
-    specs: "Wired, Optical, USB",
-    newStock: 35,
-    oldStock: 14,
-    totalStock: 49,
-    updatedBy: "Jane Smith",
-    updatedOn: "2025-05-12",
-    location: 1,
-  },
-  {
-    id: "C018",
-    category: "Keyboard",
-    specs: "Wired, USB",
-    newStock: 30,
-    oldStock: 10,
-    totalStock: 40,
-    updatedBy: "Bob Taylor",
-    updatedOn: "2025-05-10",
-    location: 2,
-  },
-  {
-    id: "C019",
-    category: "Monitor Cleaner",
-    specs: "Spray + Microfiber Cloth",
-    newStock: 20,
-    oldStock: 5,
-    totalStock: 25,
-    updatedBy: "Alice Green",
-    updatedOn: "2025-05-09",
-    location: 1,
-  },
-  {
-    id: "C020",
-    category: "RJ45 Connector",
-    specs: "Pack of 100",
-    newStock: 90,
-    oldStock: 6,
-    totalStock: 96,
-    updatedBy: "John Doe",
-    updatedOn: "2025-05-13",
-    location: 2,
-  },
-];
 
 const ConsumableList = () => {
   const navigate = useNavigate();
@@ -247,7 +19,7 @@ const ConsumableList = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
-  const [inputValue, setInputValue] = useState(null);
+  const [inputValue, setInputValue] = useState("");
   const [isUsed, setIsUsed] = useState(null);
 
   const [msg, setMsg] = useState("");
@@ -256,36 +28,76 @@ const ConsumableList = () => {
   const [isSortAsc, setIsSortAsc] = useState(false);
   const [filterData, setFilterData] = useState(initialState);
 
+  const {
+    fetchingConsumables,
+    consumables,
+    loading,
+    getConsumables,
+    editConsumable,
+    updateQuantity,
+  } = useConsumableStore();
+
+  useEffect(() => {
+    getConsumables();
+  }, [getConsumables]);
+
   useEffect(() => {
     setPage(1);
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    let data = consumables.filter((item) =>
-      Object.entries(filterData).every(([key, value]) => {
-        if (!value) return true;
-        if (["updatedOn"].includes(key)) return item[key] === value;
-        if (key === "location") return item[key] === Number(value);
+    let data = consumables
+      .filter((item) =>
+        Object.entries(filterData).every(([key, value]) => {
+          if (!value) return true;
 
-        return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
-      })
-    );
+          if (key === "storeId") return item[key] === Number(value);
+          if (key === "updatedOn") {
+            const createdDate = format(new Date(item.updatedOn), "dd-MM-yyyy");
+            const valueDate = format(new Date(value), "dd-MM-yyyy");
+            return createdDate === valueDate;
+          }
 
-    data.sort((a, b) => {
-      const dateA = new Date(a.updatedOn);
-      const dateB = new Date(b.updatedOn);
-      return isSortAsc ? dateA - dateB : dateB - dateA;
-    });
+          return item[key]?.toLowerCase().includes(value.trim().toLowerCase());
+        })
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.updatedOn);
+        const dateB = new Date(b.updatedOn);
+        return isSortAsc ? dateA - dateB : dateB - dateA;
+      });
 
     return data;
-  }, [filterData, isSortAsc]);
+  }, [filterData, isSortAsc, consumables]);
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (modalType === "edit") await editConsumable(selectedItem.id, inputValue);
+    else
+      await updateQuantity(
+        selectedItem.id,
+        inputValue,
+        isUsed,
+        selectedItem.category
+      );
+
+    setInputValue("");
+    setIsUsed(null);
+    setSelectedItem(null);
+    setShowModal(false);
+
+    return;
+  };
+
   useEffect(() => {
     setMsg(filteredData.length ? "" : "No records found");
   }, [filteredData]);
+
+  if (fetchingConsumables) return <LoadRecords />;
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
@@ -320,7 +132,7 @@ const ConsumableList = () => {
               <th className="w-[9%] border px-3 py-2">New</th>
               <th className="w-[9%] border px-3 py-2">Used</th>
               <th className="w-[9%] border px-3 py-2">Total</th>
-              <th className="w-[8%] border px-3 py-2">Location</th>
+              <th className="w-[8%] border px-3 py-2">Store</th>
               <th className="w-[8%] border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white h-fit">
@@ -373,20 +185,17 @@ const ConsumableList = () => {
               <td className="border p-2" />
               <td className="border p-2" />
               <td className="border p-2">
-                <div className="relative inline-block w-full">
-                  <select
-                    className="appearance-none w-full border p-1 rounded"
-                    value={filterData.location}
-                    onChange={(e) =>
-                      setFilterData({ ...filterData, location: e.target.value })
-                    }
-                  >
-                    <option value="">Select</option>
-                    <option value={1}>HRD</option>
-                    <option value={2}>CRD</option>
-                  </select>
-                  <ChevronDown className="absolute right-2.5 top-4/9 -translate-y-1/2 pointer-events-none text-black size-4" />
-                </div>
+                <select
+                  className="w-full border p-1 rounded"
+                  value={filterData.storeId}
+                  onChange={(e) =>
+                    setFilterData({ ...filterData, storeId: e.target.value })
+                  }
+                >
+                  <option value="">Select</option>
+                  <option value={1}>HRD</option>
+                  <option value={2}>CRD</option>
+                </select>
               </td>
               <td className="border p-2" />
             </tr>
@@ -402,21 +211,23 @@ const ConsumableList = () => {
                 </td>
                 <td className="border px-3 py-2">{consumable.category}</td>
                 <td className="border px-3 py-2">{consumable.specs}</td>
-                <td className="border px-3 py-2">{consumable.updatedBy}</td>
+                <td className="border px-3 py-2">
+                  {consumable.storeUpdater.name}
+                </td>
                 <td className="border px-3 py-2">
                   {format(consumable.updatedOn, "dd/MM/yyyy")}
                 </td>
                 <td className="border px-3 py-2 bg-emerald-50">
-                  {consumable.newStock}
+                  {consumable.newQty}
                 </td>
                 <td className="border px-3 py-2 bg-indigo-50">
-                  {consumable.oldStock}
+                  {consumable.usedQty}
                 </td>
                 <td className="border px-3 py-2 bg-yellow-50 font-bold">
-                  {consumable.oldStock + consumable.newStock}
+                  {consumable.usedQty + consumable.newQty}
                 </td>
                 <td className="border px-3 py-2">
-                  {consumable.location === 1 ? (
+                  {consumable.storeId === 1 ? (
                     <span>HRD</span>
                   ) : (
                     <span>CRD</span>
@@ -439,7 +250,6 @@ const ConsumableList = () => {
                       onClick={() => {
                         setModalType("increase");
                         setSelectedItem(consumable);
-                        setInputValue("");
                         setShowModal(true);
                       }}
                       className="text-gray-600 hover:text-black"
@@ -469,7 +279,10 @@ const ConsumableList = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-md space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-6 rounded-xl w-md space-y-4"
+          >
             <h3 className="text-lg font-semibold text-gray-800">
               {modalType === "edit" ? "Specifications" : "Quantity"}
             </h3>
@@ -484,13 +297,14 @@ const ConsumableList = () => {
               }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              required
             />
 
             {modalType === "increase" && (
               <div className="flex flex-row gap-2 justify-between items-center">
                 <span className="text-sm text-gray-700">
-                  Provided Qunatity is used{" "}
-                  <span className="text-red-500 align-top">*</span>
+                  <span className="text-red-500 align-top">*</span> Is the given
+                  qty used before ?{""}
                 </span>
                 <div className="flex items-center gap-6">
                   <label className="flex items-center gap-1">
@@ -521,24 +335,30 @@ const ConsumableList = () => {
 
             <div className="flex justify-end space-x-2">
               <button
+                type="button"
                 className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-lg"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"
                 onClick={() => {
-                  console.log(`${selectedItem.id}, ${inputValue}, ${isUsed}`);
+                  setInputValue("");
                   setIsUsed(null);
                   setSelectedItem(null);
+                  setModalType("");
                   setShowModal(false);
                 }}
               >
-                Save
+                Cancel
               </button>
+              {loading ? (
+                <LoadIcon />
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"
+                >
+                  Save
+                </button>
+              )}
             </div>
-          </div>
+          </form>
         </div>
       )}
     </div>

@@ -1,11 +1,13 @@
-import { Consumable } from "../../models/index.js";
+import { Consumable, User } from "../../models/index.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getAllConsumables = asyncHandler(async (req, res) => {
   try {
-    const consumables = await Consumable.findAll({});
+    const consumables = await Consumable.findAll({
+      include: [{ model: User, as: "storeUpdater" }],
+    });
 
     if (consumables.length <= 0)
       throw new ApiError(404, "No consumables found");
@@ -78,6 +80,9 @@ export const editConsumable = asyncHandler(async (req, res) => {
       throw new ApiError(400, "You do not manage this consumable");
 
     consumable.specs = specs;
+    consumable.updatedBy = req.user.id;
+    consumable.updatedOn = new Date();
+
     await consumable.save();
 
     return res
@@ -90,9 +95,14 @@ export const editConsumable = asyncHandler(async (req, res) => {
 
 export const updateQty = asyncHandler(async (req, res) => {
   const { consumableId } = req.params;
-
   const { qty, isUsed } = req.body || {};
-  if (!qty) throw new ApiError(400, "Please provide valid quantity");
+
+  const parsedQty = Number(qty);
+  if (isNaN(parsedQty) || parsedQty <= 0)
+    throw new ApiError(400, "Please provide valid quantity");
+
+  if (typeof isUsed !== "boolean")
+    throw new ApiError(400, "Please specify whether quantity is used or not");
 
   try {
     const consumable = await Consumable.findByPk(consumableId);
@@ -104,11 +114,12 @@ export const updateQty = asyncHandler(async (req, res) => {
     )
       throw new ApiError(400, "You do not manage this consumable");
 
-    if (isUsed) consumable.usedQty += qty;
-    else consumable.newQty += qty;
+    if (isUsed) consumable.usedQty += parsedQty;
+    else consumable.newQty += parsedQty;
 
     consumable.updatedBy = req.user.id;
     consumable.updatedOn = new Date();
+
     await consumable.save();
 
     return res

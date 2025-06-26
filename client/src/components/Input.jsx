@@ -23,7 +23,7 @@ function Input({ label, list, rowSpan, ...props }) {
               ? "bg-gray-100 text-gray-700 border border-gray-400"
               : "border"
           }`}
-        ></textarea>
+        />
       ) : (
         <input
           autoComplete="off"

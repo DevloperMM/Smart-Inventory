@@ -5,10 +5,10 @@ import Navbar from "./Navbar";
 function AdminLayout() {
   return (
     <div className="flex h-screen font-[Inter]">
-      <div className="hidden md:block fixed inset-y-0 left-0 w-56 z-20">
+      <div className="hidden lg:block fixed inset-y-0 left-0 w-56 z-20">
         <Sidebar />
       </div>
-      <div className="flex-1 flex flex-col md:ml-56">
+      <div className="flex-1 flex flex-col lg:ml-56">
         <div className="sticky top-0 z-10">
           <Navbar />
         </div>

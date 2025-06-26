@@ -1,4 +1,4 @@
-import { Request } from "../../models/index.js";
+import { Request, User } from "../../models/index.js";
 import { Op } from "sequelize";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
@@ -13,6 +13,10 @@ export const getAllRequests = asyncHandler(async (req, res) => {
   try {
     const requests = await Request.findAll({
       where: { status: { [Op.ne]: "cancelled" } },
+      include: [
+        { model: User, as: "requester" },
+        { model: User, as: "decider" },
+      ],
     });
 
     if (requests.length <= 0) throw new ApiError(404, "No requests found");
@@ -30,9 +34,10 @@ export const getMyRequests = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const requests = await Request.findAll({ where: { requestedBy: userId } });
-
-    if (requests.length <= 0) throw new ApiError(404, "No requests found");
+    const requests = await Request.findAll({
+      where: { requestedBy: userId },
+      include: [{ model: User, as: "decider", attributes: ["name"] }],
+    });
 
     return res
       .status(200)
@@ -162,8 +167,8 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
 });
 
 // Reject consumable request
-export const rejectConsumableRequest = asyncHandler(async (req, res) => {
-  const { decisionInfo } = req.body?.decisionInfo || "";
+export const decideConsumableRequest = asyncHandler(async (req, res) => {
+  const { status, decisionInfo } = req.body?.decisionInfo || "";
   const { requestId } = req.params;
 
   try {

@@ -1,4 +1,5 @@
-import { Asset } from "../../models/index.js";
+import { Asset, User } from "../../models/index.js";
+import { parseISO, isValid } from "date-fns";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
@@ -21,7 +22,10 @@ export const getAssetById = asyncHandler(async (req, res) => {
   const { assetId } = req.params;
 
   try {
-    const asset = await Asset.findByPk(assetId);
+    const asset = await Asset.findByPk(assetId, {
+      include: [{ model: User, as: "storeKeeper", attributes: ["name"] }],
+    });
+
     if (!asset) throw new ApiError(404, "No such assset found");
 
     return res
@@ -62,8 +66,14 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
     "serialNo",
     "startDate",
     "endDate",
-    ...(req.user.storeManaging === 0 ? ["storeId"] : []),
+    "storeId",
   ];
+
+  if (
+    req.user.storeManaging > 0 &&
+    assetDetails.storeId !== req.user.storeManaging
+  )
+    throw new ApiError(400, "You can add asset in your store only");
 
   for (const key of requiredKeys) {
     if (!(key in assetDetails))
@@ -72,8 +82,10 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
 
   for (const key in assetDetails) {
     if (
-      typeof key === "string" &&
-      (assetDetails[key] == null || assetDetails[key].trim() === "")
+      requiredKeys.includes(key) &&
+      (!assetDetails[key] ||
+        (typeof assetDetails[key] === "string" &&
+          assetDetails[key].trim() === ""))
     )
       throw new ApiError(400, `Missing or invalid value: ${key}`);
   }
@@ -81,7 +93,6 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
   try {
     const asset = await Asset.create({
       ...assetDetails,
-      ...(!req.storeId && { storeId: req.user.storeManaging }),
       inWarranty: new Date(assetDetails.endDate) > new Date(),
       stockedBy: req.user.id,
       status: "available",
@@ -101,7 +112,6 @@ export const addAssetInStore = asyncHandler(async (req, res) => {
 
 export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
   const { assetId } = req.params;
-  const amcVendor = req.body?.amcVendor || "";
 
   try {
     const asset = await Asset.findByPk(assetId);
@@ -110,26 +120,32 @@ export const toggleAssetMaintenance = asyncHandler(async (req, res) => {
     if (req.user.storeManaging > 0 && req.user.storeManaging !== asset.storeId)
       throw new ApiError(400, "You do not manage this asset");
 
-    if (!amcVendor && !asset.amcVendor)
-      throw new ApiError(
-        400,
-        "Please provide the AMC Vendor to the asset before flag maintenace"
-      );
+    if (!asset.amcVendor)
+      throw new ApiError(400, "Specify vendor name using edit details");
 
-    if (asset.status !== "available")
+    if (!["available", "amc"].includes(asset.status))
       throw new ApiError(
         401,
-        "Asset can be flag for maintenance only when it is available in store"
+        "Asset can be flagged for maintenance only when it is available in store"
       );
 
-    if (amcVendor) asset.amcVendor = amcVendor;
-    asset.status = "amc";
+    let flaggedAMC = asset.status === "amc";
+
+    if (flaggedAMC) {
+      asset.status = "available";
+      flaggedAMC = false;
+    } else {
+      asset.status = "amc";
+      flaggedAMC = true;
+    }
 
     await asset.save({ validate: true });
 
     return res
       .status(200)
-      .json(new ApiResponse(200, asset, "Maintenance status toggled !!"));
+      .json(
+        new ApiResponse(200, { flaggedAMC }, "Maintenance status toggled !!")
+      );
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }
@@ -147,7 +163,6 @@ export const updateAssetDetails = asyncHandler(async (req, res) => {
     "pr",
     "grn",
     "srr",
-    "materialCode",
     "amcVendor",
     "addInfo",
   ];
@@ -160,21 +175,28 @@ export const updateAssetDetails = asyncHandler(async (req, res) => {
       throw new ApiError(400, "You do not manage this asset");
 
     Object.keys(updateDetails).forEach((key) => {
-      if (allowedFields.includes(key)) {
-        asset[key] = updateDetails[key];
-      } else {
-        throw new ApiError(400, `You can not change ${key} of asset`);
+      const value = updateDetails[key];
+
+      if (
+        allowedFields.includes(key) &&
+        typeof value === "string" &&
+        value !== asset[key]
+      ) {
+        asset[key] = value.trim();
       }
     });
 
-    asset.updatedBy = req.user.id;
-    asset.inWarranty = new Date(updateDetails.endDate) > new Date();
+    if (typeof updateDetails.endDate === "string") {
+      const parsedDate = parseISO(updateDetails.endDate);
+      if (isValid(parsedDate)) asset.inWarranty = parsedDate > new Date();
+    }
 
-    await asset.save({ validate: true });
+    asset.updatedBy = req.user.id;
+    const updatedAsset = await asset.save({ validate: true });
 
     return res
       .status(200)
-      .json(new ApiResponse(200, asset, "Asset updated !!"));
+      .json(new ApiResponse(200, updatedAsset, "Asset updated !!"));
   } catch (err) {
     throw new ApiError(err.statusCode || 500, err?.message);
   }

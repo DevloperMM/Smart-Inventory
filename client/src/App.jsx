@@ -18,7 +18,7 @@ import {
   ProfilePage,
   Requests,
   TransfersHistory,
-  TransitRequests,
+  Transits,
   WelcomePage,
   UserRequests,
   NewUserRequest,
@@ -29,15 +29,25 @@ import {
   NewConsumableDispose,
   ManageUser,
 } from "./pages";
-import { useUserStore } from "./store/useUserStore.js";
+import { useAssetStore, useConsumableStore, useUserStore } from "./store";
 import { useEffect } from "react";
 
 function App() {
   const { checkAuth, checkingAuth, user } = useUserStore();
+  const { getConsumablesCats } = useConsumableStore();
+  const { getAssetsCats } = useAssetStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    getConsumablesCats();
+  }, [getConsumablesCats]);
+
+  useEffect(() => {
+    getAssetsCats();
+  }, [getAssetsCats]);
 
   if (checkingAuth) return <Loader />;
 
@@ -114,10 +124,7 @@ function App() {
                   element={<TransfersHistory />}
                 />
                 <Route path="transactions/requests" element={<Requests />} />
-                <Route
-                  path="transactions/transits"
-                  element={<TransitRequests />}
-                />
+                <Route path="transactions/transits" element={<Transits />} />
                 <Route
                   path="transactions/transits/new"
                   element={<NewTransit />}

@@ -3,8 +3,8 @@ import verifyAuth from "../../middlewares/auth.middleware.js";
 import isPermitted from "../../middlewares/role.middleware.js";
 import {
   decideAssetRequest,
+  decideConsumableRequest,
   getAllRequests,
-  rejectConsumableRequest,
 } from "../../controllers/inventory/request.controller.js";
 
 const router = Router();
@@ -86,8 +86,8 @@ router.post(
 /**
  * @swagger
  * /api/v1/admin/requests/{requestId}:
- *   patch:
- *     summary: Reject a consumable request
+ *   put:
+ *     summary: Decide a consumable request
  *     tags: [Requests]
  *     security:
  *       - bearerAuth: []
@@ -95,7 +95,7 @@ router.post(
  *       - name: requestId
  *         in: path
  *         required: true
- *         description: ID of the request to reject
+ *         description: ID of the request to decide
  *         schema:
  *           type: integer
  *     requestBody:
@@ -109,17 +109,17 @@ router.post(
  *                 type: string
  *     responses:
  *       200:
- *         description: Consumable request rejected
+ *         description: Request decided
  *       400:
  *         description: Missing reason
  *       404:
  *         description: Request not found
  */
-router.patch(
+router.put(
   "/:requestId",
   verifyAuth,
   isPermitted("admin", "it-head", "store-manager"),
-  rejectConsumableRequest
+  decideConsumableRequest
 );
 
 export default router;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserStore } from "../../../store/useUserStore";
+import { useUserStore } from "../../../store";
 import { Input, Select } from "../../../components";
 
 const initialState = {

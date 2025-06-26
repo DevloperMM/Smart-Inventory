@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function UserPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-fuchsia-100 to-emerald-100 pt-12">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-fuchsia-100 to-emerald-100">
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-cyan-700">
           Welcome to the IT Inventory System

@@ -10,8 +10,8 @@ export const getStock = asyncHandler(async (req, res) => {
       attributes: [
         "category",
         "storeId",
-        [fn("COUNT", col("*")), "count"],
-        [literal(`'ASSET'`), "itemType"],
+        [fn("COUNT", col("*")), "storeQty"],
+        [literal(`'Asset'`), "itemType"],
       ],
       group: ["category", "storeId"],
       raw: true,
@@ -21,8 +21,11 @@ export const getStock = asyncHandler(async (req, res) => {
       attributes: [
         "category",
         "storeId",
-        [fn("COUNT", col("*")), "count"],
-        [literal(`'CONSUMABLE'`), "itemType"],
+        [
+          fn("SUM", literal("COALESCE(newQty, 0) + COALESCE(usedQty, 0)")),
+          "storeQty",
+        ],
+        [literal(`'Consumable'`), "itemType"],
       ],
       group: ["category", "storeId"],
       raw: true,
@@ -33,28 +36,32 @@ export const getStock = asyncHandler(async (req, res) => {
     const finalRecords = await Promise.all(
       combined.map(async (record) => {
         const { category, storeId, itemType } = record;
-        const [stock, created] = await Stock.findOrCreate({
+        const storeQty = Number(record.storeQty || 0);
+
+        const [stock] = await Stock.findOrCreate({
           where: { category, storeId, itemType },
         });
 
         let status;
-        if (Number(record.count) === 0) status = "OutStock";
-        else if (Number(record.count) <= stock.alertQty) status = "LowStock";
+        if (storeQty === 0) status = "OutStock";
+        else if (storeQty <= stock.alertQty) status = "LowStock";
         else status = "InStock";
 
         return {
+          id: stock.id,
           category,
           storeId,
           itemType,
-          storeQty: Number(record.count),
+          storeQty,
           alertQty: stock.alertQty,
           status,
         };
       })
     );
 
-    if (!finalRecords)
+    if (!finalRecords || finalRecords.length === 0) {
       throw new ApiError(404, "No assets and consumables found in store");
+    }
 
     return res
       .status(200)

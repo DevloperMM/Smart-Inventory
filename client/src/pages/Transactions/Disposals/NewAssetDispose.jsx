@@ -105,6 +105,7 @@ function NewDispose() {
                   }))
                 }
                 options={serialNoOptions}
+                labelClass={"text-black"}
                 required
               />
             </div>

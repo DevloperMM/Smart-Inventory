@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, SquareArrowOutUpRight } from "lucide-react";
-import { useUserStore } from "../store/useUserStore.js";
+import { useUserStore } from "../store";
 
 function Sidebar() {
   const location = useLocation();
@@ -30,11 +30,8 @@ function Sidebar() {
         </Link>
       </div>
 
-      <div className="pb-4 text-center text-sm">
-        <a
-          href="/user"
-          className="italic hover:underline hover:underline-offset-4"
-        >
+      <div className="pb-4 mb-1 text-center text-sm">
+        <a href="/user" className="hover:underline hover:underline-offset-4">
           <SquareArrowOutUpRight className="inline-block mr-1 pb-1" size={20} />
           Open as user page
         </a>
@@ -48,11 +45,9 @@ function Sidebar() {
           Dashboard
         </Link>
 
-        {user.role.toLowerCase() !== "store-manager" && (
-          <Link to="/admin/users" className={navLinkClass("/admin/users")}>
-            Manage Users
-          </Link>
-        )}
+        <Link to="/admin/users" className={navLinkClass("/admin/users")}>
+          Manage Users
+        </Link>
 
         <Link to="/admin/assets" className={navLinkClass("/admin/assets")}>
           Assets

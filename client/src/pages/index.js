@@ -28,12 +28,11 @@ import NewConsumableDispose from "./Transactions/Disposals/NewConsumableDispose.
 import DisposedAssets from "./Transactions/Disposals/DisposedAssets.jsx";
 import DisposedConsumables from "./Transactions/Disposals/DisposedConsumables.jsx";
 
-import TransitRequests from "./Transactions/Transits/TransitRequests.jsx";
+import Transits from "./Transactions/Transits/Transits.jsx";
 import TransitsList from "./Transactions/Transits/TransitsList.jsx";
 import NewTransit from "./Transactions/Transits/NewTransit.jsx";
 import TransferOptions from "./Transactions/Transits/TransferOptions.jsx";
 import TransfersHistory from "./Transactions/Transfers/TransfersHistory.jsx";
-import NewTransfer from "./Transactions/Transfers/NewTransfer.jsx";
 
 import Requests from "./Transactions/UserRequests/Requests.jsx";
 import RequestsList from "./Transactions/UserRequests/RequestsList.jsx";
@@ -64,12 +63,11 @@ export {
   NewConsumableDispose,
   DisposedAssets,
   DisposedConsumables,
-  TransitRequests,
+  Transits,
   TransitsList,
   TransferOptions,
   NewTransit,
   TransfersHistory,
-  NewTransfer,
   Requests,
   RequestsList,
   UserRequests,

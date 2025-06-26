@@ -30,9 +30,6 @@ const Asset = db.define(
       unique: true,
       allowNull: false,
     },
-    materialCode: {
-      type: DataTypes.STRING,
-    },
     pr: {
       type: DataTypes.STRING,
     },

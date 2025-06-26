@@ -94,7 +94,7 @@ const consumableList = [
 ];
 
 const IssueOptions = () => {
-  const isAssetRequest = false;
+  const isAssetRequest = true;
 
   const [equipNo, setEquipNo] = useState("");
   const [selectedId, setSelectedId] = useState(null);

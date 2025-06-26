@@ -6,7 +6,12 @@ import asyncHandler from "../../utils/asyncHandler.js";
 // Dashboard of users profile
 export const getUsers = asyncHandler(async (req, res) => {
   try {
-    const users = await User.findAll({});
+    const users = await User.findAll({
+      include: [
+        { model: User, as: "profileCreator" },
+        { model: User, as: "profileUpdator" },
+      ],
+    });
 
     if (users.length <= 0) throw new ApiError(404, "No users found");
 
@@ -20,8 +25,16 @@ export const getUsers = asyncHandler(async (req, res) => {
 
 // Create new user
 export const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password, department, empCode, role, storeManaging } =
-    req.body || {};
+  const {
+    name,
+    email,
+    password,
+    department,
+    empCode,
+    role,
+    storeManaging,
+    extension,
+  } = req.body || {};
 
   if (
     !empCode ||
@@ -47,11 +60,15 @@ export const createUser = asyncHandler(async (req, res) => {
     if (role.toLowerCase() === "store-manager" && !storeManaging)
       throw new ApiError(400, "Please assign valid store");
 
+    const username = name.split(" ")[0].toLowerCase() + empCode;
+
     const user = await User.create({
       name,
       email,
       empCode,
       password,
+      username,
+      extension,
       department: department?.toUpperCase(),
       role: role?.toLowerCase(),
       profileCreatedBy: req.user.id,
@@ -76,7 +93,12 @@ export const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      include: [
+        { model: User, as: "profileCreator" },
+        { model: User, as: "profileUpdator" },
+      ],
+    });
 
     if (!user) throw new ApiError(404, "No such user found");
     return res.status(200).json(new ApiResponse(200, user, "User fetched !!"));
@@ -92,26 +114,43 @@ export const updateUser = asyncHandler(async (req, res) => {
 
   const allowedFields = [
     "name",
+    "email",
     "role",
     "department",
     "password",
     "storeManaging",
+    "extension",
+    "empCode",
   ];
 
-  if (
-    Object.values(details).some(
-      (field) => typeof field === "string" && field.trim() === ""
-    )
-  )
-    throw new ApiError(400, "Please fill the marked fields");
+  const invalidFields = Object.keys(details).filter(
+    (field) => !allowedFields.includes(field)
+  );
+
+  if (invalidFields.length > 0)
+    throw new ApiError(400, `Non-upgradable fields provided`);
+
+  for (const field of Object.keys(details)) {
+    const value = details[field];
+    if (
+      field !== "extension" &&
+      typeof value === "string" &&
+      value.trim() === ""
+    ) {
+      throw new ApiError(400, `Please fill the marked fields`);
+    }
+  }
 
   try {
     const user = await User.findByPk(userId);
     if (!user) throw new ApiError(404, "No such user found");
 
     let changesMade = false;
+    let changeUsername = false;
 
     Object.keys(details).forEach((key) => {
+      let value = details[key];
+      value = typeof value === "string" ? value.trim() : value;
       if (allowedFields.includes(key)) {
         if (user[key] !== value) {
           changesMade = true;
@@ -119,6 +158,9 @@ export const updateUser = asyncHandler(async (req, res) => {
             const roleValue = value.toLowerCase();
             user[key] = roleValue;
             if (roleValue !== "store-manager") user.storeManaging = 0;
+          } else if (["name", "empCode"].includes(key)) {
+            changeUsername = true;
+            user[key] = value;
           } else if (key === "department") user[key] = value.toUpperCase();
           else user[key] = value;
         }
@@ -131,6 +173,9 @@ export const updateUser = asyncHandler(async (req, res) => {
 
     user.profileUpdatedOn = new Date();
     user.profileUpdatedBy = req.user.id;
+
+    if (changeUsername)
+      user.username = user.name.split(" ")[0].toLowerCase() + user.empCode;
 
     await user.save({ validate: true });
 

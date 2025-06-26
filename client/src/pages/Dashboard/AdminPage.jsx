@@ -1,191 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import { ArrowUpDown, Search, ChevronDown, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowUpDown, Search, ChevronDown } from "lucide-react";
 import { statusColors } from "../../lib/constants.js";
-import { PageFooter, StockAlertColumn } from "../../components/index.js";
-
-const storeData = [
-  {
-    id: 1,
-    type: "Asset",
-    category: "Laptop",
-    storeId: 1,
-    storeQty: 12,
-    alertQty: 1,
-    status: "InStock",
-  },
-  {
-    id: 2,
-    type: "Asset",
-    category: "Laptop",
-    storeId: 2,
-    storeQty: 1,
-    alertQty: 4,
-    status: "LowStock",
-  },
-  {
-    id: 3,
-    type: "Asset",
-    category: "Monitor",
-    storeId: 1,
-    storeQty: 0,
-    alertQty: 7,
-    status: "OutStock",
-  },
-  {
-    id: 4,
-    type: "Asset",
-    category: "Monitor",
-    storeId: 1,
-    storeQty: 8,
-    alertQty: 2,
-    status: "InStock",
-  },
-  {
-    id: 5,
-    type: "Consumable",
-    category: "Ethernet Cable",
-    storeId: 2,
-    storeQty: 5,
-    alertQty: 3,
-    status: "InStock",
-  },
-  {
-    id: 6,
-    type: "Consumable",
-    category: "Ethernet Cable",
-    storeId: 1,
-    storeQty: 1,
-    alertQty: 3,
-    status: "LowStock",
-  },
-  {
-    id: 7,
-    type: "Consumable",
-    category: "HDMI Cable",
-    storeId: 1,
-    storeQty: 0,
-    alertQty: 1,
-    status: "OutStock",
-  },
-  {
-    id: 8,
-    type: "Consumable",
-    category: "HDMI Cable",
-    storeId: 1,
-    storeQty: 3,
-    alertQty: 2,
-    status: "InStock",
-  },
-  {
-    id: 9,
-    type: "Consumable",
-    category: "Mouse",
-    storeId: 1,
-    storeQty: 0,
-    alertQty: 1,
-    status: "OutStock",
-  },
-  {
-    id: 10,
-    type: "Consumable",
-    category: "Mouse",
-    storeId: 2,
-    storeQty: 6,
-    alertQty: 5,
-    status: "InStock",
-  },
-  {
-    id: 11,
-    type: "Consumable",
-    category: "Keyboard",
-    storeId: 1,
-    storeQty: 3,
-    alertQty: 0,
-    status: "LowStock",
-  },
-  {
-    id: 12,
-    type: "Consumable",
-    category: "Keyboard",
-    storeId: 2,
-    storeQty: 7,
-    alertQty: 4,
-    status: "InStock",
-  },
-  {
-    id: 13,
-    type: "Asset",
-    category: "Docking Station",
-    storeId: 1,
-    storeQty: 2,
-    alertQty: 2,
-    status: "LowStock",
-  },
-  {
-    id: 14,
-    type: "Asset",
-    category: "Docking Station",
-    storeId: 2,
-    storeQty: 5,
-    alertQty: 1,
-    status: "InStock",
-  },
-  {
-    id: 15,
-    type: "Asset",
-    category: "Tablet",
-    storeId: 2,
-    storeQty: 0,
-    alertQty: 1,
-    status: "OutStock",
-  },
-  {
-    id: 16,
-    type: "Asset",
-    category: "Tablet",
-    storeId: 1,
-    storeQty: 10,
-    alertQty: 3,
-    status: "InStock",
-  },
-  {
-    id: 17,
-    type: "Consumable",
-    category: "Power Adapter",
-    storeId: 2,
-    storeQty: 0,
-    alertQty: 2,
-    status: "OutStock",
-  },
-  {
-    id: 18,
-    type: "Consumable",
-    category: "Power Adapter",
-    storeId: 2,
-    storeQty: 3,
-    alertQty: 2,
-    status: "LowStock",
-  },
-  {
-    id: 19,
-    type: "Consumable",
-    category: "SSD",
-    storeId: 1,
-    storeQty: 4,
-    alertQty: 2,
-    status: "InStock",
-  },
-  {
-    id: 20,
-    type: "Consumable",
-    category: "SSD",
-    storeId: 1,
-    storeQty: 0,
-    alertQty: 1,
-    status: "OutStock",
-  },
-];
+import { LoadRecords, PageFooter, StockAlertColumn } from "../../components";
+import { useStockStore } from "../../store";
 
 export default function Dashbaord() {
   const [search, setSearch] = useState("");
@@ -196,7 +13,12 @@ export default function Dashbaord() {
   const [msg, setMsg] = useState("");
   const [rows, setRows] = useState(10);
 
-  const navigate = useNavigate();
+  const { stockLoading, storeData, getStockData, modifyAlert } =
+    useStockStore();
+
+  useEffect(() => {
+    getStockData();
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -214,7 +36,7 @@ export default function Dashbaord() {
       );
 
     return data;
-  }, [search, status, isSortAsc]);
+  }, [search, status, isSortAsc, storeData]);
 
   useEffect(() => {
     setMsg(filteredData.length ? "" : "No records found");
@@ -223,33 +45,11 @@ export default function Dashbaord() {
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
 
-  const handleAlertQtyChange = (id, newQty) => {
-    setData((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, alertQty: newQty } : item
-      )
-    );
-  };
+  if (stockLoading) return <LoadRecords />;
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">IT Store Overview</h2>
-        <div className="space-x-4">
-          <button
-            onClick={() => navigate("/admin/assets/new")}
-            className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-          >
-            <Plus className="inline-block size-5 mb-1 mr-1" /> Add Asset
-          </button>
-          <button
-            onClick={() => navigate("/admin/consumables/new")}
-            className="bg-emerald-500 hover:bg-green-500 text-white p-2 rounded-lg cursor-pointer"
-          >
-            <Plus className="inline-block size-5 mb-1 mr-1" /> Add Consumables
-          </button>
-        </div>
-      </div>
+      <h2 className="text-2xl font-bold">IT Store Overview</h2>
 
       {/* Search & Filter Controls */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -305,8 +105,11 @@ export default function Dashbaord() {
                 <td className="border px-4 py-3 text-center">
                   {(page - 1) * rows + i + 1}
                 </td>
-                <td className="border px-4 py-3">{item.type}</td>
-                <td className="border px-4 py-3">{item.category}</td>
+                <td className="border px-4 py-3">{item.itemType}</td>
+                <td className="border px-4 py-3">
+                  {item.category.charAt(0).toUpperCase() +
+                    item.category.slice(1)}
+                </td>
                 <td className="border px-4 py-3">
                   {item.storeId === 1 ? "HRD" : "CRD"}
                 </td>
@@ -314,7 +117,9 @@ export default function Dashbaord() {
                 <td className="border px-4 py-3">
                   <StockAlertColumn
                     item={item}
-                    onQtyChange={handleAlertQtyChange}
+                    onQtyChange={(id, newQty) => {
+                      modifyAlert(id, newQty);
+                    }}
                   />
                 </td>
                 <td className="border px-4 py-3">

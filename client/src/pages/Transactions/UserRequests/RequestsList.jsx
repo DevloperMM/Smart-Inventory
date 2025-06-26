@@ -1,184 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, Eye, Plus, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Check, Eye, X } from "lucide-react";
 import { statusColors } from "../../../lib/constants.js";
-import { PageFooter, Modal } from "../../../components/index.js";
+import { PageFooter, Modal, LoadRecords, LoadIcon } from "../../../components";
 import { format } from "date-fns";
-import { useUserStore } from "../../../store/useUserStore.js";
+import {
+  useConsumableStore,
+  useRequestStore,
+  useUserStore,
+} from "../../../store";
 
 const initialState = {
   category: "",
-  requestedBy: "",
-  requestedOn: "",
+  requester: "",
+  createdAt: "",
   status: "",
-  decidedBy: "",
-  decidedOn: "",
+  decider: "",
+  storeId: "",
 };
 
-const requests = [
-  {
-    id: 1,
-    category: "Laptop",
-    requestedBy: "John Doe",
-    requestedOn: "2025-05-01",
-    purpose: "New employee onboarding",
-    status: "Issued",
-    decidedOn: "2025-05-03",
-    decidedBy: "Arpit Singh",
-    decidedComments: "Approved for onboarding",
-  },
-  {
-    id: 2,
-    category: "Monitor",
-    requestedBy: "Jane Smith",
-    requestedOn: "2025-05-02",
-    purpose: "Dual monitor setup",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    category: "Keyboard",
-    requestedBy: "Raj Patel",
-    requestedOn: "2025-05-03",
-    purpose: "Replacement of broken keyboard",
-    status: "Issued",
-    decidedOn: "2025-05-04",
-    decidedBy: "Samarth Bhardwaj",
-    decidedComments: "Request approved",
-  },
-  {
-    id: 4,
-    category: "Mouse",
-    requestedBy: "Sara Khan",
-    requestedOn: "2025-05-04",
-    purpose: "Ergonomic mouse for wrist support",
-    status: "Rejected",
-    decidedOn: "2025-05-05",
-    decidedBy: "Arpit Singh",
-    decidedComments: "Not available in stock",
-  },
-  {
-    id: 5,
-    category: "Chair",
-    requestedBy: "Daniel Lee",
-    requestedOn: "2025-05-05",
-    purpose: "Ergonomic seating",
-    status: "Pending",
-  },
-  {
-    id: 6,
-    category: "Docking Station",
-    requestedBy: "Aditi Mehra",
-    requestedOn: "2025-05-06",
-    purpose: "For flexible workstation setup",
-    status: "Approved",
-    decidedOn: "2025-05-08",
-    decidedBy: "Samarth Bhardwaj",
-    decidedComments: "Approved as per request",
-  },
-  {
-    id: 7,
-    category: "Laptop",
-    requestedBy: "Ravi Gupta",
-    requestedOn: "2025-05-07",
-    purpose: "Replacement for outdated system",
-    status: "Rejected",
-    decidedOn: "2025-05-09",
-    decidedBy: "Arpit Singh",
-    decidedComments: "Use existing spare inventory",
-  },
-  {
-    id: 8,
-    category: "Headphones",
-    requestedBy: "Maya Nair",
-    requestedOn: "2025-05-08",
-    purpose: "For video conferencing",
-    status: "Pending",
-  },
-  {
-    id: 9,
-    category: "Projector",
-    requestedBy: "Arjun Verma",
-    requestedOn: "2025-05-09",
-    purpose: "Meeting room setup",
-    status: "Approved",
-    decidedOn: "2025-05-11",
-    decidedBy: "Arpit Singh",
-    decidedComments: "Approved with delivery timeline",
-  },
-  {
-    id: 10,
-    category: "Tablet",
-    requestedBy: "Priya Sharma",
-    requestedOn: "2025-05-10",
-    purpose: "For field visits",
-    status: "Pending",
-  },
-  {
-    id: 11,
-    category: "HDMI Cable",
-    requestedBy: "Karthik Srinivasan",
-    requestedOn: "2025-05-11",
-    purpose: "Connect to external displays",
-    status: "Approved",
-    decidedOn: "2025-05-12",
-    decidedBy: "Arpit Singh",
-    decidedComments: "In stock, approved",
-  },
-  {
-    id: 12,
-    category: "Webcam",
-    requestedBy: "Neha Reddy",
-    requestedOn: "2025-05-12",
-    purpose: "Improve video quality for calls",
-    status: "Rejected",
-    decidedOn: "2025-05-13",
-    decidedBy: "Samarth Bhardwaj",
-    decidedComments: "Not a priority purchase",
-  },
-  {
-    id: 13,
-    category: "Scanner",
-    requestedBy: "Ali Hasan",
-    requestedOn: "2025-05-13",
-    purpose: "Document digitization",
-    status: "Pending",
-  },
-  {
-    id: 14,
-    category: "Printer",
-    requestedBy: "Lina Roy",
-    requestedOn: "2025-05-14",
-    purpose: "Department printing needs",
-    status: "Approved",
-    decidedOn: "2025-05-16",
-    decidedBy: "Samarth Bhardwaj",
-    decidedComments: "Approved, proceed with order",
-  },
-  {
-    id: 15,
-    category: "USB Drive",
-    requestedBy: "Manoj Kumar",
-    requestedOn: "2025-05-15",
-    purpose: "Data transfer for external audits",
-    status: "Pending",
-  },
-  {
-    id: 16,
-    category: "Surge Protector",
-    requestedBy: "Divya Iyer",
-    requestedOn: "2025-05-16",
-    purpose: "Protect equipment during storms",
-    status: "Approved",
-    decidedOn: "2025-05-17",
-    decidedBy: "Samarth Bhardwaj",
-    decidedComments: "Approved and issued",
-  },
-];
-
 const RequestsList = ({ setStep }) => {
-  const navigate = useNavigate();
-
   const [msg, setMsg] = useState("");
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
@@ -187,37 +27,56 @@ const RequestsList = ({ setStep }) => {
   const [selectedRequest, setSelectedRequest] = useState({});
   const [filterData, setFilterData] = useState(initialState);
 
+  const [issueModal, setIssueModal] = useState(false);
+  const [approve, setApprove] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+
   const { user } = useUserStore();
+  const { consumableCats } = useConsumableStore();
+  const {
+    fetchingRequests,
+    getAllRequests,
+    requests,
+    loading,
+    decideAssetRequest,
+    decideConsumableRequest,
+  } = useRequestStore();
+
+  useEffect(() => {
+    getAllRequests();
+  }, [getAllRequests]);
 
   useEffect(() => {
     setPage(1);
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    // const filterOrder = {
-    //   Pending: 0,
-    //   Approved: 1,
-    //   Issued: 2,
-    //   Rejected: 3,
-    // };
-
     let data = requests
       .filter((request) =>
         Object.entries(filterData).every(([key, value]) => {
+          let search = request[key];
+
           if (!value) return true;
-          if (["requestedOn", "decidedOn"].includes(key))
-            return request[key] === value;
-          return request[key]
-            ?.toLowerCase()
-            .includes(value.trim().toLowerCase());
+
+          if (key === "storeId") return request.storeId === Number(value);
+          if (["requester", "decider"].includes(key))
+            search = request[key]?.name;
+          if (key === "createdAt") {
+            const createdDate = format(
+              new Date(request.createdAt),
+              "dd-MM-yyyy"
+            );
+            const valueDate = format(new Date(value), "dd-MM-yyyy");
+            return createdDate === valueDate;
+          }
+
+          return search?.toLowerCase().includes(value.trim().toLowerCase());
         })
       )
       .sort((a, b) => {
-        const dateA = new Date(a.requestedOn);
-        const dateB = new Date(b.requestedOn);
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
         return dateB - dateA;
-
-        // return filterOrder[a.status] - filterOrder[b.status];
       });
 
     return data;
@@ -230,6 +89,27 @@ const RequestsList = ({ setStep }) => {
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // TODO: Adjust it
+    if (consumableCats.includes(selectedRequest.category))
+      decideConsumableRequest();
+    else
+      decideAssetRequest(
+        selectedRequest.id,
+        approve ? "approved" : "rejected",
+        inputValue
+      );
+
+    setInputValue("");
+    setApprove(null);
+    setSelectedRequest(null);
+    setIssueModal(false);
+  };
+
+  if (fetchingRequests) return <LoadRecords />;
+
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
       <h2 className="text-2xl font-bold">Requests List</h2>
@@ -239,15 +119,15 @@ const RequestsList = ({ setStep }) => {
         <table className="w-full text-sm border-collapse rounded-lg">
           <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="w-[4%] border px-3 py-2 text-center">#</th>
+              <th className="w-[5%] border px-3 py-2 text-center">#</th>
               <th className="w-[15%] border px-3 py-2">Category</th>
-              <th className="w-[15%] border px-3 py-2">Requested By</th>
+              <th className="w-[17.5%] border px-3 py-2">Requested By</th>
               <th className="w-[10%] border px-3 py-2">Requested On</th>
               <th className="w-[10%] border px-3 py-2">Status</th>
-              <th className="w-[15%] border px-3 py-2">Decided by</th>
-              <th className="w-[10%] border px-3 py-2">Decided On</th>
-              <th className="w-[10%] border px-3 py-2">Info</th>
-              <th className="w-[21%] border px-3 py-2 text-center">Actions</th>
+              <th className="w-[17.5%] border px-3 py-2">Decided by</th>
+              <th className="w-[10%] border px-3 py-2">Store</th>
+              <th className="w-[5%] border px-3 py-2 text-center">Info</th>
+              <th className="w-[10%] border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white h-fit">
               <td className="border p-2" />
@@ -267,11 +147,11 @@ const RequestsList = ({ setStep }) => {
                   type="text"
                   placeholder="Filter..."
                   className="w-full border p-1 rounded"
-                  value={filterData.requestedBy}
+                  value={filterData.requester}
                   onChange={(e) =>
                     setFilterData({
                       ...filterData,
-                      requestedBy: e.target.value,
+                      requester: e.target.value,
                     })
                   }
                 />
@@ -281,11 +161,11 @@ const RequestsList = ({ setStep }) => {
                   type="date"
                   placeholder="Filter..."
                   className="w-full border p-1 rounded"
-                  value={filterData.requestedOn}
+                  value={filterData.createdAt}
                   onChange={(e) =>
                     setFilterData({
                       ...filterData,
-                      requestedOn: e.target.value,
+                      createdAt: e.target.value,
                     })
                   }
                 />
@@ -310,28 +190,27 @@ const RequestsList = ({ setStep }) => {
                   type="text"
                   placeholder="Filter..."
                   className="w-full border p-1 rounded"
-                  value={filterData.decidedBy}
+                  value={filterData.decider}
                   onChange={(e) =>
                     setFilterData({
                       ...filterData,
-                      decidedBy: e.target.value,
+                      decider: e.target.value,
                     })
                   }
                 />
               </td>
               <td className="border p-2">
-                <input
-                  type="date"
-                  placeholder="Filter..."
+                <select
                   className="w-full border p-1 rounded"
-                  value={filterData.decidedOn}
+                  value={filterData.storeId}
                   onChange={(e) =>
-                    setFilterData({
-                      ...filterData,
-                      decidedOn: e.target.value,
-                    })
+                    setFilterData({ ...filterData, storeId: e.target.value })
                   }
-                />
+                >
+                  <option value="">Select</option>
+                  <option value={1}>HRD</option>
+                  <option value={2}>CRD</option>
+                </select>
               </td>
               <td className="border p-2" />
               <td className="border p-2" />
@@ -347,9 +226,9 @@ const RequestsList = ({ setStep }) => {
                   {(page - 1) * rows + i + 1}
                 </td>
                 <td className="border px-3 py-2">{request.category}</td>
-                <td className="border px-3 py-2">{request.requestedBy}</td>
+                <td className="border px-3 py-2">{request.requester.name}</td>
                 <td className="border px-3 py-2">
-                  {format(request.requestedOn, "dd/MM/yyyy")}
+                  {format(request.createdAt, "dd/MM/yyyy")}
                 </td>
                 <td className="border px-3 py-2">
                   <span
@@ -357,16 +236,14 @@ const RequestsList = ({ setStep }) => {
                       statusColors[request.status]
                     }`}
                   >
-                    {request.status.toLowerCase()}
+                    {request.status}
                   </span>
                 </td>
-                <td className="border px-3 py-2">{request?.decidedBy}</td>
+                <td className="border px-3 py-2">{request.decider?.name}</td>
                 <td className="border px-3 py-2">
-                  {request.decidedOn
-                    ? format(request.decidedOn, "dd/MM/yyyy")
-                    : ""}
+                  {request.storeId === 1 ? "HRD" : "CRD"}
                 </td>
-                <td className="border px-3 py-2">
+                <td className="border px-3 py-2 text-center">
                   <span
                     className="text-blue-600 hover:underline cursor-pointer"
                     onClick={() => {
@@ -374,36 +251,48 @@ const RequestsList = ({ setStep }) => {
                       setShow(true);
                     }}
                   >
-                    <Eye size={16} className="inline-block pb-0.5 mr-1.5" />
-                    View
+                    <Eye size={20} className="inline-block pb-0.5 mr-1.5" />
                   </span>
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {["admin", "it-head"].includes(user.role) &&
-                  request.status === "Pending" ? (
+                  {request.status === "pending" &&
+                  (user.storeManaging === 0 ||
+                    (user.storeManaging > 0 &&
+                      user.storeManaging === request.storeId &&
+                      consumableCats.includes(request.category))) ? (
                     <div className="flex justify-between">
                       <button
-                        onClick={(request) => (request.status = "Approved")}
                         className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
+                        onClick={() => {
+                          setApprove(true);
+                          setIssueModal(true);
+                          setSelectedRequest(request);
+                        }}
                       >
                         <Check strokeWidth={2} size={22} />
                       </button>
                       <button
-                        onClick={(request) => (request.status = "Rejected")}
                         className="bg-red-400 px-2 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
+                        onClick={() => {
+                          setApprove(false);
+                          setIssueModal(true);
+                          setSelectedRequest(request);
+                        }}
                       >
                         <X strokeWidth={2} size={22} />
                       </button>
                     </div>
-                  ) : ["Approved", "Pending"].includes(request.status) ? (
+                  ) : ["approved", "pending"].includes(request.status) &&
+                    (user.storeManaging === 0 ||
+                      user.storeManaging === request.storeId) ? (
                     <button
-                      disabled={request.status !== "Approved"}
+                      disabled={request.status !== "approved"}
                       onClick={() => setStep(2)}
                       className="w-full bg-teal-500 px-1 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                     >
                       <span>Issue</span>
                     </button>
-                  ) : request.status === "Issued" ? (
+                  ) : request.status === "issued" ? (
                     <div className="inline-block w-full bg-blue-100 text-black text-sm font-semibold px-1 py-1.5 rounded-xl border-2 border-blue-500 shadow-md relative">
                       <span className="block text-center tracking-wide">
                         Issued
@@ -438,9 +327,74 @@ const RequestsList = ({ setStep }) => {
           onClose={() => setShow(false)}
           data={{
             "Request Purpose": selectedRequest.purpose,
-            Decision: selectedRequest?.decidedComments || "",
+            Decision: selectedRequest?.decisionInfo || "",
           }}
         />
+      )}
+
+      {issueModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-6 rounded-xl w-md space-y-4"
+          >
+            <h3 className="text-lg font-semibold text-gray-800">Decision</h3>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label htmlFor="decisionStatus" className="w-1/4">
+                Status
+              </label>
+              <input
+                id="decisionStatus"
+                type="text"
+                className="w-3/4 border rounded p-1 font-bold"
+                value={approve ? "Approved" : "Rejected"}
+                disabled
+                required
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <label htmlFor="comments" className="w-1/4">
+                Comments<span className="text-red-500 align-top">*</span>
+              </label>
+              <textarea
+                id="comments"
+                name="comments"
+                rows={4}
+                className="w-3/4 border rounded p-1"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                required
+                placeholder="Add your remarks..."
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                type="button"
+                className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-lg"
+                onClick={() => {
+                  setApprove(null);
+                  setSelectedRequest(null);
+                  setIssueModal(false);
+                }}
+              >
+                Cancel
+              </button>
+              {loading ? (
+                <LoadIcon />
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"
+                >
+                  Decide
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );

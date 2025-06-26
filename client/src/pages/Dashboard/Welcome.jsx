@@ -1,6 +1,6 @@
 import { WelcomeCard } from "../../components";
 import { Boxes, ClipboardCheck, PackageCheck, Users } from "lucide-react";
-import { useUserStore } from "../../store/useUserStore";
+import { useUserStore } from "../../store";
 
 function Welcome() {
   const { user } = useUserStore();

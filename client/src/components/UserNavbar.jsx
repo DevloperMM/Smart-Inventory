@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useUserStore } from "../store/useUserStore";
+import { useUserStore } from "../store";
 import { User } from "lucide-react";
 import { Link } from "react-router-dom";
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input } from "../../components";
-import { useUserStore } from "../../store/useUserStore.js";
+import { useUserStore } from "../../store";
 
 const initialState = {
   currPassword: "",

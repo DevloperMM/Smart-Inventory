@@ -26,6 +26,9 @@ const User = db.define(
       allowNull: false,
       unique: true,
     },
+    extension: {
+      type: DataTypes.STRING,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -38,6 +41,11 @@ const User = db.define(
       type: DataTypes.STRING,
       defaultValue: "User",
       allowNull: false,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     storeManaging: {
       type: DataTypes.INTEGER,

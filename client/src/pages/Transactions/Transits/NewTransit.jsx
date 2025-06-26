@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Select } from "../../../components";
 import toast from "react-hot-toast";
-import { Trash } from "lucide-react";
-import { useUserStore } from "../../../store/useUserStore";
+import { Plus, Trash } from "lucide-react";
+import { useUserStore } from "../../../store";
 
 const initialState = {
   assets: [{ category: "", qty: "" }],
@@ -106,7 +106,7 @@ function NewTransit() {
                 className="text-sm text-blue-600 hover:underline"
                 onClick={addAssetRow}
               >
-                + Add
+                <Plus className="inline-block h-4 w-4 mb-0.75" /> Add
               </button>
             </div>
 
@@ -153,7 +153,7 @@ function NewTransit() {
                 className="text-sm text-blue-600 hover:underline"
                 onClick={addConsumableRow}
               >
-                + Add
+                <Plus className="inline-block h-4 w-4 mb-0.75" /> Add
               </button>
             </div>
 
@@ -189,7 +189,7 @@ function NewTransit() {
         </div>
 
         {user.storeManaging === 0 && (
-          <div className="grid grid-cols-2 gap-6 mt-8">
+          <div className="grid grid-cols-2 gap-6 mt-2">
             <Select
               label="From Store"
               name="fromStore"
