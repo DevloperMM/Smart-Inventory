@@ -1,100 +1,30 @@
 import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
+import {
+  useAssetStore,
+  useConsumableStore,
+  useRequestStore,
+} from "../../../store";
+import { LoadRecords } from "../../../components";
 import toast from "react-hot-toast";
 
-const assetList = [
-  {
-    id: 1,
-    category: "Laptop",
-    brand: "Dell",
-    serialNumber: "SN123456",
-    warranty: true,
-    description: "Dell Latitude 5420, 16GB RAM, 512GB SSD",
-  },
-  {
-    id: 2,
-    category: "Monitor",
-    brand: "LG",
-    serialNumber: "SN987654",
-    warranty: true,
-    description: "LG 24-inch Full HD LED Monitor",
-  },
-  {
-    id: 3,
-    category: "Printer",
-    brand: "HP",
-    serialNumber: "SN543210",
-    warranty: false,
-    description: "HP LaserJet Pro M404dn",
-  },
-  {
-    id: 4,
-    category: "Router",
-    brand: "Cisco",
-    serialNumber: "SN777888",
-    warranty: true,
-    description: "Cisco Dual Band Gigabit Router",
-  },
-  {
-    id: 5,
-    category: "Desktop",
-    brand: "Lenovo",
-    serialNumber: "SN112233",
-    warranty: false,
-    description: "Lenovo ThinkCentre, Core i5 6th Gen, 8GB RAM",
-  },
-];
+const IssueOptions = ({ setStep }) => {
+  const { request } = useRequestStore();
+  const {
+    getUnissuedAssets,
+    loadUnissuedAssets,
+    unissuedAssets,
+    issueAsset,
+    getAssetByEquipNo,
+  } = useAssetStore();
+  const {
+    issueConsumable,
+    getUnissuedConsumables,
+    loadUnissuedConsumables,
+    unissuedConsumables,
+  } = useConsumableStore();
 
-const consumableList = [
-  {
-    id: 101,
-    category: "HDMI Cable",
-    specs: "2 meters, gold-plated",
-    newStock: 50,
-    oldStock: 10,
-    location: "IT Store",
-    isUsed: false,
-  },
-  {
-    id: 102,
-    category: "LAN Cable",
-    specs: "Cat6, 5 meters",
-    newStock: 30,
-    oldStock: 5,
-    location: "Server Room",
-    isUsed: true,
-  },
-  {
-    id: 103,
-    category: "USB Drive",
-    specs: "32GB, USB 3.0",
-    newStock: 20,
-    oldStock: 3,
-    location: "Admin Store",
-    isUsed: false,
-  },
-  {
-    id: 104,
-    category: "Mouse Pad",
-    specs: "Standard size",
-    newStock: 60,
-    oldStock: 12,
-    location: "Support Desk",
-    isUsed: false,
-  },
-  {
-    id: 105,
-    category: "AA Batteries",
-    specs: "1.5V alkaline, pack of 4",
-    newStock: 100,
-    oldStock: 25,
-    location: "Utility Store",
-    isUsed: true,
-  },
-];
-
-const IssueOptions = () => {
-  const isAssetRequest = true;
+  const isAssetRequest = request.itemType === "asset";
 
   const [equipNo, setEquipNo] = useState("");
   const [selectedId, setSelectedId] = useState(null);
@@ -102,32 +32,75 @@ const IssueOptions = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [options, setOptions] = useState([]);
   const [msg, setMsg] = useState(false);
+  const [consumeData, setConsumeData] = useState({});
 
   useEffect(() => {
-    setOptions(isAssetRequest ? assetList : consumableList);
-    showOptions && options.length <= 0 ? setMsg(true) : setMsg(false);
-  }, [isAssetRequest, isVerified]);
+    const updatedOptions = isAssetRequest
+      ? unissuedAssets
+      : unissuedConsumables;
+    setOptions(updatedOptions);
+    setMsg(showOptions && updatedOptions.length <= 0);
+  }, [
+    unissuedAssets,
+    unissuedConsumables,
+    isAssetRequest,
+    isVerified,
+    showOptions,
+  ]);
 
-  const handleVerify = () => {
+  useEffect(() => {
+    if (!isAssetRequest && options.length > 0) {
+      const initialData = {};
+      options.forEach((item) => {
+        initialData[item.id] = {
+          isUsed: false,
+          isIntegrable: false,
+        };
+      });
+      setConsumeData(initialData);
+    }
+  }, [options, isAssetRequest]);
+
+  const handleVerify = async () => {
     setMsg(false);
     setSelectedId(null);
-    setShowOptions(true);
-    setOptions(isAssetRequest ? assetList : consumableList);
 
+    if (isAssetRequest) {
+      await getUnissuedAssets(equipNo, request.category);
+    } else {
+      await getUnissuedConsumables(request.category, request.storeId);
+    }
+
+    setShowOptions(true);
     setIsVerified(true);
   };
 
-  const handleUsedChange = (id, isUsed) => {
-    setOptions((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isUsed } : item))
-    );
+  const handleProceed = async (e) => {
+    e.preventDefault();
+
+    if (!selectedId) return toast.error("Select atleast one option");
+
+    const selectedData = consumeData?.[selectedId] || {
+      isUsed: false,
+      isIntegrable: false,
+    };
+
+    if (isAssetRequest) await issueAsset(request.id, selectedId, equipNo);
+    else {
+      const asset = await getAssetByEquipNo(equipNo);
+      await issueConsumable(
+        request.id,
+        selectedId,
+        asset.id,
+        selectedData.isUsed,
+        selectedData.isIntegrable
+      );
+    }
+
+    setStep(1);
   };
 
-  const handleProceed = () => {
-    if (!selectedId) return toast.error("Select any option to proceed");
-    const type = isAssetRequest ? "Asset" : "Consumable";
-    console.log(`Submitting ${type}: ${selectedId}`);
-  };
+  if (loadUnissuedAssets || loadUnissuedConsumables) return <LoadRecords />;
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white text-gray-800 space-y-5 rounded-2xl">
@@ -202,13 +175,13 @@ const IssueOptions = () => {
                         {item.category}
                       </td>
                       <td className="px-4 py-3 border-l border-gray-500">
-                        {item.brand}
+                        {item.mfgBy}
                       </td>
                       <td className="px-4 py-3 border-l border-gray-500">
-                        {item.serialNumber}
+                        {item.serialNo}
                       </td>
                       <td className="px-4 py-3 border-l border-gray-500">
-                        {item.warranty ? "Yes" : "No"}
+                        {new Date(item.warranty) > new Date() ? "Yes" : "No"}
                       </td>
                       <td className="px-4 py-3 border-l border-gray-500">
                         {item.description}
@@ -227,6 +200,7 @@ const IssueOptions = () => {
                     <th className="px-4 py-3 border">New Stock</th>
                     <th className="px-4 py-3 border">Old Stock</th>
                     <th className="px-4 py-3 border">Used Stock</th>
+                    <th className="px-4 py-3 border">Integrated</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -248,14 +222,40 @@ const IssueOptions = () => {
                       </td>
                       <td className="px-4 py-3 font-medium">{item.category}</td>
                       <td className="px-4 py-3">{item.specs}</td>
-                      <td className="px-4 py-3">{item.newStock}</td>
-                      <td className="px-4 py-3">{item.oldStock}</td>
+                      <td className="px-4 py-3">{item.newQty}</td>
+                      <td className="px-4 py-3">{item.usedQty}</td>
                       <td className="px-4 py-3">
                         <select
-                          value={item.isUsed ? "Yes" : "No"}
+                          value={consumeData[item.id]?.isUsed ? "Yes" : "No"}
                           className="border border-gray-300 rounded px-2 py-1 text-sm"
                           onChange={(e) =>
-                            handleUsedChange(item.id, e.target.value === "Yes")
+                            setConsumeData((prev) => ({
+                              ...prev,
+                              [item.id]: {
+                                ...(prev[item.id] || {}),
+                                isUsed: e.target.value === "Yes",
+                              },
+                            }))
+                          }
+                        >
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <select
+                          value={
+                            consumeData[item.id]?.isIntegrable ? "Yes" : "No"
+                          }
+                          className="border border-gray-300 rounded px-2 py-1 text-sm"
+                          onChange={(e) =>
+                            setConsumeData((prev) => ({
+                              ...prev,
+                              [item.id]: {
+                                ...(prev[item.id] || {}),
+                                isIntegrable: e.target.value === "Yes",
+                              },
+                            }))
                           }
                         >
                           <option value="Yes">Yes</option>

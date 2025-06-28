@@ -10,8 +10,12 @@ export const useAssetStore = create((set, get) => ({
   isFetchingAsset: false,
   asset: {},
 
+  loadUnissuedAssets: false,
+  unissuedAssets: [],
+
   loading: false,
 
+  allAssetIssuances: [],
   assetIssuances: [],
   issuanceAgainstMe: [],
   fetchingIssuances: false,
@@ -101,6 +105,31 @@ export const useAssetStore = create((set, get) => ({
     }
   },
 
+  getAssetByEquipNo: async (equipNo) => {
+    try {
+      const res = await axios.get(`/admin/assets/filter/${equipNo}`);
+      return res.data.apiData;
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to fetch asset details"
+      );
+    }
+  },
+
+  getAssetIssuances: async () => {
+    set({ fetchingIssuances: true });
+    try {
+      const res = await axios.get(`/admin/issuances/assets`);
+      set({ allAssetIssuances: res.data.apiData });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to fetch all asset issuances"
+      );
+    } finally {
+      set({ fetchingIssuances: false });
+    }
+  },
+
   getIssuancesById: async (assetId) => {
     set({ fetchingIssuances: true });
     try {
@@ -129,7 +158,37 @@ export const useAssetStore = create((set, get) => ({
     }
   },
 
-  disposeAsset: async () => {},
+  getUnissuedAssets: async (equipNo, category) => {
+    set({ loadUnissuedAssets: true });
+    try {
+      const res = await axios.post(`admin/issuances/assets/filter/${equipNo}`, {
+        category,
+      });
+      set({ unissuedAssets: res.data.apiData });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to get unissued assets"
+      );
+    } finally {
+      set({ loadUnissuedAssets: false });
+    }
+  },
 
-  issueAsset: async () => {},
+  issueAsset: async (requestId, assetId, equipNo) => {
+    set({ loading: true });
+    try {
+      await axios.post("/admin/issuances/assets", {
+        requestId,
+        assetId,
+        equipNo,
+      });
+      toast.success("Asset issued for request");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to issue asset");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  disposeAsset: async () => {},
 }));

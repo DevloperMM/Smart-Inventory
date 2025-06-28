@@ -8,6 +8,7 @@ import {
   toggleAssetMaintenance,
   updateAssetDetails,
   getAssetsByFilter,
+  getAssetByEquipNo,
 } from "../../controllers/assets/asset.controller.js";
 
 const router = Router();
@@ -56,6 +57,13 @@ router.get(
   verifyAuth,
   isPermitted("admin", "store-manager", "it-head"),
   getAssetsByFilter
+);
+
+router.get(
+  "/filter/:equipNo",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  getAssetByEquipNo
 );
 
 router.get(

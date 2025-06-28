@@ -1,4 +1,4 @@
-import { Asset, User } from "../../models/index.js";
+import { Asset, AssetIssuance, User } from "../../models/index.js";
 import { parseISO, isValid } from "date-fns";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
@@ -44,14 +44,33 @@ export const getAssetsByFilter = asyncHandler(async (req, res) => {
   try {
     const assets = await Asset.findAll({ where: filters });
 
-    if (!assets || assets.length === 0)
-      throw new ApiError(404, "No such assets found");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, assets, "Assets fetched with filter !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});
+
+export const getAssetByEquipNo = asyncHandler(async (req, res) => {
+  const { equipNo } = req.params;
+
+  try {
+    const issuance = await AssetIssuance.findOne({
+      where: { equipNo },
+      include: [{ model: Asset, as: "asset" }],
+    });
+
+    if (!issuance)
+      throw new ApiError(404, "No such asset found with this equipment number");
 
     return res
       .status(200)
-      .json(new ApiResponse(200, assets, "Categories fetched !!"));
+      .json(
+        new ApiResponse(200, issuance.asset, `Asset fetched with ${equipNo} !!`)
+      );
   } catch (err) {
-    throw new ApiError(err.statusCode || 500, err?.message);
+    throw new ApiError(err?.statusCode || 500, err?.message);
   }
 });
 

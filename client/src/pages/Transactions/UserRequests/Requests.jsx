@@ -8,7 +8,7 @@ function Requests() {
   return (
     <>
       {step === 1 && <RequestsList setStep={setStep} />}
-      {step === 2 && <IssueOptions />}
+      {step === 2 && <IssueOptions setStep={setStep} />}
     </>
   );
 }

@@ -8,7 +8,6 @@ const Login = () => {
 
   const { login, loading } = useUserStore();
 
-  // TODO: Clean password after submit
   const handleLogin = async (e) => {
     e.preventDefault();
     login(email, password);

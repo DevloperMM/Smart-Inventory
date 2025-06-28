@@ -26,7 +26,7 @@ router
 
 router
   .route("/assets/filter/:equipNo")
-  .get(
+  .post(
     verifyAuth,
     isPermitted("admin", "store-manager", "it-head"),
     getUnissuedAssets

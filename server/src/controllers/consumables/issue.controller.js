@@ -226,9 +226,6 @@ export const getIssuedConsumablestoAsset = asyncHandler(async (req, res) => {
       ],
     });
 
-    if (consumables.length <= 0)
-      throw new ApiError(404, "No consumables issued against this asset");
-
     return res
       .status(200)
       .json(new ApiResponse(200, consumables, "Issued consumables fetched !!"));

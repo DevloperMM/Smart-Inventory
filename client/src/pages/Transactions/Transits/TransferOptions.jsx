@@ -7,6 +7,7 @@ import {
   useTransferStore,
 } from "../../../store";
 import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
 const initialState = {
   assets: [],
@@ -15,9 +16,12 @@ const initialState = {
 
 function TransferOptions() {
   const [formData, setFormData] = useState(initialState);
+
   const { assets, getAssets } = useAssetStore();
   const { consumables, getConsumables } = useConsumableStore();
-  const { loading } = useTransferStore();
+  const { loading, createTransfer } = useTransferStore();
+
+  const { id } = useParams();
 
   useEffect(() => {
     getAssets();
@@ -38,14 +42,14 @@ function TransferOptions() {
     value: c.id,
   }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.assets.includes("")) {
       toast.error("Empty record can't be submitted");
       return;
     }
 
-    console.log("Final form data:", formData);
+    await createTransfer(id, formData.assets, formData.consumables);
   };
 
   return (
@@ -124,7 +128,7 @@ function TransferOptions() {
                 ...prev,
                 consumables: [
                   ...prev.consumables,
-                  { consumableId: "", isUsed: "", qty: "" },
+                  { id: "", isUsed: "", qty: "" },
                 ],
               }))
             }
@@ -141,15 +145,15 @@ function TransferOptions() {
             {/* CustomSelect */}
             <div className="min-w-0">
               <CustomSelect
-                name="consumableId"
+                name="id"
                 value={
                   consumableOptions.find(
-                    (opt) => opt.value === consumable.consumableId
+                    (opt) => opt.value === consumable.id
                   ) || null
                 }
                 onChange={(selected) => {
                   const updated = [...formData.consumables];
-                  updated[index].consumableId = selected?.value || "";
+                  updated[index].id = selected?.value || "";
                   setFormData((prev) => ({ ...prev, consumables: updated }));
                 }}
                 placeholder="Select consumable..."
@@ -196,7 +200,7 @@ function TransferOptions() {
                 placeholder="Qty"
                 onChange={(e) => {
                   const updated = [...formData.consumables];
-                  updated[index].qty = e.target.value;
+                  updated[index].qty = Number(e.target.value);
                   setFormData((prev) => ({ ...prev, consumables: updated }));
                 }}
                 required
@@ -222,7 +226,9 @@ function TransferOptions() {
 
       <div className="mt-2 text-right">
         {loading ? (
-          <LoadIcon />
+          <div className="inline-block">
+            <LoadIcon />
+          </div>
         ) : (
           <button
             type="submit"

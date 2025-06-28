@@ -94,7 +94,7 @@ export const createRequest = asyncHandler(async (req, res) => {
 // Cancel my raised request
 export const cancelRequest = asyncHandler(async (req, res) => {
   const { requestId } = req.params;
-  const cancelReason = req.body?.cancelReason || "";
+  const cancelReason = "Request Cancelled";
 
   try {
     const request = await Request.findByPk(requestId);
@@ -166,10 +166,12 @@ export const decideAssetRequest = asyncHandler(async (req, res) => {
   }
 });
 
-// Reject consumable request
+// Approve or Reject consumable request
 export const decideConsumableRequest = asyncHandler(async (req, res) => {
-  const { status, decisionInfo } = req.body?.decisionInfo || "";
+  const { status, decisionInfo } = req.body || {};
   const { requestId } = req.params;
+
+  const statusValue = status.toLowerCase();
 
   try {
     const request = await Request.findByPk(requestId);
@@ -178,6 +180,15 @@ export const decideConsumableRequest = asyncHandler(async (req, res) => {
     if (request.status !== "pending")
       throw new ApiError(400, "Only pending requests can be decided");
 
+    if (
+      req.user.storeManaging > 0 &&
+      req.user.storeManaging !== request.storeId
+    )
+      throw new ApiError(400, "You can decide your store requests only");
+
+    if (!["approved", "rejected"].includes(statusValue))
+      throw new ApiError(400, "The request can only be approved or rejected");
+
     if (!decisionInfo)
       throw new ApiError(
         "Provide reason to cancel request for future reference"
@@ -185,7 +196,7 @@ export const decideConsumableRequest = asyncHandler(async (req, res) => {
 
     request.decidedBy = req.user.id;
     request.decisionInfo = decisionInfo;
-    request.status = "rejected";
+    request.status = statusValue;
 
     await request.save({ validate: true });
 

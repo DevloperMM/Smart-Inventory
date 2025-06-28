@@ -5,14 +5,13 @@ import { format } from "date-fns";
 import { useRequestStore } from "../../../store";
 import { LoadRecords } from "../../../components";
 
-// TODO: cancel button
-
 function UserRequests() {
   const [page, setPage] = useState(1);
   const [msg, setMsg] = useState("");
   const rows = 10;
 
-  const { getMyRequests, myRequests, fetchingRequests } = useRequestStore();
+  const { getMyRequests, myRequests, fetchingRequests, cancelRequest } =
+    useRequestStore();
 
   useEffect(() => {
     getMyRequests();
@@ -29,7 +28,7 @@ function UserRequests() {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-cyan-800 mb-8 text-center">
           My Requests
         </h2>
@@ -38,12 +37,14 @@ function UserRequests() {
           <table className="min-w-full text-sm text-left">
             <thead className="bg-gray-200 text-black/75">
               <tr>
-                <th className="w-1/12 px-3 py-4 border-r text-center">S.No</th>
-                <th className="w-2/12 px-3 py-4 border-r">Category</th>
-                <th className="w-2/12 px-3 py-4 border-r">Requested On</th>
-                <th className="w-2/12 px-3 py-4 border-r">Status</th>
-                <th className="w-2/12 px-3 py-4 border-r">Decided By</th>
-                <th className="w-3/12 px-3 py-4">Request Purpose</th>
+                <th className="w-1/20 px-3 py-4 border-r text-center">S.No</th>
+                <th className="w-2/20 px-3 py-4 border-r">Category</th>
+                <th className="w-2/20 px-3 py-4 border-r">Raised On</th>
+                <th className="w-2/20 px-3 py-4 border-r">Status</th>
+                <th className="w-3/20 px-3 py-4 border-r">Decided By</th>
+                <th className="w-5/20 px-3 py-4 border-r">Decision</th>
+                <th className="w-4/20 px-3 py-4">Request Purpose</th>
+                <th className="w-1/20 px-3 py-4" />
               </tr>
             </thead>
             <tbody className="text-black">
@@ -69,7 +70,18 @@ function UserRequests() {
                     </span>
                   </td>
                   <td className="px-3 py-4 border-r">{req.decider?.name}</td>
+                  <td className="px-3 py-4 border-r">{req.decisionInfo}</td>
                   <td className="px-3 py-4">{req.purpose}</td>
+                  <td>
+                    {req.status === "pending" && (
+                      <button
+                        className="px-4 py-2 mr-1.5 rounded-xl bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors"
+                        onClick={() => cancelRequest(req.id)}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

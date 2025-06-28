@@ -76,8 +76,8 @@ router.get(
  *       404:
  *         description: Request not found
  */
-router.post(
-  "/:requestId",
+router.patch(
+  "/a/:requestId",
   verifyAuth,
   isPermitted("admin", "it-head"),
   decideAssetRequest
@@ -115,8 +115,8 @@ router.post(
  *       404:
  *         description: Request not found
  */
-router.put(
-  "/:requestId",
+router.patch(
+  "/c/:requestId",
   verifyAuth,
   isPermitted("admin", "it-head", "store-manager"),
   decideConsumableRequest

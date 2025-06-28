@@ -151,7 +151,11 @@ export const getUnissuedAssets = asyncHandler(async (req, res) => {
       return res
         .status(200)
         .json(
-          new ApiResponse(200, issued.asset, `Asset fetched with ${equipNo} !!`)
+          new ApiResponse(
+            200,
+            [issued.asset],
+            `Asset fetched with ${equipNo} !!`
+          )
         );
 
     if (!category) throw new ApiError(404, "Please provide valid category");

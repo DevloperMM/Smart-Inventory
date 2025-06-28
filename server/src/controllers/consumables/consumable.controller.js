@@ -129,3 +129,19 @@ export const updateQty = asyncHandler(async (req, res) => {
     throw new ApiError(err?.statusCode || 500, err?.message);
   }
 });
+
+export const getConsumablesByFilter = asyncHandler(async (req, res) => {
+  const { filters } = req.body || {};
+  if (!filters || Object.keys(filters).length === 0)
+    throw new ApiError(400, "You must provide at least one filter");
+
+  try {
+    const consumables = await Consumable.findAll({ where: filters });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, consumables, "Consumables fetched !!"));
+  } catch (err) {
+    throw new ApiError(err.statusCode || 500, err?.message);
+  }
+});

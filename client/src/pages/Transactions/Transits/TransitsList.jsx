@@ -3,176 +3,9 @@ import { Check, Eye, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { statusColors } from "../../../lib/constants";
 import { format } from "date-fns";
-import { PageFooter, Modal } from "../../../components";
-import { useUserStore } from "../../../store";
-
-const transits = [
-  {
-    transitId: "TR-1001",
-    items: [
-      { category: "Laptops", qty: 2 },
-      { category: "Cables", qty: 30 },
-      { category: "Webcams", qty: 4 },
-    ],
-    description: "Urgent transfer for new joinees",
-    purpose: "Preparing workstations for onboarding",
-    decisionComments: "Approved. Ensure tagging before dispatch.",
-    fromStore: 1,
-    toStore: 2,
-    requestedBy: "Amit Sharma",
-    decidedBy: "Ravi Mehta",
-    status: "Approved",
-    createdAt: new Date("2025-05-01T10:00:00Z"),
-    updatedAt: new Date("2025-05-02T09:00:00Z"),
-  },
-  {
-    transitId: "TR-1002",
-    items: [{ category: "Mouse", qty: 10 }],
-    description: "Accessories for training room",
-    purpose: "Training lab setup at Store 1",
-    decisionComments: "Approved and dispatched on priority.",
-    fromStore: 2,
-    toStore: 1,
-    requestedBy: "Nisha Kapoor",
-    decidedBy: "Ravi Mehta",
-    status: "Approved",
-    createdAt: new Date("2025-05-03T11:00:00Z"),
-    updatedAt: new Date("2025-05-04T08:30:00Z"),
-  },
-  {
-    transitId: "TR-1003",
-    items: [
-      { category: "Monitors", qty: 4 },
-      { category: "HDMI Cables", qty: 8 },
-    ],
-    description: "Temporary allocation for event",
-    purpose: "Visual aids needed for product launch",
-    decisionComments: "",
-    fromStore: 1,
-    toStore: 2,
-    requestedBy: "Kunal Singh",
-    decidedBy: null,
-    status: "Pending",
-    createdAt: new Date("2025-05-05T09:30:00Z"),
-    updatedAt: null,
-  },
-  {
-    transitId: "TR-1004",
-    items: [
-      { category: "Printers", qty: 1 },
-      { category: "Ink Cartridges", qty: 5 },
-    ],
-    description: "Printer shift due to space constraints",
-    purpose: "Reorganizing Store 2 layout",
-    decisionComments: "",
-    fromStore: 2,
-    toStore: 1,
-    requestedBy: "Amit Sharma",
-    decidedBy: null,
-    status: "Pending",
-    createdAt: new Date("2025-05-06T14:00:00Z"),
-    updatedAt: null,
-  },
-  {
-    transitId: "TR-1005",
-    items: [
-      { category: "Docking Stations", qty: 5 },
-      { category: "Ethernet Cables", qty: 10 },
-    ],
-    description: "Setup for new project team",
-    purpose: "Hardware setup for 10-member dev team",
-    decisionComments: "Approved. Tag and log serials.",
-    fromStore: 1,
-    toStore: 2,
-    requestedBy: "Ravi Mehta",
-    decidedBy: "Amit Sharma",
-    status: "Approved",
-    createdAt: new Date("2025-05-07T10:00:00Z"),
-    updatedAt: new Date("2025-05-08T10:00:00Z"),
-  },
-  {
-    transitId: "TR-1006",
-    items: [{ category: "Adapters", qty: 12 }],
-    description: "Restocking supply",
-    purpose: "Supply running low in main store",
-    decisionComments: "Approved. Check quality of adapters.",
-    fromStore: 2,
-    toStore: 1,
-    requestedBy: "Neha Joshi",
-    decidedBy: "Nisha Kapoor",
-    status: "Approved",
-    createdAt: new Date("2025-05-09T11:15:00Z"),
-    updatedAt: new Date("2025-05-10T12:00:00Z"),
-  },
-  {
-    transitId: "TR-1007",
-    items: [
-      { category: "RAM Modules", qty: 6 },
-      { category: "SSD Drives", qty: 4 },
-    ],
-    description: "Upgrading PCs",
-    purpose: "Upgrade batch-2 developer machines",
-    decisionComments: "Rejected. Supply insufficient.",
-    fromStore: 1,
-    toStore: 2,
-    requestedBy: "Kunal Singh",
-    decidedBy: "Ravi Mehta",
-    status: "Rejected",
-    createdAt: new Date("2025-05-11T08:45:00Z"),
-    updatedAt: new Date("2025-05-12T09:00:00Z"),
-  },
-  {
-    transitId: "TR-1008",
-    items: [
-      { category: "Hard Drives", qty: 8 },
-      { category: "Drive Caddies", qty: 8 },
-    ],
-    description: "Backup equipment",
-    purpose: "Data redundancy for archival systems",
-    decisionComments: "Approved. Ensure offsite backup logging.",
-    fromStore: 2,
-    toStore: 1,
-    requestedBy: "Amit Sharma",
-    decidedBy: "Ravi Mehta",
-    status: "Approved",
-    createdAt: new Date("2025-05-12T13:20:00Z"),
-    updatedAt: new Date("2025-05-13T15:00:00Z"),
-  },
-  {
-    transitId: "TR-1009",
-    items: [
-      { category: "Webcams", qty: 15 },
-      { category: "USB Hubs", qty: 10 },
-    ],
-    description: "Virtual meetings setup",
-    purpose: "Enhancing remote communication",
-    decisionComments: "",
-    fromStore: 1,
-    toStore: 2,
-    requestedBy: "Ravi Mehta",
-    decidedBy: null,
-    status: "Pending",
-    createdAt: new Date("2025-05-14T10:00:00Z"),
-    updatedAt: null,
-  },
-  {
-    transitId: "TR-1010",
-    items: [
-      { category: "Speakers", qty: 4 },
-      { category: "Microphones", qty: 4 },
-    ],
-    description: "Conference room setup",
-    purpose: "Upgrade AV setup",
-    decisionComments: "Rejected due to equipment mismatch.",
-    fromStore: 2,
-    toStore: 1,
-    requestedBy: "Neha Joshi",
-    decidedBy: "Nisha Kapoor",
-    status: "Rejected",
-    createdAt: new Date("2025-05-14T14:00:00Z"),
-    updatedAt: new Date("2025-05-15T08:30:00Z"),
-  },
-];
+import { PageFooter, Modal, LoadIcon, LoadRecords } from "../../../components";
+import { useTransitStore, useUserStore } from "../../../store";
+import toast from "react-hot-toast";
 
 const initialState = {
   createdAt: "",
@@ -182,7 +15,7 @@ const initialState = {
   status: "",
 };
 
-const TransitsList = ({ setStep }) => {
+const TransitsList = () => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -193,19 +26,30 @@ const TransitsList = ({ setStep }) => {
   const [filterData, setFilterData] = useState(initialState);
   const [selectedTransit, setSelectedTransit] = useState({});
 
+  const [transitModal, setTransitModal] = useState(false);
+  const [approve, setApprove] = useState(null);
+  const [accept, setAccept] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+
   const { user } = useUserStore();
+  const {
+    transits,
+    getTransits,
+    loading,
+    decideTransit,
+    validateTransit,
+    fetchingTransits,
+  } = useTransitStore();
+
+  useEffect(() => {
+    getTransits();
+  }, []);
 
   useEffect(() => {
     setPage(1);
   }, [filterData, rows]);
 
   const filteredData = useMemo(() => {
-    // const filterOrder = {
-    //   Pending: 0,
-    //   Approved: 1,
-    //   Rejected: 2,
-    // };
-
     let data = transits
       .filter((transit) =>
         Object.entries(filterData).every(([key, value]) => {
@@ -223,9 +67,8 @@ const TransitsList = ({ setStep }) => {
       .sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
-        return dateB - dateA;
 
-        // return filterOrder[a.status] - filterOrder[b.status];
+        return dateA - dateB;
       });
 
     return data;
@@ -237,6 +80,40 @@ const TransitsList = ({ setStep }) => {
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (
+        user.storeManaging > 0 &&
+        selectedTransit.fromStore === user.storeManaging
+      ) {
+        await validateTransit(
+          selectedTransit.id,
+          accept ? "accepted" : "declined",
+          inputValue
+        );
+      } else if (user.storeManaging === 0) {
+        await decideTransit(
+          selectedTransit.id,
+          approve ? "approved" : "rejected",
+          inputValue
+        );
+      }
+
+      setInputValue("");
+      setAccept(null);
+      setApprove(null);
+      setSelectedTransit(null);
+      setTransitModal(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error submitting transit decision");
+    }
+  };
+
+  if (fetchingTransits) return <LoadRecords />;
 
   return (
     <div className="p-6 bg-white text-gray-800 space-y-5">
@@ -264,12 +141,13 @@ const TransitsList = ({ setStep }) => {
                   <span>Qty</span>
                 </div>
               </th>
-              <th className="w-[8%] border px-3 py-2">Requested On</th>
-              <th className="w-[8%] border px-3 py-2">Decided On</th>
-              <th className="w-[12%] border px-3 py-2">From Store</th>
-              <th className="w-[12%] border px-3 py-2">To Store</th>
-              <th className="w-[12%] border px-3 py-2">Details</th>
-              <th className="w-[10%] border px-3 py-2">Status</th>
+              <th className="w-[7%] border px-3 py-2">Requested On</th>
+              <th className="w-[7%] border px-3 py-2">Validated On</th>
+              <th className="w-[7%] border px-3 py-2">Decided On</th>
+              <th className="w-[14%] border px-3 py-2">From</th>
+              <th className="w-[14%] border px-3 py-2">To</th>
+              <th className="w-[5%] border px-3 py-2">Info</th>
+              <th className="w-[8%] border px-3 py-2">Status</th>
               <th className="w-[10%] border px-3 py-2 text-center">Actions</th>
             </tr>
             <tr className="bg-white h-fit">
@@ -285,6 +163,20 @@ const TransitsList = ({ setStep }) => {
                     setFilterData({
                       ...filterData,
                       createdAt: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              <td className="border p-2">
+                <input
+                  type="date"
+                  placeholder="Filter..."
+                  className="w-full border p-1 rounded"
+                  value={filterData.validatedOn}
+                  onChange={(e) =>
+                    setFilterData({
+                      ...filterData,
+                      validatedOn: e.target.value,
                     })
                   }
                 />
@@ -339,9 +231,13 @@ const TransitsList = ({ setStep }) => {
                   }
                 >
                   <option value="">Select</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Rejected">Rejected</option>
-                  <option value="Approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="declined">Declined</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="approved">Approved</option>
+                  <option value="exported">Exported</option>
                 </select>
               </td>
               <td className="border p-2" />
@@ -374,7 +270,11 @@ const TransitsList = ({ setStep }) => {
                   {format(transit.createdAt, "dd/MM/yyyy")}
                 </td>
                 <td className="border px-3 py-2">
-                  {transit.updatedAt && format(transit.updatedAt, "dd/MM/yyyy")}
+                  {transit.validator &&
+                    format(transit.validatedOn, "dd/MM/yyyy")}
+                </td>
+                <td className="border px-3 py-2">
+                  {transit.decider && format(transit.updatedAt, "dd/MM/yyyy")}
                 </td>
                 <td className="border px-3 py-2">
                   {transit.fromStore === 1 ? "HRD" : "CRD"}
@@ -382,7 +282,7 @@ const TransitsList = ({ setStep }) => {
                 <td className="border px-3 py-2">
                   {transit.toStore === 1 ? "HRD" : "CRD"}
                 </td>
-                <td className="border px-3 py-2">
+                <td className="border px-3 py-2 text-center">
                   <span
                     className="text-blue-600 hover:underline cursor-pointer"
                     onClick={() => {
@@ -403,32 +303,81 @@ const TransitsList = ({ setStep }) => {
                   </span>
                 </td>
                 <td className="border px-3 py-2 text-center">
-                  {["admin", "it-head"].includes(user.role) &&
-                  transit.status === "Pending" ? (
-                    <div className="flex justify-between">
-                      <button
-                        onClick={() => handleApprove(transit.id)}
-                        className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
-                      >
-                        <Check strokeWidth={2.5} size={22} />
-                      </button>
-                      <button
-                        onClick={() => handleReject(transit.id)}
-                        className="bg-red-400 px-2 py-1.5 rounded-xl text-white hover:bg-red-500 disabled:bg-gray-400"
-                      >
-                        <X strokeWidth={2.5} size={22} />
-                      </button>
-                    </div>
-                  ) : transit.status === "Rejected" ||
-                    (user.storeManaging > 0 &&
-                      user.storeManaging !== transit.fromStore) ? null : (
-                    <button
-                      disabled={transit.status !== "Approved"}
-                      onClick={() => setStep(2)}
-                      className="w-full bg-teal-500 px-1.5 py-1.5 text-sm rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
-                    >
-                      <span>Transfer</span>
-                    </button>
+                  {["rejected", "cancelled"].includes(transit.status) ||
+                  (user.storeManaging > 0 &&
+                    user.storeManaging !== transit.fromStore) ? null : (
+                    <>
+                      {/* For Store Manager (only if their store === fromStore && status is pending) */}
+                      {user.storeManaging > 0 &&
+                      transit.status === "pending" ? (
+                        <div className="flex justify-evenly">
+                          <button
+                            onClick={() => {
+                              setAccept(true);
+                              setTransitModal(true);
+                              setSelectedTransit(transit);
+                            }}
+                            className="text-green-500 rounded-xl "
+                          >
+                            <Check strokeWidth={2.5} size={24} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setAccept(false);
+                              setTransitModal(true);
+                              setSelectedTransit(transit);
+                            }}
+                            className="text-red-400 rounded-xl"
+                          >
+                            <X strokeWidth={2.5} size={24} />
+                          </button>
+                        </div>
+                      ) : user.storeManaging === 0 &&
+                        ["pending", "accepted", "declined"].includes(
+                          transit.status
+                        ) ? (
+                        <div className="flex justify-between">
+                          <button
+                            onClick={() => {
+                              setApprove(true);
+                              setTransitModal(true);
+                              setSelectedTransit(transit);
+                            }}
+                            className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600"
+                          >
+                            <Check strokeWidth={2.5} size={22} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setApprove(false);
+                              setTransitModal(true);
+                              setSelectedTransit(transit);
+                            }}
+                            className="bg-red-400 px-2 py-1.5 rounded-xl text-white hover:bg-red-500"
+                          >
+                            <X strokeWidth={2.5} size={22} />
+                          </button>
+                        </div>
+                      ) : transit.status === "exported" ? (
+                        <div className="inline-block w-full bg-pink-100 text-black text-sm font-semibold px-1.5 py-1.5 rounded-xl border-2 border-pink-500 shadow-md relative">
+                          <span className="block text-center tracking-wide">
+                            Exported
+                          </span>
+                        </div>
+                      ) : (
+                        <button
+                          disabled={transit.status !== "approved"}
+                          onClick={() =>
+                            navigate(
+                              `/admin/transactions/transits/${transit.id}`
+                            )
+                          }
+                          className="w-full bg-teal-500 px-1.5 py-1.5 text-sm rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
+                        >
+                          Transfer
+                        </button>
+                      )}
+                    </>
                   )}
                 </td>
               </tr>
@@ -455,12 +404,90 @@ const TransitsList = ({ setStep }) => {
           show={show}
           onClose={() => setShow(false)}
           data={{
-            "Requested By": selectedTransit.requestedBy,
-            "Transit Purpose": selectedTransit.purpose,
-            "Decided By": selectedTransit?.decidedBy || "Pending",
-            "Decision Reason": selectedTransit?.decisionComments || "Pending",
+            "Requested By": selectedTransit.requester.name,
+            "Transit Purpose": selectedTransit.description,
+            "Validated By": selectedTransit?.validator?.name || "",
+            Validation: selectedTransit?.validateInfo || "",
+            "Decided By": selectedTransit?.decider?.name || "",
+            "Decision Reason": selectedTransit?.decisionReason || "",
           }}
         />
+      )}
+
+      {transitModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-6 rounded-xl w-md space-y-4"
+          >
+            <h3 className="text-lg font-semibold text-gray-800">
+              {user.storeManaging > 0 ? "Validation" : "Decision"}
+            </h3>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label htmlFor="decisionStatus" className="w-1/4">
+                Status
+              </label>
+              <input
+                id="decisionStatus"
+                type="text"
+                className="w-3/4 border rounded p-1 font-bold"
+                value={
+                  user.storeManaging > 0
+                    ? accept === true
+                      ? "Accepted"
+                      : "Declined"
+                    : approve === true
+                    ? "Approved"
+                    : "Rejected"
+                }
+                disabled
+                required
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <label htmlFor="comments" className="w-1/4">
+                Comments<span className="text-red-500 align-top">*</span>
+              </label>
+              <textarea
+                id="comments"
+                name="comments"
+                rows={4}
+                className="w-3/4 border rounded p-1"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                required
+                placeholder="Add your remarks..."
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                type="button"
+                className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-lg"
+                onClick={() => {
+                  setAccept(null);
+                  setApprove(null);
+                  setSelectedTransit(null);
+                  setTransitModal(false);
+                }}
+              >
+                Cancel
+              </button>
+              {loading ? (
+                <LoadIcon />
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"
+                >
+                  {user.storeManaging > 0 ? "Validate" : "Decide"}
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );

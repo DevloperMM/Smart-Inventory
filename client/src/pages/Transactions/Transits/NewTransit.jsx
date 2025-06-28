@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Input, Select } from "../../../components";
 import toast from "react-hot-toast";
 import { Plus, Trash } from "lucide-react";
-import { useUserStore } from "../../../store";
+import {
+  useAssetStore,
+  useConsumableStore,
+  useTransitStore,
+  useUserStore,
+} from "../../../store";
 
 const initialState = {
   assets: [{ category: "", qty: "" }],
@@ -15,20 +20,25 @@ const initialState = {
 function NewTransit() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialState);
-  const { user } = useUserStore();
 
-  const assetOptions = ["PRINTER", "SCANNER", "DESKTOP", "LAPTOP", "SERVER"];
-  const consumableOptions = ["MOUSE", "KEYBOARD", "CABLES", "HARD-DISK"];
+  const { user } = useUserStore();
+  const { assetCats } = useAssetStore();
+  const { consumableCats } = useConsumableStore();
+  const { loading, createTransit } = useTransitStore();
 
   const handleAssetChange = (index, e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === "qty") value = Number(value);
+
     const updated = [...formData.assets];
     updated[index][name] = value;
     setFormData((prev) => ({ ...prev, assets: updated }));
   };
 
   const handleConsumableChange = (index, e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === "qty") value = Number(value);
+
     const updated = [...formData.consumables];
     updated[index][name] = value;
     setFormData((prev) => ({ ...prev, consumables: updated }));
@@ -75,17 +85,30 @@ function NewTransit() {
     setFormData((prev) => ({ ...prev, [name]: parsedValue }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.assets.length <= 0 && formData.consumables.length <= 0)
       return toast.error("You can not make empty request");
 
+    const transitData = {
+      items: [...formData.assets, ...formData.consumables],
+      description: formData.description,
+      fromStore: formData.fromStore,
+    };
+
     if (user.storeManaging > 0) {
-      console.log({ ...formData, fromStore: user.storeManaging });
-      return;
+      transitData.fromStore = user.storeManaging;
+    } else {
+      transitData.fromStore = formData.fromStore;
     }
 
-    console.log(formData);
+    transitData.toStore = formData.fromStore === 1 ? 2 : 1;
+
+    const res = await createTransit(transitData);
+    if (!res?.success) return;
+
+    setFormData(initialState);
+    navigate("/admin/transits");
   };
 
   return (
@@ -117,7 +140,7 @@ function NewTransit() {
                   value={asset.category}
                   onChange={(e) => handleAssetChange(index, e)}
                   placeholder="Select category..."
-                  options={assetOptions}
+                  options={assetCats}
                   className="col-span-5"
                   required
                 />
@@ -164,7 +187,7 @@ function NewTransit() {
                   value={consumable.category}
                   onChange={(e) => handleConsumableChange(index, e)}
                   placeholder="Select category..."
-                  options={consumableOptions}
+                  options={consumableCats}
                   required
                 />
                 <Input

@@ -5,8 +5,6 @@ import { useParams } from "react-router-dom";
 import { useAssetStore } from "../../store/useAssetStore.js";
 import { LoadRecords } from "../../components";
 
-// TODO: Solve inWarranty issue and delete field inWarranty
-
 const fields = {
   status: "Status",
   description: "Description",

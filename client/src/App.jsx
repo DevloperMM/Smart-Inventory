@@ -18,7 +18,6 @@ import {
   ProfilePage,
   Requests,
   TransfersHistory,
-  Transits,
   WelcomePage,
   UserRequests,
   NewUserRequest,
@@ -28,6 +27,8 @@ import {
   NewAssetDispose,
   NewConsumableDispose,
   ManageUser,
+  TransitsList,
+  TransferOptions,
 } from "./pages";
 import { useAssetStore, useConsumableStore, useUserStore } from "./store";
 import { useEffect } from "react";
@@ -124,10 +125,17 @@ function App() {
                   element={<TransfersHistory />}
                 />
                 <Route path="transactions/requests" element={<Requests />} />
-                <Route path="transactions/transits" element={<Transits />} />
+                <Route
+                  path="transactions/transits"
+                  element={<TransitsList />}
+                />
                 <Route
                   path="transactions/transits/new"
                   element={<NewTransit />}
+                />
+                <Route
+                  path="transactions/transits/:id"
+                  element={<TransferOptions />}
                 />
 
                 <Route path="profile" element={<ProfilePage />} />

@@ -3,8 +3,6 @@ import { Input, LoadIcon, Select } from "../../components";
 import { useNavigate } from "react-router-dom";
 import { useAssetStore, useUserStore } from "../../store";
 
-// TODO: Get brand options here also
-
 const initialState = {
   category: "",
   mfgBy: "",

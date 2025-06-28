@@ -3,11 +3,7 @@ import { Check, Eye, X } from "lucide-react";
 import { statusColors } from "../../../lib/constants.js";
 import { PageFooter, Modal, LoadRecords, LoadIcon } from "../../../components";
 import { format } from "date-fns";
-import {
-  useConsumableStore,
-  useRequestStore,
-  useUserStore,
-} from "../../../store";
+import { useRequestStore, useUserStore } from "../../../store";
 
 const initialState = {
   category: "",
@@ -32,7 +28,6 @@ const RequestsList = ({ setStep }) => {
   const [inputValue, setInputValue] = useState("");
 
   const { user } = useUserStore();
-  const { consumableCats } = useConsumableStore();
   const {
     fetchingRequests,
     getAllRequests,
@@ -40,11 +35,13 @@ const RequestsList = ({ setStep }) => {
     loading,
     decideAssetRequest,
     decideConsumableRequest,
+    setRequest,
   } = useRequestStore();
 
   useEffect(() => {
+    setRequest(null);
     getAllRequests();
-  }, [getAllRequests]);
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -92,9 +89,12 @@ const RequestsList = ({ setStep }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // TODO: Adjust it
-    if (consumableCats.includes(selectedRequest.category))
-      decideConsumableRequest();
+    if (selectedRequest.itemType === "consumable")
+      decideConsumableRequest(
+        selectedRequest.id,
+        approve ? "approved" : "rejected",
+        inputValue
+      );
     else
       decideAssetRequest(
         selectedRequest.id,
@@ -259,7 +259,7 @@ const RequestsList = ({ setStep }) => {
                   (user.storeManaging === 0 ||
                     (user.storeManaging > 0 &&
                       user.storeManaging === request.storeId &&
-                      consumableCats.includes(request.category))) ? (
+                      request.itemType === "consumable")) ? (
                     <div className="flex justify-between">
                       <button
                         className="bg-green-500 px-2 py-1.5 rounded-xl text-white hover:bg-green-600 disabled:bg-gray-400"
@@ -287,7 +287,10 @@ const RequestsList = ({ setStep }) => {
                       user.storeManaging === request.storeId) ? (
                     <button
                       disabled={request.status !== "approved"}
-                      onClick={() => setStep(2)}
+                      onClick={() => {
+                        setRequest(request);
+                        setStep(2);
+                      }}
                       className="w-full bg-teal-500 px-1 py-1.5 text-base rounded-xl text-white hover:bg-teal-600 disabled:bg-gray-400"
                     >
                       <span>Issue</span>

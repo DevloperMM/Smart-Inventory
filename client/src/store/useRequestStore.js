@@ -8,6 +8,9 @@ export const useRequestStore = create((set, get) => ({
   myRequests: [],
 
   loading: false,
+  request: null,
+
+  setRequest: async (request) => set({ request }),
 
   getAllRequests: async () => {
     set({ fetchingRequests: true });
@@ -54,7 +57,7 @@ export const useRequestStore = create((set, get) => ({
   decideAssetRequest: async (requestId, status, comments) => {
     set({ loading: true });
     try {
-      await axios.post(`/admin/requests/${requestId}`, {
+      await axios.patch(`/admin/requests/a/${requestId}`, {
         status,
         decisionInfo: comments,
       });
@@ -67,11 +70,10 @@ export const useRequestStore = create((set, get) => ({
     }
   },
 
-  decideConsumableRequest: async () => {
+  decideConsumableRequest: async (requestId, status, comments) => {
     set({ loading: true });
     try {
-      // TODO: Re-check it, currently this api won't work
-      await axios.post(`/admin/requests/${requestId}`, {
+      await axios.patch(`/admin/requests/c/${requestId}`, {
         status,
         decisionInfo: comments,
       });
@@ -79,6 +81,18 @@ export const useRequestStore = create((set, get) => ({
       toast.success(`Request ${status.toLowerCase()}`);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to decide request");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  cancelRequest: async (requestId) => {
+    set({ loading: true });
+    try {
+      await axios.patch(`/users/requests/${requestId}`);
+      toast.success(`Request cancelled`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to cancel request");
     } finally {
       set({ loading: false });
     }

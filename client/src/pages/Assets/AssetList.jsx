@@ -6,8 +6,6 @@ import { LoadRecords, PageFooter } from "../../components";
 import { format } from "date-fns";
 import { useAssetStore } from "../../store/index.js";
 
-// TODO: fetch all brand options for using in select
-
 const initialState = {
   category: "",
   description: "",

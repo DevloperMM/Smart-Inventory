@@ -6,7 +6,14 @@ export const useConsumableStore = create((set, get) => ({
   fetchingConsumables: false,
   consumableCats: [],
   consumables: [],
+
   loading: false,
+
+  unissuedConsumables: [],
+  loadUnissuedConsumables: false,
+
+  fetchingIssuances: false,
+  allConsumableIssuances: [],
 
   getConsumablesCats: async () => {
     try {
@@ -71,6 +78,61 @@ export const useConsumableStore = create((set, get) => ({
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update stock");
       return { success: false };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getUnissuedConsumables: async (category, storeId) => {
+    set({ loadUnissuedConsumables: true });
+    try {
+      const res = await axios.post("admin/consumables/filter", {
+        filters: { category, storeId },
+      });
+      set({ unissuedConsumables: res.data.apiData });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to get unissued assets"
+      );
+    } finally {
+      set({ loadUnissuedConsumables: false });
+    }
+  },
+
+  getConsumableIssuances: async () => {
+    set({ fetchingIssuances: true });
+    try {
+      const res = await axios.get(`/admin/issuances/consumables`);
+      set({ allConsumableIssuances: res.data.apiData });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to fetch all consumable issuances"
+      );
+    } finally {
+      set({ fetchingIssuances: false });
+    }
+  },
+
+  issueConsumable: async (
+    requestId,
+    consumableId,
+    assetId,
+    isUsed,
+    isIntegrable
+  ) => {
+    set({ loading: true });
+    try {
+      await axios.post("/admin/issuances/consumables", {
+        requestId,
+        consumableId,
+        assetId,
+        isUsed,
+        isIntegrable,
+      });
+      toast.success("Consumable issued for request");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to issue asset");
     } finally {
       set({ loading: false });
     }

@@ -3,7 +3,11 @@ import { ArrowUpDown, EllipsisVertical, Undo2 } from "lucide-react";
 import { statusColors } from "../../../lib/constants.js";
 import { Modal, PageFooter } from "../../../components";
 import { format } from "date-fns";
-import { useUserStore } from "../../../store";
+import {
+  useAssetStore,
+  useConsumableStore,
+  useUserStore,
+} from "../../../store";
 import { useOutsideClick } from "../../../hooks/useOutsideClick.js";
 
 const initialState = {
@@ -185,10 +189,20 @@ function IssueHistory() {
   const [isSortAsc, setIsSortAsc] = useState(false);
   const [filterData, setFilterData] = useState(initialState);
 
-  const [selectedIssuance, setSelectedIssuance] = useState({});
-  const [openDropdownId, setOpenDropdownId] = useState(1);
+  const [selectedIssuance, setSelectedIssuance] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
 
   const { user } = useUserStore();
+  const { allAssetIssuances, getAssetIssuances } = useAssetStore();
+  const { allConsumableIssuances, getConsumableIssuances } =
+    useConsumableStore();
+
+  useEffect(() => {
+    getAssetIssuances(), getConsumableIssuances();
+  }, []);
+
+  const issuances = [...allAssetIssuances, ...allConsumableIssuances];
+
   useOutsideClick(() => setOpenDropdownId(null));
 
   const toggleDropdown = (id) => {
@@ -203,7 +217,7 @@ function IssueHistory() {
     let data = issuances
       .map((item) => ({
         ...item,
-        category: item.asset.category,
+        category: item?.consumable?.category || item?.asset?.category,
         issuedBy: item.issuer.name,
         issuedTo: item.recipient.name,
         handledBy: item.handler?.name || "",
@@ -226,7 +240,7 @@ function IssueHistory() {
       });
 
     return data;
-  }, [filterData, isSortAsc]);
+  }, [filterData, isSortAsc, allAssetIssuances, allConsumableIssuances]);
 
   const pageData = filteredData.slice((page - 1) * rows, page * rows);
   const totalPages = Math.ceil(filteredData.length / rows);
@@ -260,7 +274,7 @@ function IssueHistory() {
               <th className="w-[12.5%] border px-3 py-2">Returned To</th>
               <th className="w-[12.5%] border px-3 py-2">Received On</th>
               <th className="w-[8%] border px-3 py-2">Status</th>
-              <th className="w-[2%] -2 bg-white"></th>
+              <th className="w-[2%] bg-white"></th>
             </tr>
             <tr className="bg-white h-fit">
               <td className="border p-2" />
@@ -353,6 +367,8 @@ function IssueHistory() {
                   <option value="issued">Issued</option>
                   <option value="returned">Returned</option>
                   <option value="exempted">Exempted</option>
+                  <option value="standalone">Standalone</option>
+                  <option value="embedded">Embedded</option>
                 </select>
               </td>
               <td className="p-2" />
@@ -367,7 +383,9 @@ function IssueHistory() {
                 <td className="border px-3 py-2 text-center">
                   {(page - 1) * rows + i + 1}
                 </td>
-                <td className="border px-3 py-2">{item.asset.category}</td>
+                <td className="border px-3 py-2">
+                  {item?.consumable?.category || item?.asset?.category}
+                </td>
                 <td className="border px-3 py-2">{item.equipNo}</td>
                 <td className="border px-3 py-2">
                   {item.issuer.name.split(" ")[0]}
@@ -386,14 +404,14 @@ function IssueHistory() {
                 </td>
                 <td className="border px-3 py-2">
                   <span
-                    className={`px-2 py-1 rounded font-medium ${
+                    className={`px-2 py-1 rounded font-medium whitespace-nowrap ${
                       statusColors[item.status.toLowerCase()]
                     }`}
                   >
                     {item.status}
                   </span>
                 </td>
-                <td className="relative px-3 py-2 text-center">
+                <td className="relative px-3 py-2 text-center bg-white">
                   <button
                     onClick={() => toggleDropdown(item.id)}
                     className="hover:text-black cursor-pointer"
@@ -416,7 +434,7 @@ function IssueHistory() {
                           className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                           onClick={() => {
                             setShow(true);
-                            setSelectedIssuance(item);
+                            setSelectedIssuance(item.id);
                             setOpenDropdownId(null);
                           }}
                         >

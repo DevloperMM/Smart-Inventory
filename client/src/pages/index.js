@@ -28,7 +28,6 @@ import NewConsumableDispose from "./Transactions/Disposals/NewConsumableDispose.
 import DisposedAssets from "./Transactions/Disposals/DisposedAssets.jsx";
 import DisposedConsumables from "./Transactions/Disposals/DisposedConsumables.jsx";
 
-import Transits from "./Transactions/Transits/Transits.jsx";
 import TransitsList from "./Transactions/Transits/TransitsList.jsx";
 import NewTransit from "./Transactions/Transits/NewTransit.jsx";
 import TransferOptions from "./Transactions/Transits/TransferOptions.jsx";
@@ -63,7 +62,6 @@ export {
   NewConsumableDispose,
   DisposedAssets,
   DisposedConsumables,
-  Transits,
   TransitsList,
   TransferOptions,
   NewTransit,

@@ -5,6 +5,7 @@ import {
   addConsumableInStore,
   editConsumable,
   getAllConsumables,
+  getConsumablesByFilter,
   updateQty,
 } from "../../controllers/consumables/consumable.controller.js";
 
@@ -22,6 +23,13 @@ router
     isPermitted("admin", "it-head", "store-manager"),
     addConsumableInStore
   );
+
+router.post(
+  "/filter",
+  verifyAuth,
+  isPermitted("admin", "store-manager", "it-head"),
+  getConsumablesByFilter
+);
 
 router
   .route("/:consumableId")

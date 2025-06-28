@@ -1,12 +1,23 @@
 import db from "../../lib/db.js";
-import { Asset, Consumable, Transfer, Transit } from "../../models/index.js";
+import {
+  Asset,
+  Consumable,
+  Transfer,
+  Transit,
+  User,
+} from "../../models/index.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const getTranferRecords = asyncHandler(async (req, res) => {
   try {
-    const transfers = await Transfer.findAll();
+    const transfers = await Transfer.findAll({
+      include: [
+        { model: User, as: "sender" },
+        { model: User, as: "receiver" },
+      ],
+    });
 
     const result = await Promise.all(
       transfers.map(async (transfer) => {
@@ -117,7 +128,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
 
   // Check for duplicate asset IDs
   if (new Set(assets).size !== assets.length)
-    throw new ApiError(400, "Duplicate asset IDs are not allowed");
+    throw new ApiError(400, "Duplicate assets are not allowed");
 
   const cIDs = consumables.map((c) => c.id);
   const c_keySet = new Set();
@@ -126,7 +137,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
     if (c_keySet.has(key))
       throw new ApiError(
         400,
-        "Duplicate consumable ID with same usage status is not allowed"
+        "Duplicate consumables with same usage status is not allowed"
       );
     c_keySet.add(key);
   }
@@ -137,7 +148,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
     const transit = await Transit.findByPk(transitId, { transaction });
     if (!transit) throw new ApiError(404, "No such transit request found");
 
-    if (["transferred", "received"].includes(transit.status))
+    if (transit.status === "exported")
       throw new ApiError(
         400,
         "A transfer has been made already against this transit request"
@@ -161,17 +172,14 @@ export const createTransfer = asyncHandler(async (req, res) => {
       });
 
       if (fetchedAssets.length !== assets.length)
-        throw new ApiError(400, "Missing or invalid asset IDs provided");
+        throw new ApiError(400, "Missing or invalid assets provided");
 
       const invalidStoreAsset = fetchedAssets.find(
         (a) => a.storeId !== transit.fromStore
       );
 
       if (invalidStoreAsset)
-        throw new ApiError(
-          400,
-          "One or more assets do not belong to your store"
-        );
+        throw new ApiError(400, "Some assets do not belong to your store");
 
       await Asset.update(
         { status: "in-transit" },
@@ -189,7 +197,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
       });
 
       if (fetchedConsumables.length !== consumables.length)
-        throw new ApiError(400, "Missing or invalid consumables IDs provided");
+        throw new ApiError(400, "Missing or invalid consumables provided");
 
       const fetchedMap = Object.fromEntries(
         fetchedConsumables.map((c) => [c.id, c])
@@ -202,7 +210,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
         if (fetched.storeId !== transit.fromStore) {
           throw new ApiError(
             400,
-            `One or more consumables do not belong to your store`
+            "Some consumables do not belong to your store"
           );
         }
 
@@ -260,7 +268,7 @@ export const createTransfer = asyncHandler(async (req, res) => {
         "Error while transferring items! Please try again after sometime"
       );
 
-    await transit.update({ status: "transferred" }, { transaction });
+    await transit.update({ status: "exported" }, { transaction });
 
     await transaction.commit();
 
@@ -298,7 +306,7 @@ export const receiveTransfer = asyncHandler(async (req, res) => {
     if (transfer.status !== "in-transit")
       throw new ApiError(400, "Only in-transit transfers can be received");
 
-    transfer.status = "moved";
+    transfer.status = "transferred";
     transfer.receivedBy = req.user.id;
 
     await Asset.update(
@@ -349,10 +357,7 @@ export const receiveTransfer = asyncHandler(async (req, res) => {
       }
     }
 
-    await Promise.all([
-      transfer.save({ transaction }),
-      transit.update({ status: "moved" }, { transaction }),
-    ]);
+    await transfer.save({ transaction });
 
     await transaction.commit();
 
